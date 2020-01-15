@@ -72,14 +72,14 @@ function! MyNComment()
 
     if &filetype ==# 'c' || &filetype ==# 'c' || &filetype==#'js'
         let sep="//"
-    elseif &filetype ==# 'python' || &filetype ==# 'bash'
+    elseif &filetype ==# 'python' || &filetype ==# 'sh' || &filetype ==# 'make'
         let sep="#"
     endif
 
     if stridx(getline("."), sep) != -1
         " exe 's/' . sep . '\s\+//ge'
         call setline(".", substitute(getline("."), sep . '\s\+', '', 'g'))
-        echom "Found already"
+        echom "Removing Comment"
     else
         exe "normal! I" . sep . " "
         echom "New Comment"
@@ -89,21 +89,36 @@ endfunction
 function! MyVComment()
     let top_com="/*"
     let bottom_com="*/"
+    let wrapping_comment=1
+    let sep='//'
 
     if &filetype ==# 'c' || &filetype ==# 'c' || &filetype==#'js'
         let top_com="/*"
         let bottom_com="*/"
-    elseif &filetype ==# 'python' || &filetype ==# 'bash'
+        let wrapping_comment=1
+        echom "Found C-style comment"
+    elseif &filetype ==# 'python'
         let top_com="'''"
         let bottom_com="'''"
+        let wrapping_comment=1
+        echom "Found python style comment"
+    elseif &filetype ==# 'sh' || &filetype ==# 'make'
+        let wrapping_comment=0
+        let sep='#'
+        echom "Found shell style comment"
     endif
 
     let top_pos=getpos("'<")[1]
     let bottom_pos=getpos("'>")[1]
-    call cursor(top_pos, 1)
-    exe "normal!O" . top_com
-    call cursor(bottom_pos+1, 1)
-    exe "normal!o" . bottom_com
+
+    if wrapping_comment == 1
+        call cursor(top_pos, 1)
+        exe "normal!O" . top_com
+        call cursor(bottom_pos+1, 1)
+        exe "normal!o" . bottom_com
+    else
+        exe 'silent! ' . string(top_pos) . ',' . string(bottom_pos) . 's/^/' . sep . ' /g'
+    endif
 endfunction
 
 nnoremap  :call MyNComment()
