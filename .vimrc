@@ -62,6 +62,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'chrisbra/unicode.vim'
+Plug 'ashermancinelli/pcommenter'
 
 call plug#end()
 
