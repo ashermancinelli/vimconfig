@@ -1,4 +1,4 @@
-
+" 
 " Always keep the cursor in the center of the screen
 nnoremap j jzz
 nnoremap k kzz

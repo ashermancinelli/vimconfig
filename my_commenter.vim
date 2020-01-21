@@ -50,10 +50,11 @@ function! MyVComment()
         call cursor(bottom_pos+1, 1)
         exe "normal!o" . bottom_com
     else
-        exe 'silent! ' . string(top_pos) . ',' . string(bottom_pos) . 's/^/' . sep . '/g'
+        exe 'silent! ' . string(top_pos) . ',' . string(bottom_pos) . 's/^/' . sep . ' /g'
     endif
 endfunction
 
 " Remap c-k to my commenting function
-nnoremap  :call MyNComment()
-vnoremap  :call MyVComment()
+nnoremap <c-c> :call MyNComment()
+vnoremap <c-c> :call MyVComment()
+
