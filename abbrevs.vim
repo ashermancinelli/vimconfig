@@ -11,8 +11,17 @@ iabbrev pymain :read ~/.vim/template.py/###C
 iabbrev scipy <BS>import pandas as pdimport matplotlib.pyplot as pltimport numpy as np
 iabbrev osxplt <BS>import matplotlibmatplotlib.use('TkAgg')import matplotlib.pyplot as plt
 
+" jinja abbreviations, still in python:
+iabbrev #for {% for i in thing %}{% endfor %}?thingh
+" think 'jinja bracket'
+iabbrev #[ {% %}bhi
+" think 'jinja variable'
+iabbrev #v {{ }}bhi
+" think 'jinja block'
+iabbrev #b {% block block_name %}{% endblock %}?block_nameh
+
 " Bash / shell abbreviations
-iabbrev sbatch #!/usr/bin/env bash#SBATCH -t 1:00:00#SBATCH -N 1#SBATCH -n 1#SBATCH -p phi#SBATCH -o slurm.%j.out#SBATCH -e slurm.%j.err
+iabbrev sbatchh #!/usr/bin/env bash#SBATCH -t 1:00:00#SBATCH -N 1#SBATCH -n 1#SBATCH -p phi#SBATCH -o slurm.%j.out#SBATCH -e slurm.%j.err
 iabbrev bashfor for i in "${arrayName[@]}"douse i heredone?usev/re
 
 " C-Style abbreviations
@@ -27,9 +36,17 @@ iabbrev inc #include <>
 iabbrev incall #include <stdio.h>#include <string.h>#include <stdlib.h>#include <unistd.h>
 iabbrev csign /*Asher Mancinelliasher.mancinelli@pnnl.gov/
 iabbrev cmpi :read ~/.vim/mpi_template.c/###C
-iabbrev header ggO#ifndef ####define ###Go#endifgg:%s/###/
+iabbrev chead ggO#ifndef ####define ###Go#endifgg:%s/###/
+
+" Php
+iabbrev phpp <?php ?>bhi
+" think 'php for each in [h]ash'
+iabbrev phpfh <?php foreach($array as $key=>$value): ?><?php endforeach; ?>?array0/array\\|key\\|valueh
+" think 'php for [e]ach'
+iabbrev phpfe <?php foreach($array as $value): ?><?php endforeach; ?>?array0/array\\|key\\|valueh
 
 " Misc abbreviations
 iabbrev htmll k:read ~/.vim/template.html/titlevith
-inoreabbrev @g ashermancinelli@gmail.com
-inoreabbrev @p asher.mancinelli@pnnl.gov
+inoreabbrev @@g ashermancinelli@gmail.com
+inoreabbrev @@p asher.mancinelli@pnnl.gov
+iabbrev teh the
