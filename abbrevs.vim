@@ -19,7 +19,7 @@ iabbrev bashfor for i in "${arrayName[@]}"douse i heredone?usev/re
 iabbrev fori for (i=low; i<high; i++){// bodycc}?low0/low\\|high\\|bodyh
 iabbrev forj for (j=low; j<high; j++){// bodycc}?low0/low\\|high\\|bodyh
 iabbrev fork for (k=low; k<high; k++){// bodycc}?low0/low\\|high\\|bodyh
-iabbrev printarr for (i=0; i<arr_len; i++)fprintf(stdout, "arr[%i] = %i\n", i, arr[i]);?arr_lenh
+iabbrev printarr for (i=0; i<arr_len; i++)fprintf(stdout, "arr[%i] = %i\n", i, arr[i]);?arr_len0/arr_len\\|arrh
 iabbrev cfn void name(){return;}?namek/void\\|name\\|return
 iabbrev cmain :read ~/.vim/template.c/###C
 iabbrev dbg #ifdef __DEBUG#endifk
