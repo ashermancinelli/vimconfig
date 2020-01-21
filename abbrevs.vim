@@ -8,6 +8,7 @@ iabbrev pyclass class Thing:'''Some docstring here'''def __init__(self, para
 iabbrev scipy <BS>import pandas as pdimport matplotlib.pyplot as pltimport numpy as np
 iabbrev osxplt <BS>import matplotlibmatplotlib.use('TkAgg')import matplotlib.pyplot as plt
 
+" jinja bracket
 iabbrev `[ {% %}bhi
 " think 'jinja variable'
 iabbrev `v {{ }}bhi
@@ -22,8 +23,11 @@ iabbrev printarr for (i=0; i<arr_len; i++)fprintf(stdout, "arr[%i] = %i\n", i, 
 iabbrev dbg #ifdef __DEBUG#endifk
 iabbrev inc #include <>i
 iabbrev incall #include <stdio.h>#include <string.h>#include <stdlib.h>#include <unistd.h>
-iabbrev cmpi :read ~/.vim/mpi_template.c/###C
+iabbrev cmpi :read ~/.vim/templates/mpi_template.c/###C
 iabbrev chead ggO#ifndef ####define ###Go#endifgg:%s/###/
+
+" Makefiles
+iabbrev makec :read ~/.vim/templates/c_template.Makefilegg
 
 " Php
 iabbrev phpp <?php ?>bhi
@@ -33,7 +37,7 @@ iabbrev phpfh <?php foreach($array as $key=>$value): ?><?php endforeach; ?>?ar
 iabbrev phpfe <?php foreach($array as $value): ?><?php endforeach; ?>?array0/array\\|key\\|valueh
 
 " Misc abbreviations
-iabbrev htmll k:read ~/.vim/template.html/titlevith
+iabbrev htmll k:read ~/.vim/templates/template.html/titlevith
 inoreabbrev @@g ashermancinelli@gmail.com
 inoreabbrev @@p asher.mancinelli@pnnl.gov
 iabbrev teh the
@@ -63,9 +67,9 @@ endfunction
 
 function! SyntaxAwareMain()
     if (&filetype ==# 'c')
-        exe "normal! :read ~/.vim/template.c/return"
+        exe "normal! :read ~/.vim/templates/template.c/return"
     elseif (&filetype ==# 'python')
-        exe "normal! :read ~/.vim/template.py/pass"
+        exe "normal! :read ~/.vim/templates/template.py/pass"
     endif
 endfunction
 
