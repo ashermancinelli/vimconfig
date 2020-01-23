@@ -4,7 +4,6 @@
 "
 "
 " Python abbreviations
-iabbrev pyclass class Thing:'''Some docstring here'''def __init__(self, param):self.param = paramdef method(self, param):pass?Thing0/Thing\\|Some\\|param\\|methodh
 iabbrev scipy <BS>import pandas as pdimport matplotlib.pyplot as pltimport numpy as np
 iabbrev osxplt <BS>import matplotlibmatplotlib.use('TkAgg')import matplotlib.pyplot as plt
 
@@ -42,27 +41,31 @@ inoreabbrev @@g ashermancinelli@gmail.com
 inoreabbrev @@p asher.mancinelli@pnnl.gov
 iabbrev teh the
 
-function! SyntaxAwareFor(iterator)
+function! SyntaxAwareFor(iterator, cli)
     let c_types = ['c', "cpp", "php", "js", "rust"]
-    
-    if (index(c_types, &filetype) >= 0)
-        " c style for loop:
-        exe "normal! ifor (".a:iterator."=low; ".a:iterator."<high; i++){// bodycc}?low0/low\\|high\\|bodyh"
-    elseif (&filetype ==# 'python')
-        exe "normal! ifor ".a:iterator." in thing:pass?thingk/func\\|thing\\|passh"
-    elseif (&filetype ==# 'sh')
-        exe "normal! ifor ".a:iterator." in \"${arrayName[@]}\"do# loop bodydone?for0/arrayName\\|loop bodyh"
-    endif
-endfunction
 
-function! SyntaxAwareFunc()
-    let c_types = ['c', 'cpp', "php", "js", "rust"]
-    
-    if (index(c_types, &filetype) >= 0)
-        exe "normal! ivoid name(){return;}?namek/void\\|name\\|return"
-    elseif (&filetype ==# 'python')
-        exe "normal! idef func(params):pass?funck/func\\|params\\|passh"
+    if a:cli | else
+        call getchar()
     endif
+
+    let cmd_str = 'normal! ifor '
+
+    call inputsave()
+    if (index(c_types, &filetype) >= 0)
+        let l = input('Lower bound: ')
+        let h = input('Upper bound: ')
+        let it = input('Delta: ', a:iterator.'++')
+        " c style for loop:
+        let cmd_str .= '(' . a:iterator . '=' . l . '; ' . a:iterator . '<' . h . '; ' . it . '){// bodycc}?body'
+    elseif (&filetype ==# 'python')
+        let cmd_str .= a:iterator . " in thing:pass?thingk/func\\|thing\\|passh"
+    elseif (&filetype ==# 'sh')
+        let aname = input('Array name: ')
+        let cmd_str .= a:iterator." in \"${".aname."[@]}\"doecho \$".a:iterator."done"
+    endif
+    call inputrestore()
+
+    exe cmd_str
 endfunction
 
 function! SyntaxAwareMain()
@@ -73,10 +76,57 @@ function! SyntaxAwareMain()
     endif
 endfunction
 
-iabbrev forr :call SyntaxAwareFor('i')
-iabbrev fori :call SyntaxAwareFor('i')
-iabbrev forj :call SyntaxAwareFor('j')
-iabbrev fork :call SyntaxAwareFor('k')
-iabbrev forl :call SyntaxAwareFor('l')
-iabbrev fnn :call SyntaxAwareFunc()
-iabbrev mainn :call SyntaxAwareMain()
+function! PythonClass()
+    call inputsave()
+    let name = input('Class name: ')
+    let cmd_str = "normal! iclass " . name . ":"
+ 
+    let init = input('def __init__(self, ')
+    if init == ''
+        let cmd_str .= "def __init__(self):pass"
+    else
+        let cmd_str .= "def __init__(self, " . init . "):"
+        let args = split(init, ',')
+        for i in range(len(args))
+            " Remove default values
+            let args[i] = substitute(args[i], '\v\=.+', '', 'g')
+            " Remove whitespace
+            let args[i] = substitute(args[i], ' ', '', 'g')
+        endfor
+        for i in args
+            let cmd_str .= 'self.' . i . ' = ' . i . ''
+        endfor
+    endif
+
+    let first = 1
+    let method = input('Enter method name (blank for none): ')
+    while method != ''
+        let cmd_str .= 'def ' . method . '('
+        let m_args = input(method . '(', 'self')
+        let cmd_str .= m_args . '):'
+        if first && init != ''
+            let cmd_str .= '<<'
+            let first -= 1
+        endif
+        let cmd_str .= 'opass'
+        let method = input('Enter method name (blank for none): ')
+    endwhile
+    call inputrestore()
+
+    exe cmd_str
+endfunction
+
+noreabbrev forr :call SyntaxAwareFor('i', 1)
+noreabbrev fori :call SyntaxAwareFor('i', 1)
+noreabbrev forj :call SyntaxAwareFor('j', 1)
+noreabbrev fork :call SyntaxAwareFor('k', 1)
+noreabbrev forl :call SyntaxAwareFor('l', 1)
+
+cnoreabbrev forr call SyntaxAwareFor('i', 0)
+cnoreabbrev fori call SyntaxAwareFor('i', 0)
+cnoreabbrev forj call SyntaxAwareFor('j', 0)
+cnoreabbrev fork call SyntaxAwareFor('k', 0)
+cnoreabbrev forl call SyntaxAwareFor('l', 0)
+cnoreabbrev main call SyntaxAwareMain()
+
+noreabbrev pyclass :call PythonClass()
