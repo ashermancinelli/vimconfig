@@ -18,9 +18,7 @@ iabbrev `b {% block block_name %}{% endblock %}?block_nameh
 iabbrev sbatchh #!/usr/bin/env bash#SBATCH -t 1:00:00#SBATCH -N 1#SBATCH -n 1#SBATCH -p phi#SBATCH -o slurm.%j.out#SBATCH -e slurm.%j.err
 
 " C-Style abbreviations
-iabbrev printarr for (i=0; i<arr_len; i++)fprintf(stdout, "arr[%i] = %i\n", i, arr[i]);?arr_len0/arr_len\\|arrh
 iabbrev dbg #ifdef __DEBUG#endifk
-iabbrev inc #include <>i
 iabbrev incall #include <stdio.h>#include <string.h>#include <stdlib.h>#include <unistd.h>
 iabbrev cmpi :read ~/.vim/templates/mpi_template.c/###C
 iabbrev chead ggO#ifndef ####define ###Go#endifgg:%s/###/
@@ -41,6 +39,38 @@ inoreabbrev @@g ashermancinelli@gmail.com
 inoreabbrev @@p asher.mancinelli@pnnl.gov
 iabbrev teh the
 
+let g:c_std_libs = [
+\   "assert.h",
+\   "complex.h",
+\   "ctype.h",
+\   "errno.h",
+\   "fenv.h",
+\   "float.h",
+\   "inttypes.h",
+\   "iso646.h",
+\   "limits.h",
+\   "locale.h",
+\   "math.h",
+\   "setjmp.h",
+\   "signal.h",
+\   "stdalign.h",
+\   "stdarg.h",
+\   "stdatomic.h",
+\   "stdbool.h",
+\   "stddef.h",
+\   "stdint.h",
+\   "stdio.h",
+\   "stdlib.h",
+\   "stdnoreturn.h",
+\   "string.h",
+\   "tgmath.h",
+\   "threads.h",
+\   "time.h",
+\   "uchar.h",
+\   "wchar.h",
+\   "wctype.h",
+\   ]
+
 function! SyntaxAwareFor(iterator, cli)
     let c_types = ['c', "cpp", "php", "js", "rust"]
 
@@ -51,6 +81,7 @@ function! SyntaxAwareFor(iterator, cli)
     let cmd_str = 'normal! ifor '
 
     call inputsave()
+
     if (index(c_types, &filetype) >= 0)
         let l = input('Lower bound: ')
         let h = input('Upper bound: ')
@@ -63,6 +94,7 @@ function! SyntaxAwareFor(iterator, cli)
         let aname = input('Array name: ')
         let cmd_str .= a:iterator." in \"${".aname."[@]}\"doecho \$".a:iterator."done"
     endif
+
     call inputrestore()
 
     exe cmd_str
@@ -116,6 +148,58 @@ function! PythonClass()
     exe cmd_str
 endfunction
 
+function! Include()
+
+    let exe_str = 'normal! '
+
+    call inputsave()
+    let prompt = 'Enter include: '
+    let headers = []
+    let header = input(prompt, '', 'file')
+    while header != ''
+        call add(headers, header)
+        let header = input(prompt, '', 'file')
+    endwhile
+    echo 'Input ' . len(headers) . ' headers/includes.'
+    call inputrestore()
+
+    for h in headers
+        if &filetype ==# 'python'
+            let pre = 'import '
+            let post = ''
+        elseif &filetype ==# 'c' || &filetype ==# 'cpp'
+            if &filetype ==# 'c' && (index(g:c_std_libs, h) >= 0)
+                let pre = '#include <'
+                let post = '>'
+            else
+                let pre = '#include "'
+                let post = '"'
+            endif
+        elseif &filetype ==# 'php'
+            let pre = 'use \'
+            let post = ';'
+        endif
+        let exe_str .= 'i'. pre . h . post . ''
+    endfor
+
+    exe exe_str
+endfunction
+
+function! CPrintArr(iter)
+    call inputsave()
+    let length = input('Length: ')
+    let name = input('Array name: ')
+    call inputrestore()
+
+    let s = 'normal! '
+    let s .= 'ifor ('.a:iter.'=0; '.a:iter.'<'
+    let s .= length.'; '.a:iter.'++)'
+    let s .= 'fprintf(stdout, "'.name.'[%i] = %i\n"'
+    let s .= ', '.a:iter.', ' . name . '['.a:iter.']);'
+
+    exe s
+endfunction
+
 noreabbrev forr :call SyntaxAwareFor('i', 1)
 noreabbrev fori :call SyntaxAwareFor('i', 1)
 noreabbrev forj :call SyntaxAwareFor('j', 1)
@@ -130,3 +214,6 @@ cnoreabbrev forl call SyntaxAwareFor('l', 0)
 cnoreabbrev main call SyntaxAwareMain()
 
 noreabbrev pyclass :call PythonClass()
+noreabbrev incc :call CInclude()
+nnoremap <C-i> :call Include()
+noreabbrev printarr :call CPrintArr('i')
