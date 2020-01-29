@@ -2,6 +2,8 @@
 
 cp vimrc_base ~/.vimrc
 
+[ -d ~/.vim ] || mkdir ~/.vim
+
 [ -d ~/.vim/templates ] || mkdir ~/.vim/templates
 
 for i in $(ls templates)
