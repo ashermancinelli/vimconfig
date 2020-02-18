@@ -25,6 +25,7 @@ nnoremap T :NERDTree<Enter>
 
 " Use spelling when in a spelling-dependent context
 autocmd Filetype txt setlocal spell
+autocmd Filetype md setlocal spell
 autocmd Filetype tex setlocal spell
 
 " Configuring folding
@@ -39,7 +40,7 @@ set relativenumber
 " number of colors
 set t_Co=256
 
-" Tabbing {{
+" Tabbing
 " show existing tab with 4 spaces width
 set tabstop=4
 
@@ -49,9 +50,39 @@ set shiftwidth=4
 " On pressing tab, insert 4 spaces
 set expandtab
 set softtabstop=4
-" }}
 
 set backspace=indent,eol,start
 set autoindent
 set ruler
 set showcmd
+
+function! TODOList()
+    let items = []
+    call inputrestore()
+    let item = input('(' . len(items) . ') TODO item> ')
+
+    " I probably started this accidentally
+    if item == ''
+        return
+    endif
+
+    while item != ''
+        call add(items, item)
+        let item = input('(' . len(items) . ') TODO item> ')
+    endwhile
+    call inputsave()
+
+    for i in items
+        call append('.', ['- [ ] ' . i, ''])
+    endfor
+endfunction
+
+function! TODOListToggle()
+    call setline('.', substitute(getline('.'), '\[X\]', '[+]', ''))
+    call setline('.', substitute(getline('.'), '\[ \]', '[-]', ''))
+    call setline('.', substitute(getline('.'), '\[+\]', '[ ]', ''))
+    call setline('.', substitute(getline('.'), '\[-\]', '[X]', ''))
+endfunction
+
+nnoremap <c-t><c-t> :call TODOListToggle()
+nnoremap <c-t>n :call TODOList()

@@ -33,6 +33,8 @@
 " The two must-have lines:
 filetype plugin indent on
 syntax on
+let mapleader = '<c-j>'
+set dictionary=/usr/share/dict/words
 
 " A few essential plugins
 call plug#begin('~/.vim/plugged')
@@ -54,6 +56,6 @@ source ~/.vim/abbrevs.vim
 " colorscheme material
 " colorscheme materialbox
 " colorscheme minimalist
-" colorscheme meta5
+" colorscheme meta4
 " colorscheme wolfpack
 colorscheme apprentice
