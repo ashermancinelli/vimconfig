@@ -57,24 +57,18 @@ set ruler
 set showcmd
 
 function! TODOList()
-    let items = []
+    let n = 0
     call inputrestore()
-    let item = input('(' . len(items) . ') TODO item> ')
 
-    " I probably started this accidentally
-    if item == ''
-        return
-    endif
-
-    while item != ''
-        call add(items, item)
-        let item = input('(' . len(items) . ') TODO item> ')
+    while 1
+        let item = input('(' . n . ') TODO item> ')
+        if item == ''
+            break
+        endif
+        let n += 1
+        call append('.', ['- [ ] ' . item, ''])
     endwhile
     call inputsave()
-
-    for i in items
-        call append('.', ['- [ ] ' . i, ''])
-    endfor
 endfunction
 
 function! TODOListToggle()
@@ -86,3 +80,4 @@ endfunction
 
 nnoremap <c-t><c-t> :call TODOListToggle()
 nnoremap <c-t>n :call TODOList()
+
