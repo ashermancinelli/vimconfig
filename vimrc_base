@@ -35,6 +35,7 @@ filetype plugin indent on
 syntax on
 let mapleader = '<c-j>'
 set dictionary=/usr/share/dict/words
+set updatetime=100
 
 " A few essential plugins
 call plug#begin('~/.vim/plugged')
