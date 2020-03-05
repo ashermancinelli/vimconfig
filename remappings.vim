@@ -27,6 +27,7 @@ nnoremap T :NERDTree<Enter>
 autocmd Filetype txt setlocal spell
 autocmd Filetype md setlocal spell
 autocmd Filetype tex setlocal spell
+autocmd Filetype rs set makeprg=cargo\ build
 
 " Configuring folding
 set foldmethod=manual

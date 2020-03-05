@@ -199,21 +199,3 @@ function! CPrintArr(iter)
 
     exe s
 endfunction
-
-noreabbrev forr :call SyntaxAwareFor('i', 1)
-noreabbrev fori :call SyntaxAwareFor('i', 1)
-noreabbrev forj :call SyntaxAwareFor('j', 1)
-noreabbrev fork :call SyntaxAwareFor('k', 1)
-noreabbrev forl :call SyntaxAwareFor('l', 1)
-
-cnoreabbrev forr call SyntaxAwareFor('i', 0)
-cnoreabbrev fori call SyntaxAwareFor('i', 0)
-cnoreabbrev forj call SyntaxAwareFor('j', 0)
-cnoreabbrev fork call SyntaxAwareFor('k', 0)
-cnoreabbrev forl call SyntaxAwareFor('l', 0)
-" cnoreabbrev main call SyntaxAwareMain()
-
-noreabbrev pyclass :call PythonClass()
-noreabbrev incc :call Include()
-nnoremap <C-i> :call Include()
-noreabbrev printarr :call CPrintArr('i')
