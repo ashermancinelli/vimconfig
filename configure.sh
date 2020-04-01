@@ -23,6 +23,22 @@ do
     cp $i ~/.vim/$i
 done
 
+type go
+if [ $? -gt 0 ]; then
+    echo 'Go not found... Not installing prologic/ed'
+else
+    echo
+    echo Installing prologic/ed...
+    echo
+
+    test -d external || mkdir external
+    pushd external
+    git clone https://github.com/prologic/ed
+    cd ed
+    go build
+    cp ed ~/.local/bin
+fi
+
 zshrc=$(cat <<'EOF'
 if [ -d \$HOME/.oh-my-zsh ]
 then
