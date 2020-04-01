@@ -13,7 +13,7 @@ nnoremap <c-j> <c-w><c-j>
 nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 
-nnoremap gy :Goyo<Enter>
+nnoremap <c-g> :Goyo<Enter>
 
 " Better tab navigation
 nnoremap tn gt
