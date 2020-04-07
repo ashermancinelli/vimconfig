@@ -70,13 +70,13 @@ case "$SHELL" in
         echo
         echo Found Zshell
         echo
-        cat baserc zshrc > $HOME/.bash_rc
+        cat baserc zshrc > $HOME/.zshrc
         ;;
     *bash )
         echo
         echo Found Bash
         echo
-        cat baserc bashrc > $HOME/.zshrc
+        cat baserc bashrc > $HOME/.bashrc
         ;;
     * )
         echo

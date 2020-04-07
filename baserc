@@ -14,3 +14,8 @@ if which vim.my
 then
     alias vim=vim.my
 fi
+
+if [ $TMUX ]; then
+    source "$HOME/$(basename $SHELL)rc"
+    clear
+fi
