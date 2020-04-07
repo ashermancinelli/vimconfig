@@ -8,7 +8,7 @@ if [ ! -d ~/.vim/autoload ]
 then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    echo "Run :PlugInstall when you first load up."
+    vim +PlugInstall +q! +q!
 fi
 
 [ -d ~/.vim/templates ] || mkdir ~/.vim/templates
@@ -37,36 +37,50 @@ else
     cd ed
     go build
     cp ed ~/.local/bin
+    popd
 fi
 
-zshrc=$(cat <<'EOF'
-if [ -d \$HOME/.oh-my-zsh ]
-then
-    export ZSH="\$HOME/.oh-my-zsh"
-    source \$ZSH/oh-my-zsh.sh
-
-    ZSH_THEME="refined"
-    plugins=(
-        git 
-        colored-man-pages 
-        zsh-autosuggestions 
-        zsh-syntax-highlighting
-    )
-
-    bindkey '^ ' autosuggest-accept
+type tmux
+if [ $? -ne 0 ]; then
+    echo
+    echo Installing tmux from tarball...
+    echo
+    wget https://github.com/tmux/tmux/releases/download/3.0/tmux-3.0.tar.gz \
+        -O external/tmux-3.0.tar.gz || echo 'Check tmux url'
+    pushd external
+    tar -xvgf ./external/tmux-3.0.tar.gz
+    pushd tmux-3.0
+    ./configure --prefix=$HOME/.local
+    make
+    make install
+    popd
+    popd
 fi
 
-alias python=python3
-alias pip="python3 -m pip"
+echo
+echo Loading default tmux config...
+echo
+cp tmux.conf $HOME/.tmux.conf
 
-alias dc="docker-compose"
-alias dcu="docker-compose up"
-alias dcb="docker-compose build"
-alias dcd="docker-compose down"
-
-if which vim.my
-then
-    alias vim=vim.my
-fi
-EOF
-)
+echo
+echo Setting up shell rc
+echo
+case "$SHELL" in
+    *zsh )
+        echo
+        echo Found Zshell
+        echo
+        cat baserc zshrc > $HOME/.bash_rc
+        ;;
+    *bash )
+        echo
+        echo Found Bash
+        echo
+        cat baserc bashrc > $HOME/.zshrc
+        ;;
+    * )
+        echo
+        echo Shell type not found...
+        echo Not loading defaults.
+        echo
+esac

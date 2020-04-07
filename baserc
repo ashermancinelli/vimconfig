@@ -1,0 +1,16 @@
+alias python=python3
+alias pip="python3 -m pip"
+
+alias dc="docker-compose"
+alias dcu="docker-compose up"
+alias dcb="docker-compose build"
+alias dcd="docker-compose down"
+
+export PATH="~/.local/bin:$PATH"
+export LD_LIBRARY_PATH="~/.local/lib:$PATH"
+
+# For local installations of vim
+if which vim.my
+then
+    alias vim=vim.my
+fi
