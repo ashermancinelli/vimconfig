@@ -60,4 +60,7 @@ source ~/.vim/abbrevs.vim
 " colorscheme minimalist
 " colorscheme meta4
 " colorscheme wolfpack
+
+set omnifunc=syntaxcomplete#Complete
+
 colorscheme apprentice
