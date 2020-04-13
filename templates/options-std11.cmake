@@ -2,7 +2,7 @@ add_library(options INTERFACE)
 
 target_compile_features(options
     INTERFACE
-        cxx_std_111
+        cxx_std_11
         cxx_alignas
         cxx_alignof
         cxx_attributes
