@@ -5,3 +5,8 @@ if [ $TMUX ]; then
     source "$HOME/$(basename $SHELL)rc"
     clear
 fi
+
+function name()
+{
+    uname -a | cut -d' ' -f2
+}

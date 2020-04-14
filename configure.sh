@@ -99,3 +99,4 @@ else
     echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> ~/.vimrc
 fi
 
+cat baserc zshrc > $HOME/.zshrc
