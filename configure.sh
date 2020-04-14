@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+cp vimrc_base ~/.vimrc
 [ -d ~/.vim ] || mkdir ~/.vim
 
 if [ ! -d ~/.vim/autoload ]
@@ -63,9 +64,12 @@ if [ $? -ne 0 ]; then
     make -j 8
     make install
     popd; popd
+    pushd $HOME/.oh-my-zsh/plugins
+    git clone \
+        https://github.com/zsh-users/zsh-syntax-highlighting.git \
+        ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    popd
 fi
-
-rm ~/.vimrc
 
 which ctags
 if [ $? -ne 0 ]; then
@@ -80,7 +84,7 @@ else
     touch ./tags
     while read pth
     do
-        find $pth -name '*.h' | \
+        find $pth -name '*' | grep -E '\.(h|hpp)$' | \
              ctags -f ./tags \
              --verbose \
              --append \
@@ -90,11 +94,8 @@ else
              --language-force=C++ \
              -I _GLIBCXX_NOEXCEPT \
              -L -
-    done < ./tags-paths
+    done < ./$(uname -a | cut -d' ' -f2)_tag_paths
     mv ./tags ~/.vim/tags
-    echo 'set tags=~/.vim/tags,tags;' > ~/.vimrc
-
+    echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> ~/.vimrc
 fi
-
-cat vimrc_base >> ~/.vimrc
 

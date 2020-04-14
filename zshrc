@@ -10,4 +10,3 @@ zsh-syntax-highlighting
 )
 
 bindkey '^ ' autosuggest-accept
-source /etc/profile.d/modules.sh || echo 'Not on a cluster...'

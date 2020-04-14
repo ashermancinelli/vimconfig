@@ -1,22 +1,6 @@
 alias python=python3
 alias pip="python3 -m pip"
 
-alias dc="docker-compose"
-alias dcu="docker-compose up"
-alias dcb="docker-compose build"
-alias dcd="docker-compose down"
-
-export PATH="~/.local/bin:$PATH"
-export LD_LIBRARY_PATH="~/.local/lib:$PATH"
-
-# For local installations of vim
-type vim.my && alias vim=vim.my
-
-tmux new-session -d 'Edit'
-tmux new-window 'Shell'
-tmux split-window -v 'Shell'
-tmux -2 attach-session -d
-
 if [ $TMUX ]; then
     source "$HOME/$(basename $SHELL)rc"
     clear
