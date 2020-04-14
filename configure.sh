@@ -92,7 +92,7 @@ else
              -L -
     done < ./tags-paths
     mv ./tags ~/.vim/tags
-    echo 'tags+=~/.vim/tags' > ~/.vimrc
+    echo 'set tags=~/.vim/tags,tags;' > ~/.vimrc
 
 fi
 
