@@ -17,3 +17,13 @@ function name()
 {
     uname -a | cut -d' ' -f2
 }
+
+function comp_inc_paths()
+{
+    if [ -z "$1" ]; then
+        cmp="gcc"
+    else
+        cmp="$1"
+    fi
+    echo | $cmp -E -Wp,-v -
+}
