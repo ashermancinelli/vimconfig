@@ -1,10 +1,12 @@
 
 function! MyNComment()
     let sep="//"
+    let hashkinds = ['python', 'sh', 'make', 'perl', 'cmake']
 
     if &filetype ==# 'c' || &filetype ==# 'c' || &filetype==#'js'
         let sep="//"
-    elseif &filetype ==# 'python' || &filetype ==# 'sh' || &filetype ==# 'make' || &filetype ==# 'perl'
+    " elseif &filetype ==# 'python' || &filetype ==# 'sh' || &filetype ==# 'make' || &filetype ==# 'perl' || &filetype ==# 'cmake'
+    elseif index(hashkinds, &filetype) != -1
         let sep="#"
     elseif &filetype ==# 'vim'
         let sep='"'
