@@ -82,3 +82,5 @@ endfunction
 nnoremap <c-t><c-t> :call TODOListToggle()
 nnoremap <c-t>n :call TODOList()
 
+nnoremap <c-n> :bnext<cr>
+nnoremap <c-p> :bprevious<cr>
