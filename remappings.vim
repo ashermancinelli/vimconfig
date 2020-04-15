@@ -82,6 +82,6 @@ endfunction
 nnoremap <c-t><c-t> :call TODOListToggle()
 nnoremap <c-t>n :call TODOList()
 
-nnoremap <c-n> :bnext<cr>:echo "BUFFER:" bufname(winbufnr(winnr())) "<" winbufnr(winnr()) ">"<cr>
-nnoremap <c-p> :bprevious<cr>:echo "BUFFER:" bufname(winbufnr(winnr())) "<" winbufnr(winnr()) ">"<cr>
+nnoremap <c-n> :bnext \| ls<cr>
+nnoremap <c-p> :bprevious \| ls<cr>
 
