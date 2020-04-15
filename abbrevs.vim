@@ -360,3 +360,5 @@ function! CPrintArr(iter)
 
     exe s
 endfunction
+
+nnoremap <c-i> :call Include()
