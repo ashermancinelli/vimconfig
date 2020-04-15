@@ -6,6 +6,13 @@ if [ $TMUX ]; then
     clear
 fi
 
+function gpa()
+{
+    git pull
+    git fetch --all
+    git branch -r
+}
+
 function name()
 {
     uname -a | cut -d' ' -f2

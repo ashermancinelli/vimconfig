@@ -17,15 +17,6 @@ iabbrev `b {% block block_name %}{% endblock %}?block_nameh
 " Bash / shell abbreviations
 iabbrev sbatchh #!/usr/bin/env bash#SBATCH -t 1:00:00#SBATCH -N 1#SBATCH -n 1#SBATCH -p phi#SBATCH -o slurm.%j.out#SBATCH -e slurm.%j.err
 
-" C-Style abbreviations
-iabbrev dbg #ifdef __DEBUG#endifk
-iabbrev incall #include <stdio.h>#include <string.h>#include <stdlib.h>#include <unistd.h>
-iabbrev cmpi :read ~/.vim/templates/mpi_template.c/###C
-iabbrev chead ggO#ifndef ####define ###Go#endifgg:%s/###/
-
-" Makefiles
-iabbrev makec :read ~/.vim/templates/c_template.Makefilegg
-
 " Php
 iabbrev phpp <?php ?>bhi
 " think 'php for each in [h]ash'
@@ -341,16 +332,13 @@ function! Include()
             let pre = 'import '
             let post = ''
         elseif &filetype ==# 'c' || &filetype ==# 'cpp'
-            if &filetype ==# 'c' && (index(g:c_std_libs, h) >= 0)
+            if (index(g:c_std_libs, h) >= 0)
                 let pre = '#include <'
                 let post = '>'
             else
                 let pre = '#include "'
                 let post = '"'
             endif
-        elseif &filetype ==# 'php'
-            let pre = 'use \'
-            let post = ';'
         endif
         let exe_str .= 'i'. pre . h . post . ''
     endfor

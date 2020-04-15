@@ -64,11 +64,13 @@ if [ $? -ne 0 ]; then
     make -j 8
     make install
     popd; popd
-    pushd $HOME/.oh-my-zsh/plugins
+fi
+
+if [ ! -d $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting ]
+then
     git clone \
         https://github.com/zsh-users/zsh-syntax-highlighting.git \
-        ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-    popd
+        $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting
 fi
 
 which ctags
