@@ -96,7 +96,7 @@ else
              --language-force=C++ \
              -I _GLIBCXX_NOEXCEPT \
              -L -
-    done < ./$(uname -a | cut -d' ' -f2)_tag_paths
+    done < ./$(uname -n)_tag_paths
     mv ./tags ~/.vim/tags
     echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> ~/.vimrc
 fi
