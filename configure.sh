@@ -24,22 +24,26 @@ done
 
 type tmux
 if [ $? -ne 0 ]; then
-    echo
-    echo Installing tmux from tarball...
-    echo
-    wget https://github.com/tmux/tmux/releases/download/3.0/tmux-3.0.tar.gz \
-        -O external/tmux-3.0.tar.gz || echo 'Check tmux url'
-    pushd external
-    tar -xvgf ./external/tmux-3.0.tar.gz
-    pushd tmux-3.0
-    ./configure \
-        --prefix=$HOME/.local \
-        CPPFLAGS="-I$HOME/.local/include" \
-        LDFLAGS="-L$HOME/.local/lib"
-    make -j 8
-    make install
-    popd
-    popd
+    echo 'Install tmux? [yn]'
+    read inst
+    if [ $inst -eq "y" ]; then
+        echo
+        echo Installing tmux from tarball...
+        echo
+        wget https://github.com/tmux/tmux/releases/download/3.0/tmux-3.0.tar.gz \
+            -O external/tmux-3.0.tar.gz || echo 'Check tmux url'
+        pushd external
+        tar -xvgf ./external/tmux-3.0.tar.gz
+        pushd tmux-3.0
+        ./configure \
+            --prefix=$HOME/.local \
+            CPPFLAGS="-I$HOME/.local/include" \
+            LDFLAGS="-L$HOME/.local/lib"
+        make -j 8
+        make install
+        popd
+        popd
+    fi
 fi
 
 echo
