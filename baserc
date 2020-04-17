@@ -27,3 +27,14 @@ function comp_inc_paths()
     fi
     echo | $cmp -E -Wp,-v -
 }
+
+function match()
+{
+    if [ $(echo $1 | grep -E "$2") ]
+    then
+        echo 0
+    else
+        echo 1
+    fi
+}
+
