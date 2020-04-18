@@ -6,18 +6,6 @@ if [ $TMUX ]; then
     clear
 fi
 
-function gpa()
-{
-    git pull
-    git fetch --all
-    git branch -r
-}
-
-function name()
-{
-    uname -a | cut -d' ' -f2
-}
-
 function comp_inc_paths()
 {
     if [ -z "$1" ]; then
@@ -28,14 +16,15 @@ function comp_inc_paths()
     echo | $cmp -E -Wp,-v -
 }
 
-function match()
+function modload()
 {
-    if [ $(echo $1 | grep -E "$2") ]
-    then
-        echo 0
-    else
-        echo 1
-    fi
+    echo module purge
+    module list 2>&1 \
+        | tr ' ' '\n' \
+        | awk '!/^[0-9]/' \
+        | sort \
+        | grep '/' \
+        | sed 's/^/module load /'
 }
 
 function modstr()

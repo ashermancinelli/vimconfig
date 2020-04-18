@@ -26,7 +26,7 @@ type tmux
 if [ $? -ne 0 ]; then
     echo 'Install tmux? [yn]'
     read inst
-    if [ $inst -eq "y" ]; then
+    if [ "$inst" == "y" ]; then
         echo
         echo Installing tmux from tarball...
         echo
@@ -83,26 +83,30 @@ if [ $? -ne 0 ]; then
     echo Ctags not found...
     echo
 else
-    echo
-    echo Generating Ctags...
-    echo
-    [ -f ./tags ] && rm ./tags
-    touch ./tags
-    while read pth
-    do
-        find $pth -name '*' | grep -E '\.(h|hpp)$' | \
-             ctags -f ./tags \
-             --verbose \
-             --append \
-             --c++-kinds=+p \
-             --fields=+iaS \
-             --extra=+q \
-             --language-force=C++ \
-             -I _GLIBCXX_NOEXCEPT \
-             -L -
-    done < ./$(uname -n)_tag_paths
-    mv ./tags ~/.vim/tags
-    echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> ~/.vimrc
+    echo 'Generate new ctags? [yn]'
+    read inst
+    if [ "$inst" == "y" ]; then
+        echo
+        echo Generating Ctags...
+        echo
+        [ -f ./tags ] && rm ./tags
+        touch ./tags
+        while read pth
+        do
+            find $pth -name '*' | grep -E '\.(h|hpp)$' | \
+                 ctags -f ./tags \
+                 --verbose \
+                 --append \
+                 --c++-kinds=+p \
+                 --fields=+iaS \
+                 --extra=+q \
+                 --language-force=C++ \
+                 -I _GLIBCXX_NOEXCEPT \
+                 -L -
+        done < ./$(uname -n)_tag_paths
+        mv ./tags ~/.vim/tags
+        echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> ~/.vimrc
+    fi
 fi
 
 cat baserc zshrc > $HOME/.zshrc
