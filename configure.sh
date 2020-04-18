@@ -86,6 +86,12 @@ else
     echo 'Generate new ctags? [yn]'
     read inst
     if [ "$inst" == "y" ]; then
+        [ -f "./tags/$(uname -n)" ] || {
+            echo
+            echo "./tags/$(uname -n) tags file not found"
+            echo
+            exit 1
+        }
         echo
         echo Generating Ctags...
         echo
@@ -103,7 +109,7 @@ else
                  --language-force=C++ \
                  -I _GLIBCXX_NOEXCEPT \
                  -L -
-        done < ./$(uname -n)_tag_paths
+        done < "./tags/$(uname -n)"
         mv ./tags ~/.vim/tags
         echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> ~/.vimrc
     fi
