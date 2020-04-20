@@ -45,15 +45,17 @@ function modstr()
 function mc()
 {
     dirname="."
-    editor="vim"
+    editor="vim -c 'exe \"normal! gg/HEAD\" | normal n'"
 
     while [[ $# -gt 0 ]]
     do
         case $1 in
         -h|--help)
-            echo 'Usage:'
-            echo 'mc [--dirname|-d] <> [--editor|-e] <>'
-            echo 'or call with -h|--help for this message'
+            echo Options:
+            echo
+            echo -d|--dirname
+            echo -e|--editor
+            echo -s|--search
             echo
             echo 'dirname default: .'
             echo 'editor default: vim'
@@ -71,6 +73,12 @@ function mc()
             echo Using editor $editor
             shift
             ;;
+        -s|--search)
+            grep -r '^=\{7\}$' . || {
+                echo 'No conflicts found'
+            }
+            return 0
+            ;;
         *)
             echo Use -h for help
             return 1
@@ -78,11 +86,57 @@ function mc()
         esac
     done
 
+    grep -r '^=\{7\}$' . || {
+        echo 'No conflicts found'
+        return 0
+    }
+
     files=$(grep -r '^=\{7\}$' $dirname \
         | cut -d':' -f1 \
         | sort \
         | uniq \
         | tr '\n' ' ')
 
+    eval "$editor $files"
+}
+
+function vfind()
+{
+    editor="vim"
+    dir=$(pwd)
+    exp=""
+
+    while [[ $# -gt 0 ]]
+    do
+        case $1 in
+        -E|--editor)
+            vimcmd=$2
+            shift; shift
+            ;;
+        -d|--directory)
+            dir=$2
+            shift; shift
+            ;;
+        -e|--expression)
+            exp=$2
+            shift; shift
+            ;;
+        *)
+            echo Opions:
+            echo
+            echo '-E|--editor      [default: vim]'
+            echo '-d|--directory   [default: .]'
+            echo '-e|--expression  [default: ]'
+            return 1
+        esac
+    done
+
+    [ -z "$exp" ] && {
+        echo 'Must pass expression'
+        return 1
+    }
+
+    files=$(find $dir -regextype posix-extended -regex $exp \
+        | tr '\n' ' ')
     eval "$editor $files"
 }
