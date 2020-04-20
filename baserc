@@ -41,3 +41,48 @@ function modstr()
         | sed 's/ /-/g' \
         | sed 's/$/\n/g'
 }
+
+function mc()
+{
+    dirname="."
+    editor="vim"
+
+    while [[ $# -gt 0 ]]
+    do
+        case $1 in
+        -h|--help)
+            echo 'Usage:'
+            echo 'mc [--dirname|-d] <> [--editor|-e] <>'
+            echo 'or call with -h|--help for this message'
+            echo
+            echo 'dirname default: .'
+            echo 'editor default: vim'
+            return 0
+            ;;
+        -d|--dirname)
+            shift
+            dirname=$1
+            shift
+            echo Using dirname $dirname
+            ;;
+        -e|--editor)
+            shift
+            editor=$1
+            echo Using editor $editor
+            shift
+            ;;
+        *)
+            echo Use -h for help
+            return 1
+            ;;
+        esac
+    done
+
+    files=$(grep -r '^=\{7\}$' $dirname \
+        | cut -d':' -f1 \
+        | sort \
+        | uniq \
+        | tr '\n' ' ')
+
+    eval "$editor $files"
+}
