@@ -1,47 +1,27 @@
 #!/usr/bin/env bash
 
-install_prefix=""
-n_jobs=1
+if [[ $# -gt 0 ]]
+then
+    echo 'All arguments will be discarded'
+fi
 
-while [[ $# -gt 0 ]]
-do
-    case $i in
-    --install-prefix)
-        install_prefix=$2
-        shift;shift
-        ;;
-    -n|--jobs)
-        n_jobs=$2
-        shift;shift
-        ;;
-    *)
-        echo
-        echo Usage:
-        echo '--install-prefix <path>'
-        echo '-n|--jobs <int>'
-        echo
-        ;;
-    esac
-done
+read -p 'Number of make jobs: ' n_jobs
 
-[ -z $install_prefix ] && {
-    read -p 'No install prefix set. Set prefix? [yn] ' y
-    if [ "$y" == y ]
-    then
-        read -e -p "Enter prefix: " tmp
-        install_prefix=${tmp/\~/$HOME}
-    else
-        install_prefix="$HOME/.local"
-    fi
-}
-
+read -p 'Set install prefix? [yn] ' y
+if [ "$y" == y ]
+then
+    read -e -p "Enter prefix: " tmp
+    install_prefix="${tmp/\~/$HOME}"
+else
+    install_prefix="$HOME/.local"
+fi
 
 realpath $install_prefix || {
     echo "Instal prefix $install_prefix not found."
     exit 1
 }
-install_prefix=$(realpath $install_prefix)
-echo "Using install prefix $install_prefix"
+install_prefix="$(realpath $install_prefix)"
+echo Using install prefix $install_prefix
 
 cp vimrc_base ~/.vimrc
 [ -d ~/.vim ] || mkdir ~/.vim
@@ -71,10 +51,11 @@ then
     echo
     echo 'Installing dash from source...'
     echo
+    [ -f dash.tar.gz ] && rm dash.tar.gz
     wget http://gondor.apana.org.au/~herbert/dash/files/dash-0.5.10.2.tar.gz \
         -O external/dash.tar.gz
     pushd external
-    tar -gvxf dash.tar.gz
+    tar -xvzf dash.tar.gz
     pushd $(ls | grep dash | grep -v tar)
 
     read -p "Install dash to $install_prefix? [yn] " y
