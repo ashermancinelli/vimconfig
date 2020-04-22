@@ -110,7 +110,7 @@ function vfind()
     do
         case $1 in
         -E|--editor)
-            vimcmd=$2
+            editor=$2
             shift; shift
             ;;
         -d|--directory)
