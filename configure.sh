@@ -23,27 +23,31 @@ realpath $install_prefix || {
 install_prefix="$(realpath $install_prefix)"
 echo Using install prefix $install_prefix
 
-cp vimrc_base ~/.vimrc
-[ -d ~/.vim ] || mkdir ~/.vim
-
-if [ ! -d ~/.vim/autoload ]
+read -p "Install vim defaults? [yn] " y
+if [ "$y" == "y" ]
 then
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    vim +PlugInstall +q! +q!
+    cp vimrc_base ~/.vimrc
+    [ -d ~/.vim ] || mkdir ~/.vim
+
+    if [ ! -d ~/.vim/autoload ]
+    then
+        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        vim +PlugInstall +q! +q!
+    fi
+
+    [ -d ~/.vim/templates ] || mkdir ~/.vim/templates
+
+    for i in $(ls templates)
+    do
+        cp templates/$i ~/.vim/templates/$i
+    done
+
+    for i in $(ls *.vim)
+    do
+        cp $i ~/.vim/$i
+    done
 fi
-
-[ -d ~/.vim/templates ] || mkdir ~/.vim/templates
-
-for i in $(ls templates)
-do
-    cp templates/$i ~/.vim/templates/$i
-done
-
-for i in $(ls *.vim)
-do
-    cp $i ~/.vim/$i
-done
 
 read -p 'Install Dash? [yn] ' inst
 if [ "$inst" == "y" ]
@@ -222,9 +226,16 @@ echo
 cat ./baserc >> $rc
 
 read -p "Add zshrc to $rc? [yn] " y
-[ "$inst" == "y" ] && {
+[ "$y" == "y" ] && {
     cat ./zshrc >> $rc
 }
+
+read -p "Add $HOME/.local/ to PATH? [yn] " y
+if [ "$y" == "y" ]
+then
+    echo 'export PATH=$PATH:$HOME/.local/bin' >> $rc
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib' >> $rc
+fi
 
 echo
 echo All done!
