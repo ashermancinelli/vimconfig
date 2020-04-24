@@ -199,8 +199,8 @@ else
 fi
 
 
-rc="$HOME/.${SHELL}rc"
-read -p "Default shell is $SHELL. Install baserc to $rc? [yn]" inst
+rc="$HOME/.$(basename $SHELL)rc"
+read -p "Default shell is $SHELL. Install baserc to $rc? [yn] " inst
 [ "$inst" == "y" ] || {
     read -p "Install baserc to another path? [yn]" inst
     if [ "$inst" == "y" ]
@@ -221,7 +221,7 @@ echo "Adding baserc to $rc"
 echo
 cat ./baserc >> $rc
 
-read -p "Add zshrc to $rc? [yn]" y
+read -p "Add zshrc to $rc? [yn] " y
 [ "$inst" == "y" ] && {
     cat ./zshrc >> $rc
 }
