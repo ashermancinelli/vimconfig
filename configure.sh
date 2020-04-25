@@ -7,6 +7,9 @@ fi
 
 read -p 'Number of make jobs: ' n_jobs
 
+rc="$HOME/.$(basename $SHELL)rc"
+echo '' > $rc
+
 read -p 'Set install prefix? [yn] ' y
 if [ "$y" == y ]
 then
@@ -15,6 +18,8 @@ then
 else
     install_prefix="$HOME/.local"
 fi
+
+[ -d external ] || mkdir external
 
 realpath $install_prefix || {
     echo "Instal prefix $install_prefix not found."
@@ -55,7 +60,6 @@ then
     echo
     echo 'Installing dash from source...'
     echo
-    [ -f dash.tar.gz ] && rm dash.tar.gz
     wget http://gondor.apana.org.au/~herbert/dash/files/dash-0.5.10.2.tar.gz \
         -O external/dash.tar.gz
     pushd external
@@ -158,13 +162,6 @@ if [ $? -ne 0 ]; then
     fi
 fi
 
-if [ ! -d $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting ]
-then
-    git clone \
-        https://github.com/zsh-users/zsh-syntax-highlighting.git \
-        $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting
-fi
-
 which ctags
 if [ $? -ne 0 ]; then
     echo
@@ -202,8 +199,25 @@ else
     fi
 fi
 
+read -p 'Install oh-my-zsh? [yn] ' y
+if [ "$y" == "y" ]
+then
+    sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    if [ ! -d $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting ]
+    then
+        git clone \
+            https://github.com/zsh-users/zsh-syntax-highlighting.git \
+            $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting
+    fi
 
-rc="$HOME/.$(basename $SHELL)rc"
+    if [ ! -d $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]
+    then
+        git clone \
+            https://github.com/zsh-users/zsh-autosuggestions \
+            ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    fi
+fi
+
 read -p "Default shell is $SHELL. Install baserc to $rc? [yn] " inst
 [ "$inst" == "y" ] || {
     read -p "Install baserc to another path? [yn]" inst
@@ -219,7 +233,6 @@ read -p "Default shell is $SHELL. Install baserc to $rc? [yn] " inst
 }
 
 
-echo '' > $rc
 echo
 echo "Adding baserc to $rc"
 echo
