@@ -7,19 +7,25 @@ fi
 
 read -p 'Number of make jobs: ' n_jobs
 
-read -p 'Set install prefix? [yn] ' y
-if [ "$y" == y ]
+if [ -z "$INSTALL_LOCAL" ]
 then
-    read -e -p "Enter prefix: " tmp
-    install_prefix="${tmp/\~/$HOME}"
+    read -p 'Set install prefix? [yn] ' y
+    if [ "$y" == y ]
+    then
+        read -e -p "Enter prefix: " tmp
+        install_prefix="${tmp/\~/$HOME}"
+    else
+        install_prefix="$HOME/.local"
+    fi
+
+    realpath $install_prefix || {
+        echo "Instal prefix $install_prefix not found."
+        exit 1
+    }
 else
-    install_prefix="$HOME/.local"
+    install_prefix=$INSTALL_LOCAL
 fi
 
-realpath $install_prefix || {
-    echo "Instal prefix $install_prefix not found."
-    exit 1
-}
 install_prefix="$(realpath $install_prefix)"
 echo Using install prefix $install_prefix
 
@@ -199,32 +205,30 @@ else
 fi
 
 
-rc="$HOME/.${SHELL}rc"
-read -p "Default shell is $SHELL. Install baserc to $rc? [yn]" inst
-[ "$inst" == "y" ] || {
-    read -p "Install baserc to another path? [yn]" inst
-    if [ "$inst" == "y" ]
-    then
-        read -e -p 'Enter rc path: ' rc
-    else
-        echo
-        echo All done!
-        echo
-        exit 0
-    fi
-}
+rc="$(realpath $HOME/.$(basename $SHELL)rc)"
+read -p "Default shell is $SHELL, default rc is $rc. Set different rc path? [yn] " y
+if [ "$y" == "y" ]; then
+    read -e -p 'Enter new rc path > ' rc
+    rc=$(realpath "${rc/\~/$HOME}")
+fi
 
+read -p "Install baserc to $rc? [yn] " inst
+if [ "$inst" == "y" ]
+then
+    echo
+    echo "Adding baserc to $rc"
+    echo
+    cat ./baserc > $rc
+fi
 
-echo '' > $rc
-echo
-echo "Adding baserc to $rc"
-echo
-cat ./baserc >> $rc
-
-read -p "Add zshrc to $rc? [yn]" y
-[ "$inst" == "y" ] && {
+read -p "Add zshrc to $rc? [yn] " y
+if [ "$inst" == "y" ]
+then
+    echo
+    echo "Adding zshrc to $rc"
+    echo
     cat ./zshrc >> $rc
-}
+fi
 
 echo
 echo All done!

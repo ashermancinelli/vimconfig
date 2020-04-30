@@ -140,3 +140,33 @@ function vfind()
         | tr '\n' ' ')
     eval "$editor $files"
 }
+
+init_cmake()
+{
+    if [ -z "$1" ]
+    then
+        srcdir=$(pwd)
+    else
+        srcdir=$(realpath $1) 
+    fi
+
+    mkdir -p \
+        $srcdir/src/lib \
+        $srcdir/src/driver \
+        $srcdir/tests \
+        $srcdir/build
+
+    touch \
+        $srcdir/CMakeLists.txt \
+        $srcdir/build.sh \
+        $srcdir/src/CMakeLists.txt \
+        $srcdir/src/lib/CMakeLists.txt \
+        $srcdir/src/driver/CMakeLists.txt \
+        $srcdir/tests/CMakeLists.txt
+
+    pushd ~/.vim/templates
+    cat project.cmake warnings.cmake options-std17.cmake > $srcdir/CMakeLists.txt
+    popd
+
+    echo Finished creating cmake project in $srcdir
+}
