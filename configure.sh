@@ -6,6 +6,7 @@ then
 fi
 
 read -p 'Number of make jobs: ' n_jobs
+n_jobs=${n_jobs:-1}
 
 if [ -z "$INSTALL_LOCAL" ]
 then
@@ -211,6 +212,7 @@ then
             https://github.com/zsh-users/zsh-syntax-highlighting.git \
             $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting
     fi
+fi
 
 rc="$(realpath $HOME/.$(basename $SHELL)rc)"
 read -p "Default shell is $SHELL, default rc is $rc. Set different rc path? [yn] " y
