@@ -26,30 +26,35 @@ else
     install_prefix=$INSTALL_LOCAL
 fi
 
+[ -d external ] || mkdir external
 install_prefix="$(realpath $install_prefix)"
 echo Using install prefix $install_prefix
 
-cp vimrc_base ~/.vimrc
-[ -d ~/.vim ] || mkdir ~/.vim
-
-if [ ! -d ~/.vim/autoload ]
+read -p "Install vim defaults? [yn] " y
+if [ "$y" == "y" ]
 then
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    vim +PlugInstall +q! +q!
+    cp vimrc_base ~/.vimrc
+    [ -d ~/.vim ] || mkdir ~/.vim
+
+    if [ ! -d ~/.vim/autoload ]
+    then
+        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        vim +PlugInstall +q! +q!
+    fi
+
+    [ -d ~/.vim/templates ] || mkdir ~/.vim/templates
+
+    for i in $(ls templates)
+    do
+        cp templates/$i ~/.vim/templates/$i
+    done
+
+    for i in $(ls *.vim)
+    do
+        cp $i ~/.vim/$i
+    done
 fi
-
-[ -d ~/.vim/templates ] || mkdir ~/.vim/templates
-
-for i in $(ls templates)
-do
-    cp templates/$i ~/.vim/templates/$i
-done
-
-for i in $(ls *.vim)
-do
-    cp $i ~/.vim/$i
-done
 
 read -p 'Install Dash? [yn] ' inst
 if [ "$inst" == "y" ]
@@ -57,7 +62,6 @@ then
     echo
     echo 'Installing dash from source...'
     echo
-    [ -f dash.tar.gz ] && rm dash.tar.gz
     wget http://gondor.apana.org.au/~herbert/dash/files/dash-0.5.10.2.tar.gz \
         -O external/dash.tar.gz
     pushd external
@@ -160,13 +164,6 @@ if [ $? -ne 0 ]; then
     fi
 fi
 
-if [ ! -d $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting ]
-then
-    git clone \
-        https://github.com/zsh-users/zsh-syntax-highlighting.git \
-        $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting
-fi
-
 which ctags
 if [ $? -ne 0 ]; then
     echo
@@ -204,6 +201,16 @@ else
     fi
 fi
 
+read -p 'Install oh-my-zsh? [yn] ' y
+if [ "$y" == "y" ]
+then
+    sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    if [ ! -d $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting ]
+    then
+        git clone \
+            https://github.com/zsh-users/zsh-syntax-highlighting.git \
+            $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting
+    fi
 
 rc="$(realpath $HOME/.$(basename $SHELL)rc)"
 read -p "Default shell is $SHELL, default rc is $rc. Set different rc path? [yn] " y
@@ -227,7 +234,20 @@ then
     echo
     echo "Adding zshrc to $rc"
     echo
+    if [ ! -d $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]
+    then
+        git clone \
+            https://github.com/zsh-users/zsh-autosuggestions \
+            ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    fi
     cat ./zshrc >> $rc
+fi
+
+read -p "Add $HOME/.local/ to PATH? [yn] " y
+if [ "$y" == "y" ]
+then
+    echo 'export PATH=$PATH:$HOME/.local/bin' >> $rc
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib' >> $rc
 fi
 
 echo
