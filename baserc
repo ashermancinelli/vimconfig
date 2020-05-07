@@ -170,3 +170,10 @@ init_cmake()
 
     echo Finished creating cmake project in $srcdir
 }
+
+machine_env_file=$($HOME/.$(uname -n))
+
+if [ -f "$machine_env_file" ]
+then
+    source $machine_env_file
+fi
