@@ -31,6 +31,9 @@ fi
 install_prefix="$(realpath $install_prefix)"
 echo Using install prefix $install_prefix
 
+export PATH="$PATH:$install_prefix/bin"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$install_prefix/lib:$install_prefix/lib64"
+
 read -p "Install vim defaults? [yn] " y
 if [ "$y" == "y" ]
 then
@@ -57,8 +60,8 @@ then
     done
 fi
 
-read -p 'Install Dash? [yn] ' inst
-if [ "$inst" == "y" ]
+read -p 'Install Dash? [yn] ' y
+if [ "$y" == "y" ]
 then
     echo
     echo 'Installing dash from source...'
@@ -114,11 +117,14 @@ else
     echo
 fi
 
-
-type tmux
-if [ $? -ne 0 ]; then
-    read -p 'Install tmux? [yn] ' inst
-    if [ "$inst" == "y" ]; then
+if type tmux
+then
+    echo
+    echo Found tmux
+    echo
+else
+    read -p 'Install tmux? [yn] ' y
+    if [ "$y" == "y" ]; then
         echo
         echo Installing tmux from tarball...
         echo
@@ -143,10 +149,14 @@ echo Loading default tmux config...
 echo
 cp tmux.conf $HOME/.tmux.conf
 
-which zsh
-if [ $? -ne 0 ]; then
-    read -p 'Install zsh?' inst
-    if [ "$inst" == "y" ]; then
+if type zsh
+then
+    echo
+    echo Found zsh
+    echo
+else
+    read -p 'Install zsh?' y
+    if [ "$y" == "y" ]; then
         echo
         echo Installing Zsh from source...
         echo
@@ -171,8 +181,8 @@ if [ $? -ne 0 ]; then
     echo Ctags not found...
     echo
 else
-    read -p 'Generate new ctags? [yn] ' inst
-    if [ "$inst" == "y" ]; then
+    read -p 'Generate new ctags? [yn] ' y
+    if [ "$y" == "y" ]; then
         [ -f "./tags/$(uname -n)" ] || {
             echo
             echo "./tags/$(uname -n) tags file not found"
@@ -214,6 +224,13 @@ then
     fi
 fi
 
+read -p 'Install oh-my-bash? [yn] ' y
+if [ "$y" == "y" ]
+then
+    [ -d $HOME/.oh-my-bash ] || \
+        git clone git://github.com/ohmybash/oh-my-bash.git ~/.oh-my-bash
+fi
+
 rc="$(realpath $HOME/.$(basename $SHELL)rc)"
 read -p "Default shell is $SHELL, default rc is $rc. Set different rc path? [yn] " y
 if [ "$y" == "y" ]; then
@@ -221,8 +238,8 @@ if [ "$y" == "y" ]; then
     rc=$(realpath "${rc/\~/$HOME}")
 fi
 
-read -p "Install baserc to $rc? [yn] " inst
-if [ "$inst" == "y" ]
+read -p "Install baserc to $rc? [yn] " y
+if [ "$y" == "y" ]
 then
     echo
     echo "Adding baserc to $rc"
@@ -231,7 +248,7 @@ then
 fi
 
 read -p "Add zshrc to $rc? [yn] " y
-if [ "$inst" == "y" ]
+if [ "$y" == "y" ]
 then
     echo
     echo "Adding zshrc to $rc"
@@ -243,6 +260,15 @@ then
             ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     fi
     cat ./zshrc >> $rc
+fi
+
+read -p "Add oh-my-bash rcfile to $rc? [yn] " y
+if [ "$y" == "y" ]
+then
+    echo
+    echo "Adding oh-my-bash rcfile to $rc"
+    echo
+    cat ./ohmybashrc >> $rc
 fi
 
 read -p "Add $HOME/.local/ to PATH? [yn] " y
