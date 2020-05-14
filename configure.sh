@@ -37,26 +37,36 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$install_prefix/lib:$install_prefix/lib
 read -p "Install vim defaults? [yn] " y
 if [ "$y" == "y" ]
 then
-    cp vimrc_base ~/.vimrc
-    [ -d ~/.vim ] || mkdir ~/.vim
+    cp vimrc_base $HOME/.vimrc
+    [ -d $HOME/.vim ] || mkdir $HOME/.vim
 
-    if [ ! -d ~/.vim/autoload ]
+    cp addressbook $HOME/.vim/
+    mkdir -p $HOME/.vim/syntax $HOME/.vim/after/syntax
+
+    wget https://raw.githubusercontent.com/bfrg/vim-cuda-syntax/master/syntax/cuda.vim \
+      -P ~/.vim/syntax/cuda.vim
+
+    # echo 'syntax match cudaKernelAngles "<<<\_.\{-}>>>"' > $HOME/.vim/after/syntax/cuda.vim
+    echo 'highlight link cudaKernelAngles Operator' >> $HOME/.vim/after/syntax/cuda.vim
+    echo 'highlight link cudaStorageClass Statement' >> $HOME/.vim/after/syntax/cuda.vim
+
+    if [ ! -d $HOME/.vim/autoload ]
     then
-        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+        curl -fLo $HOME/.vim/autoload/plug.vim --create-dirs \
             https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         vim +PlugInstall +q! +q!
     fi
 
-    [ -d ~/.vim/templates ] || mkdir ~/.vim/templates
+    [ -d $HOME/.vim/templates ] || mkdir $HOME/.vim/templates
 
     for i in $(ls templates)
     do
-        cp templates/$i ~/.vim/templates/$i
+        cp templates/$i $HOME/.vim/templates/$i
     done
 
     for i in $(ls *.vim)
     do
-        cp $i ~/.vim/$i
+        cp $i $HOME/.vim/$i
     done
 fi
 
@@ -207,8 +217,8 @@ else
                  -I _GLIBCXX_NOEXCEPT \
                  -L -
         done < "./tags/$(uname -n)"
-        mv ./tags-file ~/.vim/tags
-        echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> ~/.vimrc
+        mv ./tags-file $HOME/.vim/tags
+        echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> $HOME/.vimrc
     fi
 fi
 
@@ -228,7 +238,7 @@ read -p 'Install oh-my-bash? [yn] ' y
 if [ "$y" == "y" ]
 then
     [ -d $HOME/.oh-my-bash ] || \
-        git clone git://github.com/ohmybash/oh-my-bash.git ~/.oh-my-bash
+        git clone git://github.com/ohmybash/oh-my-bash.git $HOME/.oh-my-bash
 fi
 
 rc="$(realpath $HOME/.$(basename $SHELL)rc)"
@@ -244,7 +254,7 @@ then
     echo
     echo "Adding baserc to $rc"
     echo
-    cat ./baserc > $rc
+    cat ./baserc.sh > $rc
 fi
 
 read -p "Add zshrc to $rc? [yn] " y
@@ -257,9 +267,9 @@ then
     then
         git clone \
             https://github.com/zsh-users/zsh-autosuggestions \
-            ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+            ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     fi
-    cat ./zshrc >> $rc
+    cat ./zshrc.sh >> $rc
 fi
 
 read -p "Add oh-my-bash rcfile to $rc? [yn] " y
@@ -268,7 +278,7 @@ then
     echo
     echo "Adding oh-my-bash rcfile to $rc"
     echo
-    cat ./ohmybashrc >> $rc
+    cat ./ohmybashrc.sh >> $rc
 fi
 
 read -p "Add $HOME/.local/ to PATH? [yn] " y

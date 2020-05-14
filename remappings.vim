@@ -27,7 +27,13 @@ nnoremap T :NERDTree<Enter>
 autocmd Filetype txt setlocal spell
 autocmd Filetype md setlocal spell
 autocmd Filetype tex setlocal spell
+
+" :make runs cargo build when in rust
 autocmd Filetype rs set makeprg=cargo\ build
+
+" Set filetypes in cuda source/headers
+au BufNewFile,BufRead *.cu set ft=cuda
+au BufNewFile,BufRead *.cuh set ft=cuda
 
 " Configuring folding
 set foldmethod=manual
@@ -43,14 +49,14 @@ set t_Co=256
 
 " Tabbing
 " show existing tab with 4 spaces width
-set tabstop=4
+set tabstop=2
 
 " when indenting with '>', use 4 spaces width
-set shiftwidth=4
+set shiftwidth=2
 
 " On pressing tab, insert 4 spaces
 set expandtab
-set softtabstop=4
+set softtabstop=2
 
 set backspace=indent,eol,start
 set autoindent

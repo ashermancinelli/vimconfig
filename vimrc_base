@@ -62,6 +62,13 @@ source ~/.vim/abbrevs.vim
 " colorscheme meta4
 " colorscheme wolfpack
 
+" Highlight keywords from CUDA Runtime API
+let g:cuda_runtime_api_highlight = 1
+" Highlight keywords from CUDA Driver API
+let g:cuda_driver_api_highlight = 1
+" Highlight keywords from CUDA Thrust library
+let g:cuda_thrust_highlight = 1
+
 set omnifunc=syntaxcomplete#Complete
 
 colorscheme apprentice
