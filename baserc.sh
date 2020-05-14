@@ -190,6 +190,7 @@ alias ga='git add'
 alias gr='git remote -v'
 alias gb='git branch'
 alias gp='git push'
+alias gck='git checkout'
 function squash()
 {
     function usage()
