@@ -192,6 +192,7 @@ alias gb='git branch'
 alias gp='git push'
 alias gck='git checkout'
 alias gg='git log --graph --color --oneline'
+alias gd='git diff --color'
 function squash()
 {
     function usage()
@@ -238,3 +239,5 @@ if [ -f "$machine_env_file" ]
 then
     source $machine_env_file
 fi
+
+set -o vi
