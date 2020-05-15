@@ -191,6 +191,7 @@ alias gr='git remote -v'
 alias gb='git branch'
 alias gp='git push'
 alias gck='git checkout'
+alias gg='git log --graph --color --oneline'
 function squash()
 {
     function usage()
