@@ -240,4 +240,4 @@ then
     source $machine_env_file
 fi
 
-set -o vi
+set -o emacs
