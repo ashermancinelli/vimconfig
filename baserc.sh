@@ -181,7 +181,6 @@ else
     alias ls="ls --color=always"
 fi
 
-alias python=python3
 alias pip="python3 -m pip"
 alias mkae=make
 alias gs='git status'
