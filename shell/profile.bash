@@ -94,3 +94,5 @@ EOD
     esac
   done
 }
+
+complete -W 'avail list load new help show' profile
