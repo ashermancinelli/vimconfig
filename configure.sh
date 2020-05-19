@@ -254,7 +254,7 @@ then
     echo
     echo "Adding baserc to $rc"
     echo
-    cat ./baserc.sh > $rc
+    cat ./shell/baserc.sh > $rc
 fi
 
 read -p "Add zshrc to $rc? [yn] " y
@@ -269,7 +269,7 @@ then
             https://github.com/zsh-users/zsh-autosuggestions \
             ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     fi
-    cat ./zshrc.sh >> $rc
+    cat ./shell/zshrc.sh >> $rc
 fi
 
 read -p "Add oh-my-bash rcfile to $rc? [yn] " y
@@ -278,7 +278,7 @@ then
     echo
     echo "Adding oh-my-bash rcfile to $rc"
     echo
-    cat ./ohmybashrc.sh >> $rc
+    cat ./shell/ohmybashrc.sh >> $rc
 fi
 
 read -p "Add $HOME/.local/ to PATH? [yn] " y

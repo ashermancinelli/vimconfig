@@ -168,72 +168,12 @@ init_cmake()
     echo Finished creating cmake project in $srcdir
 }
 
-function addrbook()
-{
-    grep -iE "$*" $HOME/.vim/addressbook \
-        | cut -f1 -d';'
-}
 
-if [[ $OSTYPE =~ darwin* ]]
-then
-    alias ls="ls -G"
-else
-    alias ls="ls --color=always"
-fi
+source $(realpath ./aliases.sh)
+# Add profile command
+source $(realpath ./profile.bash)
 
-alias pip="python3 -m pip"
-alias mkae=make
-alias gs='git status'
-alias gc='git commit'
-alias ga='git add'
-alias gr='git remote -v'
-alias gb='git branch'
-alias gp='git push'
-alias gck='git checkout'
-alias gg='git log --graph --color --oneline'
-alias gd='git diff --color'
-function squash()
-{
-    function usage()
-    {
-        echo
-        echo Usage:
-        echo
-        echo '-n|--num-commits     Number of commits to squash'
-        echo '-m|--message         Message to commit'
-        echo
-    }
-    while [[ $# -gt 1 ]]
-    do
-        case $1 in
-            -n|--num-commits)
-                if [[ -z "$2" ]]; then usage; return 1; fi
-                nc=$2
-                shift
-                shift
-                ;;
-            -m|--message)
-                if [[ -z "$2" ]]; then usage; return 1; fi
-                message=$2
-                shift
-                shift
-                ;;
-            *)
-                usage
-                return 1
-        esac
-    done
-    if [[ -z "$nc" ]]; then usage; return 1; fi
-    git reset --soft HEAD~$nc
-    if [[ -z "$message" ]] 
-    then
-        git commit
-    else
-        git commit -m $message
-    fi
-}
-
-machine_env_file=$($HOME/.$(uname -n))
+machine_env_file="$HOME/.$(uname -n)"
 if [ -f "$machine_env_file" ]
 then
     source $machine_env_file
