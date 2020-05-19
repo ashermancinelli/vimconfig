@@ -2,6 +2,9 @@
 profile()
 {
   profilepath="$HOME/.profiles/$(uname -n)"
+  [ -d $profilepath ] || mkdir -p $profilepath > /dev/null 2>&1
+  current_profiles=/tmp/profile/$$
+  [ -d $current_profiles ] || mkdir -p $current_profiles > /dev/null 2>&1
 
   create()
   {
@@ -25,7 +28,8 @@ profile()
 
     Usage:
 
-    list    Show all available profiles
+    avail   Show all available profiles
+    list    Show current profiles
     load    Load a single profile
     new     Create a new profile
     help    Show this message
@@ -44,13 +48,24 @@ EOD
         shift
         ;;
       list)
+        profiles=$(ls "$current_profiles")
+        if [[ "$profiles" == "" ]]
+        then
+          echo No profiles found.
+          return 1
+        else
+          echo $profiles | tr ' ' '\n'
+        fi
+        shift
+        ;;
+      avail)
         profiles=$(ls "$profilepath")
         if [[ "$profiles" == "" ]]
         then
           echo No profiles found.
           return 1
         else
-          echo $profiles
+          echo $profiles | tr ' ' '\n'
         fi
         shift
         ;;
@@ -61,6 +76,7 @@ EOD
           return 1
         fi
         source $profilepath/$2
+        touch $current_profiles/$2
         shift; shift
         ;;
       help)
