@@ -168,10 +168,11 @@ init_cmake()
     echo Finished creating cmake project in $srcdir
 }
 
+# Add shell aliases
+source $vimconfigpath/shell/aliases.sh
 
-source $(realpath ./aliases.sh)
 # Add profile command
-source $(realpath ./profile.bash)
+source $vimconfigpath/shell/profile.bash
 
 machine_env_file="$HOME/.$(uname -n)"
 if [ -f "$machine_env_file" ]

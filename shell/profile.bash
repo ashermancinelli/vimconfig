@@ -29,6 +29,7 @@ profile()
     load    Load a single profile
     new     Create a new profile
     help    Show this message
+    show    Show profile
 
     Profile path for current system is $profilepath
 
@@ -65,6 +66,10 @@ EOD
       help)
         usage
         return 0
+        ;;
+      show)
+        cat $profilepath/$2
+        shift; shift
         ;;
       *)
         usage

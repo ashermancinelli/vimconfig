@@ -248,13 +248,17 @@ if [ "$y" == "y" ]; then
     rc=$(realpath "${rc/\~/$HOME}")
 fi
 
+echo '' > $rc
+
+echo "vimconfigpath=$(realpath ./)" >> $rc
+
 read -p "Install baserc to $rc? [yn] " y
 if [ "$y" == "y" ]
 then
     echo
     echo "Adding baserc to $rc"
     echo
-    cat ./shell/baserc.sh > $rc
+    cat ./shell/baserc.sh >> $rc
 fi
 
 read -p "Add zshrc to $rc? [yn] " y
