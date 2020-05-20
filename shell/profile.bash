@@ -31,6 +31,7 @@ profile()
     avail   Show all available profiles
     list    Show current profiles
     load    Load a single profile
+    unload  Unload a profile
     new     Create a new profile
     help    Show this message
     show    Show profile
@@ -75,8 +76,18 @@ EOD
           echo Please specify name of profile.
           return 1
         fi
-        source $profilepath/$2
+        source $profilepath/$2/load
         touch $current_profiles/$2
+        shift; shift
+        ;;
+      unload)
+        if [[ "$2" == "" ]]
+        then
+          echo Please specify name of profile.
+          return 1
+        fi
+        source $profilepath/$2/unload
+        [ -f $current_profiles/$2 ] && rm $current_profiles/$2
         shift; shift
         ;;
       help)
