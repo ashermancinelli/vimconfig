@@ -6,6 +6,10 @@ profile()
   current_profiles=/tmp/profile/$$
   [ -d $current_profiles ] || mkdir -p $current_profiles > /dev/null 2>&1
 
+  red="\e[31m"
+  green="\e[32m"
+  white="\e[97m"
+
   create()
   {
     read -p 'Profile name: ' profilename
@@ -14,10 +18,17 @@ profile()
       return 1
     }
     echo Enter . on a single line to end input.
-    while read -e -p "profile $profilename > " line
+
+    while read -e -p "load $profilename > " line
     do
       [ "$line" == "." ] && break
-      echo $line >> $profilepath/$profilename
+      echo $line >> $profilepath/$profilename/load
+    done
+
+    while read -e -p "unload $profilename > " line
+    do
+      [ "$line" == "." ] && break
+      echo $line >> $profilepath/$profilename/unload
     done
     echo Created profile $profilename
   }
@@ -52,7 +63,7 @@ EOD
         profiles=$(ls "$current_profiles")
         if [[ "$profiles" == "" ]]
         then
-          echo No profiles found.
+          echo -e "$red No profiles found."
           return 1
         else
           echo $profiles | tr ' ' '\n'
@@ -63,7 +74,7 @@ EOD
         profiles=$(ls "$profilepath")
         if [[ "$profiles" == "" ]]
         then
-          echo No profiles found.
+          echo -e "$red No profiles found."
           return 1
         else
           echo $profiles | tr ' ' '\n'
@@ -73,7 +84,7 @@ EOD
       load)
         if [[ "$2" == "" ]]
         then
-          echo Please specify name of profile.
+          echo -e "$red Please specify name of profile."
           return 1
         fi
         source $profilepath/$2/load
@@ -83,7 +94,7 @@ EOD
       unload)
         if [[ "$2" == "" ]]
         then
-          echo Please specify name of profile.
+          echo -e "$red Please specify name of profile."
           return 1
         fi
         source $profilepath/$2/unload
@@ -95,7 +106,14 @@ EOD
         return 0
         ;;
       show)
-        cat $profilepath/$2
+        echo
+        echo -e "$green Load profile:"
+        echo
+        cat $profilepath/$2/load
+        echo
+        echo "$red Unload profile:"
+        echo
+        cat $profilepath/$2/unload
         shift; shift
         ;;
       *)
