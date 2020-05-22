@@ -22,13 +22,13 @@ profile()
     while read -e -p "load $profilename > " line
     do
       [ "$line" == "." ] && break
-      echo $line >> $profilepath/$profilename/load
+      echo $line >> "$profilepath/$profilename/load"
     done
 
     while read -e -p "unload $profilename > " line
     do
       [ "$line" == "." ] && break
-      echo $line >> $profilepath/$profilename/unload
+      echo $line >> "$profilepath/$profilename/unload"
     done
     echo Created profile $profilename
   }
