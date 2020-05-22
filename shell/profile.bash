@@ -111,9 +111,10 @@ EOD
         echo
         cat $profilepath/$2/load
         echo
-        echo "$red Unload profile:"
+        echo -e "$red Unload profile:"
         echo
         cat $profilepath/$2/unload
+        echo -e "$while"
         shift; shift
         ;;
       *)
