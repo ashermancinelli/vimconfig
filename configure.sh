@@ -31,6 +31,10 @@ do
       installs=$(echo $2 | tr ',' '\n')
       shift; shift
       ;;
+    -s|--shell-rc-path)
+      rc=$2
+      shift; shift
+      ;;
     -p|--prefix)
       install_prefix=$2
       shift; shift
