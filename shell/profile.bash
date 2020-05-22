@@ -17,6 +17,7 @@ profile()
       echo "Please enter a name."
       return 1
     }
+    mkdir -p "$profilepath/$profilename"
     echo Enter . on a single line to end input.
 
     while read -e -p "load $profilename > " line
