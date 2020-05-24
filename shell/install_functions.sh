@@ -66,11 +66,13 @@ install_ctags()
              ctags -f ./tags-file \
              --verbose \
              --append \
-             --c++-kinds=+p \
-             --fields=+iaS \
+             --fields=+iaSmKz \
              --extra=+q \
-             --language-force=C++ \
-             -I _GLIBCXX_NOEXCEPT \
+             --c++-kinds=cdefgmstuv
+             --c-kinds=cdefgmstuv \
+             --language-force="c++" \
+             --langmap=c++:+.tcc. \
+             -I "_GLIBCXX_BEGIN_NAMESPACE_VERSION _GLIBCXX_END_NAMESPACE_VERSION _GLIBCXX_VISIBILITY+" \
              -L -
     done < "./tags/$(uname -n)"
     mv ./tags-file $HOME/.vim/tags
@@ -119,8 +121,6 @@ install_vim()
     do
         cp $i $HOME/.vim/$i
     done
-
-    echo "set tags+=$(realpath $HOME/.vim/tags);" >> $HOME/.vimrc
 }
 
 install_tmux()

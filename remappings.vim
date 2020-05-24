@@ -45,8 +45,6 @@ autocmd Filetype rs set makeprg=cargo\ build
 " Set filetypes in cuda source/headers
 au BufNewFile,BufRead *.cu set ft=cuda
 au BufNewFile,BufRead *.cuh set ft=cuda
-" au Bufwrite *.c* silent call GenTags()
-" au Bufwrite *.h* silent call GenTags()
 
 " Configuring folding
 set foldmethod=manual
