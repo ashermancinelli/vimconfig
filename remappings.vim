@@ -21,7 +21,6 @@ nnoremap <c-p> :bprevious \| ls<cr>
 " <c-]> takes you to the tag definition, so naturally
 " <c-[> should take you back to the location from
 " which you tried to find the definition
-nnoremap <c-[> <c-t>
 func! GenTags()
   exe "!ctags -R --c++-kinds=+p --extra=+q --fields=+iaS ."
   exe "echom 'Generated new ctags database.'"
@@ -46,8 +45,8 @@ autocmd Filetype rs set makeprg=cargo\ build
 " Set filetypes in cuda source/headers
 au BufNewFile,BufRead *.cu set ft=cuda
 au BufNewFile,BufRead *.cuh set ft=cuda
-au Bufwrite *.c* silent call GenTags()
-au Bufwrite *.h* silent call GenTags()
+" au Bufwrite *.c* silent call GenTags()
+" au Bufwrite *.h* silent call GenTags()
 
 " Configuring folding
 set foldmethod=manual
