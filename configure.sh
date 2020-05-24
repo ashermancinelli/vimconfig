@@ -46,7 +46,6 @@ do
   esac
 done
 
-install_base
 for install in $installs
 do
   echo
@@ -54,6 +53,7 @@ do
   echo
   eval "install_$install"
 done
+install_base
 
 echo
 echo All done!

@@ -36,8 +36,9 @@ install_zsh()
 
 install_base()
 {
-    cat ./shell/baserc.sh > $rc
-    echo "vimconfigpath=$(realpath ./)" >> $rc
+    cat ./shell/baserc.sh >> $rc
+    [ -d $HOME/.shell/ ] || mkdir -p $HOME/.shell
+    cp ./shell/* $HOME/.shell/
 }
 
 install_bash()
