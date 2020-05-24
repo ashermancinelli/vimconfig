@@ -62,18 +62,20 @@ install_ctags()
     touch ./tags-file
     while read pth
     do
-        find $pth -name '*' | grep -E '\.(h|hpp)$' | \
-             ctags -f ./tags-file \
-             --verbose \
-             --append \
-             --fields=+iaSmKz \
-             --extra=+q \
-             --c++-kinds=cdefgmstuv
-             --c-kinds=cdefgmstuv \
-             --language-force="c++" \
-             --langmap=c++:+.tcc. \
-             -I "_GLIBCXX_BEGIN_NAMESPACE_VERSION _GLIBCXX_END_NAMESPACE_VERSION _GLIBCXX_VISIBILITY+" \
-             -L -
+        echo "Searching path $pth for tags."
+        find $pth -name '*' | \
+            grep -E '\.(h|hpp)$' | \
+            ctags -f ./tags-file \
+            --verbose \
+            --append \
+            --fields=+iaSmKz \
+            --extra=+q \
+            --c++-kinds=cdefgmstuv \
+            --c-kinds=cdefgmstuv \
+            --language-force="c++" \
+            --langmap=c++:+.tcc. \
+            -I "_GLIBCXX_BEGIN_NAMESPACE_VERSION _GLIBCXX_END_NAMESPACE_VERSION _GLIBCXX_VISIBILITY+" \
+            -L -
     done < "./tags/$(uname -n)"
     mv ./tags-file $HOME/.vim/tags
     rm $HOME/.ctags
