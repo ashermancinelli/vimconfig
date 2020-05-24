@@ -14,6 +14,7 @@ nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 
 nnoremap <c-g> :Goyo<Enter>
+nnoremap <c-t> :!ctags -R .<Enter>
 
 " Better tab navigation
 nnoremap tn gt
