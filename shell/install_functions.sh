@@ -74,7 +74,15 @@ install_ctags()
              -L -
     done < "./tags/$(uname -n)"
     mv ./tags-file $HOME/.vim/tags
-    echo "set tags=$(realpath $HOME/.vim/tags),tags;" >> $HOME/.vimrc
+    rm $HOME/.ctags
+    cat > $HOME/.ctags <<EOD
+--recurse=yes
+--exclude=.git
+--exclude=vendor/*
+--exclude=node_modules/*
+--exclude=db/*
+--exclude=log/*
+EOD
 }
 
 
@@ -111,6 +119,8 @@ install_vim()
     do
         cp $i $HOME/.vim/$i
     done
+
+    echo "set tags+=$(realpath $HOME/.vim/tags);" >> $HOME/.vimrc
 }
 
 install_tmux()

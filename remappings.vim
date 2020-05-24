@@ -14,7 +14,18 @@ nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 
 nnoremap <c-g> :Goyo<Enter>
-nnoremap <c-t> :!ctags -R .<Enter>
+
+nnoremap <c-n> :bnext \| ls<cr>
+nnoremap <c-p> :bprevious \| ls<cr>
+
+" <c-]> takes you to the tag definition, so naturally
+" <c-[> should take you back to the location from
+" which you tried to find the definition
+nnoremap <c-[> <c-t>
+func! GenTags()
+  exe "!ctags -R --c++-kinds=+p --extra=+q --fields=+iaS ."
+  exe "echom 'Generated new ctags database.'"
+endfunc
 
 " Better tab navigation
 nnoremap tn gt
@@ -35,6 +46,8 @@ autocmd Filetype rs set makeprg=cargo\ build
 " Set filetypes in cuda source/headers
 au BufNewFile,BufRead *.cu set ft=cuda
 au BufNewFile,BufRead *.cuh set ft=cuda
+au Bufwrite *.c* silent call GenTags()
+au Bufwrite *.h* silent call GenTags()
 
 " Configuring folding
 set foldmethod=manual
@@ -63,32 +76,3 @@ set backspace=indent,eol,start
 set autoindent
 set ruler
 set showcmd
-
-function! TODOList()
-    let n = 0
-    call inputrestore()
-
-    while 1
-        let item = input('(' . n . ') TODO item> ')
-        if item == ''
-            break
-        endif
-        let n += 1
-        call append('.', ['- [ ] ' . item, ''])
-    endwhile
-    call inputsave()
-endfunction
-
-function! TODOListToggle()
-    call setline('.', substitute(getline('.'), '\[X\]', '[+]', ''))
-    call setline('.', substitute(getline('.'), '\[ \]', '[-]', ''))
-    call setline('.', substitute(getline('.'), '\[+\]', '[ ]', ''))
-    call setline('.', substitute(getline('.'), '\[-\]', '[X]', ''))
-endfunction
-
-nnoremap <c-t><c-t> :call TODOListToggle()
-nnoremap <c-t>n :call TODOList()
-
-nnoremap <c-n> :bnext \| ls<cr>
-nnoremap <c-p> :bprevious \| ls<cr>
-
