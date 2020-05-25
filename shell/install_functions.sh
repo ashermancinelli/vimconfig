@@ -90,7 +90,6 @@ install_ctags()
 EOD
 }
 
-
 install_vim()
 {
     cp vimrc_base $HOME/.vimrc
@@ -99,8 +98,13 @@ install_vim()
     cp addressbook $HOME/.vim/
     mkdir -p $HOME/.vim/syntax $HOME/.vim/after/syntax
 
-    wget https://raw.githubusercontent.com/bfrg/vim-cuda-syntax/master/syntax/cuda.vim \
-      -P ~/.vim/syntax/cuda.vim
+    [ -f ~/.vim/syntax/cuda.vim ] || \
+      wget https://raw.githubusercontent.com/bfrg/vim-cuda-syntax/master/syntax/cuda.vim \
+      -P ~/.vim/syntax/
+
+    [ -f ~/.vim/autoclose.vim ] || \
+      curl "https://www.vim.org/scripts/download_script.php?src_id=10873" \
+      > ~/.vim/autoclose.vim
 
     # echo 'syntax match cudaKernelAngles "<<<\_.\{-}>>>"' > $HOME/.vim/after/syntax/cuda.vim
     echo 'highlight link cudaKernelAngles Operator' >> $HOME/.vim/after/syntax/cuda.vim

@@ -55,6 +55,7 @@ call plug#end()
 source ~/.vim/remappings.vim
 source ~/.vim/my_commenter.vim
 source ~/.vim/abbrevs.vim
+source ~/.vim/autoclose.vim
 set tags+=~/.vim/tags
 
 " set background=light
