@@ -13,6 +13,7 @@ usage()
 
   -p|--prefix         Sets install prefix. Default: $install_prefix
   -s|--shell-rc-path  Path to RC file for given shell. Default: $rc
+  -d|--default        Installs ctags, vim, and bash
   -i|--install        One or more of the following list, separated by commas with no spaces:
                         dash
                         zsh
@@ -24,9 +25,22 @@ usage()
 EOD
 }
 
+if [[ $# -eq 0 ]]
+then
+  usage
+  exit 1
+fi
+
+default=0
 while [[ $# -gt 0 ]]
 do
+  if [[ $default == 1 ]]; then break; fi
+
   case $1 in
+    -d|--default)
+      installs=$(echo "ctags,vim,bash" | tr ',' '\n')
+      default=1
+      ;;
     -i|--install)
       installs=$(echo $2 | tr ',' '\n')
       shift; shift
