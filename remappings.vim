@@ -15,8 +15,14 @@ nnoremap <c-l> <c-w><c-l>
 
 nnoremap <c-g> :Goyo<Enter>
 
+" Better buffer navigation "
 nnoremap <c-n> :bnext \| ls<cr>
 nnoremap <c-p> :bprevious \| ls<cr>
+
+" Bracket completion "
+inoremap { {}<left>
+inoremap {<CR> {<CR>}<ESC>O
+inoremap {;<CR> {<CR>};<ESC>O
 
 " <c-]> takes you to the tag definition, so naturally
 " <c-[> should take you back to the location from
