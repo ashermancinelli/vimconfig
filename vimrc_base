@@ -48,6 +48,7 @@ Plug 'chrisbra/unicode.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'vim-scripts/OmniCppComplete'
 Plug 'tpope/vim-surround'
+Plug 'JamshedVesuna/vim-markdown-preview'
 " Plug 'https://github.com/airblade/vim-gitgutter.git'
 
 call plug#end()
@@ -86,6 +87,10 @@ let OmniCpp_MayCompleteArrow = 1 " autocomplete after ->
 let OmniCpp_MayCompleteScope = 1 " autocomplete after ::
 " also necessary for fixing LIBSTDC++ releated stuff
 let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD", "_GLIBCXX_STD_A", "_GLIBCXX_STD_C"]
+
+" Vim markdown preview settings "
+let vim_markdown_preview_browser='Google Chrome'
+
 " automatically open and close the popup menu / preview window
 au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
 set completeopt=menuone,menu,longest,preview

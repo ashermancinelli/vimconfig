@@ -106,6 +106,8 @@ install_vim()
       curl "https://www.vim.org/scripts/download_script.php?src_id=10873" \
       > ~/.vim/autoclose.vim
 
+    pip install grip
+
     # echo 'syntax match cudaKernelAngles "<<<\_.\{-}>>>"' > $HOME/.vim/after/syntax/cuda.vim
     echo 'highlight link cudaKernelAngles Operator' >> $HOME/.vim/after/syntax/cuda.vim
     echo 'highlight link cudaStorageClass Statement' >> $HOME/.vim/after/syntax/cuda.vim
