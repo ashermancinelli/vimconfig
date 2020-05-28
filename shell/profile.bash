@@ -34,6 +34,36 @@ profile()
     echo Created profile $profilename
   }
 
+  load_fn()
+  {
+    source $profilepath/$1/load
+    touch $current_profiles/$2
+  }
+
+  load()
+  {
+    for dep in $(grep -E '^#DEPENDS:' $profilepath/$1/load | cut -f2 -d':')
+    do
+      load_fn $dep
+    done
+    load_fn $1
+  }
+
+  unload_fn()
+  {
+    source $profilepath/$1/unload
+    [ -f $current_profiles/$1 ] && rm $current_profiles/$1
+  }
+
+  unload()
+  {
+    for dep in $(grep -E '^#DEPENDS:' $profilepath/$1/load | cut -f2 -d':')
+    do
+      load_fn $dep
+    done
+    unload_fn $1
+  }
+
   usage()
   {
     cat <<EOD
@@ -52,6 +82,12 @@ profile()
 
 EOD
   }
+
+  if [[ $# -eq 0 ]]
+  then
+    usage
+    return 1
+  fi
 
   while [[ $# -gt 0 ]]
   do
@@ -83,13 +119,17 @@ EOD
         shift
         ;;
       load)
-        if [[ "$2" == "" ]]
-        then
+        if [[ "$2" == "" ]]; then
           echo -e "$red Please specify name of profile."
           return 1
         fi
-        source $profilepath/$2/load
-        touch $current_profiles/$2
+
+        if [[ ! -d $profilepath/$2 ]]; then
+          echo -e "$red Profile not found."
+          return 1
+        else
+          load $2
+        fi
         shift; shift
         ;;
       unload)
@@ -98,8 +138,13 @@ EOD
           echo -e "$red Please specify name of profile."
           return 1
         fi
-        source $profilepath/$2/unload
-        [ -f $current_profiles/$2 ] && rm $current_profiles/$2
+
+        if [[ ! -d $profilepath/$2 ]]; then
+          echo -e "$red Profile not found."
+          return 1
+        else
+          unload $2
+        fi
         shift; shift
         ;;
       help)
