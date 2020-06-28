@@ -21,6 +21,7 @@ usage()
                         tmux
                         ctags
                         vim
+			emacs
 
 EOD
 }

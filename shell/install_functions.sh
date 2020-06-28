@@ -59,15 +59,24 @@ install_ctags()
     echo
     echo Generating Ctags...
     echo
+
+    for path in $(echo $PATH | tr ':' '\n'); do
+      if [[ -f $path/ctags ]]; then
+          if [[ $($path/ctags --version | grep Exuberant | wc -l) -eq 1 ]]; then
+            ctags_path=$path
+            echo "Found valid ctags at $path"
+            break
+          fi
+      fi
+    done
+    if [[ -z "$ctags_path" ]]; then echo 'Could not find exuberant ctags...'; exit 1; fi
+    
     [ -f ./tags-file ] && rm ./tags-file
     touch ./tags-file
     while read pth
     do
         echo "Searching path $pth for tags."
-        find $pth -name '*' | \
-            grep -E '\.(h|hpp)$' | \
-            ctags -f ./tags-file \
-            --verbose \
+        find $pth -name '*' | grep -E '\.(h|hpp)$' | $ctags_path/ctags -f ./tags-file \
             --append \
             --fields=+iaSmKz \
             --extra=+q \
@@ -79,6 +88,7 @@ install_ctags()
             -L -
     done < "./tags/$(uname -n)"
     mv ./tags-file $HOME/.vim/tags
+    cp $HOME/.vim/tags $HOME/.emacs.d/tags
     rm $HOME/.ctags
     cat > $HOME/.ctags <<EOD
 --recurse=yes
@@ -188,4 +198,19 @@ install_dash()
     echo 'Dash installed'
     echo
     popd; popd
+}
+
+install_emacs()
+{
+    ver=$(emacs --version | head -n 1 | cut -f3 -d' ' | cut -f1 -d.)
+    if [[ $ver -lt 24 ]]
+    then
+	echo
+	echo "Emacs version too low. Please use a newer version"
+	echo "($ver < 24)"
+	echo
+    fi
+    EMACS_HOME=$HOME/.emacs.d
+    [ -d $EMACS_HOME ] || mkdir $EMACS_HOME
+    cp ./shell/init.el $EMACS_HOME/init.el
 }

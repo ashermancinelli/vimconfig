@@ -138,6 +138,13 @@ files=$(find $dir -regextype posix-extended -regex $exp \
 eval "$editor $files"
 }
 
+gentags()
+{
+  set -x
+  ctags -R --c++-kinds=+p --extra=+q --fields=+iaS $(pwd)
+  set +x
+}
+
 init_cmake()
 {
     if [ -z "$1" ]
