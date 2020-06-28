@@ -140,8 +140,18 @@ eval "$editor $files"
 
 gentags()
 {
+  for path in $(echo $PATH | tr ':' '\n'); do
+    if [[ -f $path/ctags ]]; then
+      if [[ $($path/ctags --version | grep Exuberant | wc -l) -eq 1 ]]; then
+        ctags_path=$path
+        echo "Found valid ctags at $path"
+        break
+      fi
+    fi
+  done
+  if [[ -z "$ctags_path" ]]; then echo 'Could not find exuberant ctags...'; exit 1; fi
   set -x
-  ctags -R --c++-kinds=+p --extra=+q --fields=+iaS $(pwd)
+  $ctags_path/ctags -R --c++-kinds=+p --extra=+q --fields=+iaS $(pwd)
   set +x
 }
 

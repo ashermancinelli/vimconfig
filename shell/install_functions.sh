@@ -88,7 +88,6 @@ install_ctags()
             -L -
     done < "./tags/$(uname -n)"
     mv ./tags-file $HOME/.vim/tags
-    cp $HOME/.vim/tags $HOME/.emacs.d/tags
     rm $HOME/.ctags
     cat > $HOME/.ctags <<EOD
 --recurse=yes
@@ -116,7 +115,9 @@ install_vim()
       curl "https://www.vim.org/scripts/download_script.php?src_id=10873" \
       > ~/.vim/autoclose.vim
 
-    pip install grip
+    if type pip; then
+        pip install grip
+    fi
 
     # echo 'syntax match cudaKernelAngles "<<<\_.\{-}>>>"' > $HOME/.vim/after/syntax/cuda.vim
     echo 'highlight link cudaKernelAngles Operator' >> $HOME/.vim/after/syntax/cuda.vim
@@ -202,15 +203,24 @@ install_dash()
 
 install_emacs()
 {
-    ver=$(emacs --version | head -n 1 | cut -f3 -d' ' | cut -f1 -d.)
-    if [[ $ver -lt 24 ]]
-    then
-	echo
-	echo "Emacs version too low. Please use a newer version"
-	echo "($ver < 24)"
-	echo
-    fi
-    EMACS_HOME=$HOME/.emacs.d
-    [ -d $EMACS_HOME ] || mkdir $EMACS_HOME
-    cp ./shell/init.el $EMACS_HOME/init.el
+  ver=$(emacs --version | head -n 1 | cut -f3 -d' ' | cut -f1 -d.)
+  if [[ $ver -lt 24 ]]
+  then
+    echo
+    echo "Emacs version too low. Please use a newer version"
+    echo "($ver < 24)"
+    echo
+  fi
+  EMACS_HOME=$HOME/.emacs.d
+  [ -d $EMACS_HOME ] || mkdir $EMACS_HOME
+  cp ./shell/init.el $EMACS_HOME/init.el
+
+  [ -f ./tags-file ] && rm ./tags-file
+  touch ./tags-file
+  while read pth
+  do
+    echo "Searching path $pth for tags."
+    find $pth -name '*' | grep -E '\.(h|hpp)$' | xargs etags -o ./tags-file --append
+  done < "./tags/$(uname -n)"
+  mv ./tags-file $HOME/.emacs.d/tags
 }

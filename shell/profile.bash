@@ -1,43 +1,43 @@
+cat >>/dev/null <<EOF
+
+Profile:
+
+This program is for quickly modifying your user environment.
+Scripts under your 'profilepath' will be sourced.
+You may also set dependencies for a given profile with a comment at the top of your file.
+
+E.g:
+
+~~~~~~~~~~~~~~{sh}
+# ~/.profiles/my_hostname/gawk-5/load
+#DEPENDS:gcc-7.4.0
+export PATH=/path/to/gawk-5/bin:$PATH
+~~~~~~~~~~~~~~
+
+This will first load gcc-7.4.0 before setting the environment vars for
+your gawk-5 package.
+
+EOF
+
+current_profiles=""
 
 profile()
 {
-  profilepath="$HOME/.profiles/$(uname -n)"
+  profilehome=$HOME/.profiles/
+  profilepath=$profilehome/$(uname -n)
   [ -d $profilepath ] || mkdir -p $profilepath > /dev/null 2>&1
-  current_profiles=/tmp/profile/$$
+  current_profiles=$profilehome/loaded/$$
   [ -d $current_profiles ] || mkdir -p $current_profiles > /dev/null 2>&1
 
   red="\e[31m"
   green="\e[32m"
   white="\e[97m"
 
-  create()
-  {
-    read -p 'Profile name: ' profilename
-    [ -z "$profilename" ] && {
-      echo "Please enter a name."
-      return 1
-    }
-    mkdir -p "$profilepath/$profilename"
-    echo Enter . on a single line to end input.
-
-    while read -e -p "load $profilename > " line
-    do
-      [ "$line" == "." ] && break
-      echo $line >> "$profilepath/$profilename/load"
-    done
-
-    while read -e -p "unload $profilename > " line
-    do
-      [ "$line" == "." ] && break
-      echo $line >> "$profilepath/$profilename/unload"
-    done
-    echo Created profile $profilename
-  }
-
   load_fn()
   {
+    echo Loading $1...
     source $profilepath/$1/load
-    touch $current_profiles/$2
+    touch $current_profiles/$1
   }
 
   load()
@@ -59,7 +59,7 @@ profile()
   {
     for dep in $(grep -E '^#DEPENDS:' $profilepath/$1/load | cut -f2 -d':')
     do
-      load_fn $dep
+      unload_fn $dep
     done
     unload_fn $1
   }
@@ -70,13 +70,12 @@ profile()
 
     Usage:
 
-    avail   Show all available profiles
-    list    Show current profiles
-    load    Load a single profile
-    unload  Unload a profile
-    new     Create a new profile
-    help    Show this message
-    show    Show profile
+    avail        Show all available profiles
+    list         Show all currently loaded profiles
+    load|add     Load a single profile
+    rm|unload    Unload a profile
+    help         Show this message
+    show         Show profile
 
     Profile path for current system is $profilepath
 
@@ -92,21 +91,10 @@ EOD
   while [[ $# -gt 0 ]]
   do
     case $1 in
-      new)
-        create
-        shift
-        ;;
       list)
-        profiles=$(ls "$current_profiles")
-        if [[ "$profiles" == "" ]]
-        then
-          echo -e "$red No profiles found."
-          return 1
-        else
-          echo $profiles | tr ' ' '\n'
-        fi
-        shift
-        ;;
+          ls $current_profiles/
+          shift
+          ;;
       avail)
         profiles=$(ls "$profilepath")
         if [[ "$profiles" == "" ]]
@@ -118,21 +106,25 @@ EOD
         fi
         shift
         ;;
-      load)
-        if [[ "$2" == "" ]]; then
+      load|add)
+        if [[ -z "$2" ]]; then
           echo -e "$red Please specify name of profile."
           return 1
         fi
 
-        if [[ ! -d $profilepath/$2 ]]; then
-          echo -e "$red Profile not found."
-          return 1
-        else
-          load $2
-        fi
-        shift; shift
+      	shift
+      	while [[ $# -gt 0 ]]; do
+          if [[ ! -d $profilepath/$1 ]]; then
+            echo -e "$red Profile not found."
+            return 1
+          else
+            load $1
+          fi
+      	  shift
+      	done
+      	return 1
         ;;
-      unload)
+      rm|unload)
         if [[ "$2" == "" ]]
         then
           echo -e "$red Please specify name of profile."
@@ -171,4 +163,4 @@ EOD
   done
 }
 
-complete -W 'avail list load new help show' profile
+complete -W 'avail list load help show' profile
