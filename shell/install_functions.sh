@@ -77,6 +77,7 @@ install_ctags()
     do
         echo "Searching path $pth for tags."
         find $pth -name '*' | grep -E '\.(h|hpp)$' | $ctags_path/ctags -f ./tags-file \
+            -e \
             --append \
             --fields=+iaSmKz \
             --extra=+q \
