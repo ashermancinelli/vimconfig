@@ -9,6 +9,13 @@
 (setq tags-table-list
       '("~/.emacs.d/tags"))
 
+(load-theme 'misterioso t)
+(defun gentags (&rest dirs)
+  (dolist (dir dirs)
+    (shell-command (format "find %s -iname '*.[chp]' | xargs etags --append --output=%s"
+                           (expand-file-name dir)
+                           tags-table-list))))
+
 ;; Requirements
 (require 'use-package)
 
@@ -69,3 +76,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+  
+(defun eval-clang-format ()
+  (if (file-exists-p (expand-file-name (read-file-name "Location of .clang-format: ")))
+      ((shell-command (format "clang-format -style=file %s" (buffer-file-name)))
+       (revert-buffer))
+    (message "Could not find clang format file.")))
