@@ -12,7 +12,8 @@
 ;; Requirements
 (require 'use-package)
 
-;; (use-package helm-mode :bind ("C-x C-f" . 'helm-find-files))
+(use-package evil
+  :ensure t)
 (use-package indent-guide
   :init (indent-guide-global-mode)
   :ensure t)
@@ -21,7 +22,7 @@
   :init
   (highlight-parentheses-mode 1))
 
-(use-package spartparens
+(use-package smartparens
   :ensure t)
 
 (use-package smart-tab
