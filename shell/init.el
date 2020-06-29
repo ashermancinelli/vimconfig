@@ -7,27 +7,20 @@
 (package-initialize)
 
 (setq tags-table-list
-  '("~/.emacs.d/tags"))
+      '("~/.emacs.d/tags"))
 
-;; requirements
-
+;; Requirements
 (require 'use-package)
-(use-package helm-etags-plus)
-(use-package helm-gtags)
-(use-package helm-mode
-  :bind ("C-x C-f" . 'helm-find-files))
 
-(use-package neotree
-  :bind ("C-x T" . 'neotree))
-
-(use-package cmake-mode)
+;; (use-package helm-mode :bind ("C-x C-f" . 'helm-find-files))
+(use-package neotree :bind ("C-x T" . 'neotree))
 (use-package multiple-cursors
-  :bind ("C-c n" . 'mc/mark-next-like-this)
-        ("C-c p" . 'mc/mark-previous-like-this)
-        ("C-c a" . 'mc/mark-all-like-this))
+  :bind ("C-c n" . mc/mark-next-like-this)
+        ("C-c p" . mc/mark-previous-like-this)
+        ("C-c a" . mc/mark-all-like-this))
   
-;; Plugin configurations
 (electric-pair-mode 1)
+(rainbow-delimiters-mode 1)
 
 ;; Hooks
 (with-eval-after-load 'company
