@@ -24,6 +24,21 @@
 (use-package indent-guide
   :init (indent-guide-global-mode)
   :ensure t)
+(use-package ivy
+  :demand
+  :inti
+  (ivy-mode 1)
+  :config
+  (setq ivy-use-virtual-buffers t
+        ivy-count-format "%d/%d "))
+
+(use-package ivy-rich
+  :demand
+  :init
+  (ivy-rich-mode t))
+
+(use-package counsel
+  :ensure t)
 
 (use-package highlight-parentheses
   :init
