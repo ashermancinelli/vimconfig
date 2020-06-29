@@ -77,7 +77,6 @@ install_ctags()
     do
         echo "Searching path $pth for tags."
         find $pth -name '*' | grep -E '\.(h|hpp)$' | $ctags_path/ctags -f ./tags-file \
-            -e \
             --append \
             --fields=+iaSmKz \
             --extra=+q \
@@ -216,12 +215,60 @@ install_emacs()
   [ -d $EMACS_HOME ] || mkdir $EMACS_HOME
   cp ./shell/init.el $EMACS_HOME/init.el
 
+  for path in $(echo $PATH | tr ':' '\n'); do
+    if [[ -f $path/ctags ]]; then
+        if [[ $($path/ctags --version | grep Exuberant | wc -l) -eq 1 ]]; then
+          ctags_path=$path
+          echo "Found valid ctags at $path"
+          break
+        fi
+    fi
+  done
+  if [[ -z "$ctags_path" ]]; then echo 'Could not find exuberant ctags...'; return 1; fi
+    
   [ -f ./tags-file ] && rm ./tags-file
   touch ./tags-file
   while read pth
   do
-    echo "Searching path $pth for tags."
-    find $pth -name '*' | grep -E '\.(h|hpp)$' | xargs etags -o ./tags-file --append
+      echo "Searching path $pth for tags."
+      $ctags_path/ctags -e -R --append -f ./tags-file $pth
   done < "./tags/$(uname -n)"
   mv ./tags-file $HOME/.emacs.d/tags
+
+  cat >> ~/.clang-format <<EOF
+---
+Language: Cpp
+AlignConsecutiveAssignments: true
+ColumnLimit: 100
+AlignEscapedNewlines: Right
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+BreakBeforeBraces: Allman
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
+BreakStringLiterals: true
+CompactNamespaces: true
+FixNamespaceComments: true
+IndentPPDirectives: None
+IndentWidth: 2
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
+PointerAlignment: Left
+SortIncludes: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: Never
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 3
+SpacesInAngles: false
+SpacesInConditionalStatement: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+---
+EOF
 }
