@@ -235,7 +235,7 @@ install_emacs()
   done < "./tags/$(uname -n)"
   mv ./tags-file $HOME/.emacs.d/tags
 
-  cat >> ~/.clang-format <<EOF
+  cat > ~/.clang-format <<EOF
 ---
 Language: Cpp
 AlignConsecutiveAssignments: true
@@ -261,12 +261,9 @@ SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: Never
 SpaceBeforeRangeBasedForLoopColon: true
-SpaceBeforeSquareBrackets: false
-SpaceInEmptyBlock: false
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 3
 SpacesInAngles: false
-SpacesInConditionalStatement: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 ---

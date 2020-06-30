@@ -26,7 +26,7 @@
   :ensure t)
 (use-package ivy
   :demand
-  :inti
+  :init
   (ivy-mode 1)
   :config
   (setq ivy-use-virtual-buffers t
@@ -53,9 +53,10 @@
   (smart-tab-mode 1))
 
 (use-package multiple-cursors
-  :bind ("C-c n" . mc/mark-next-like-this)
-        ("C-c p" . mc/mark-previous-like-this)
-        ("C-c a" . mc/mark-all-like-this)
+  :bind ("C-M-n" . mc/mark-next-like-this)
+        ("C-M-p" . mc/mark-previous-like-this)
+        ("C-M-a" . mc/mark-all-like-this)
+        ("C-M-r" . mc/mark-next-symbol-like-this)
   :init
   (multiple-cursors-mode 1)
   :ensure t)
