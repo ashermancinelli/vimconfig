@@ -234,38 +234,5 @@ install_emacs()
       $ctags_path/ctags -e -R --append -f ./tags-file $pth
   done < "./tags/$(uname -n)"
   mv ./tags-file $HOME/.emacs.d/tags
-
-  cat > ~/.clang-format <<EOF
----
-Language: Cpp
-AlignConsecutiveAssignments: true
-ColumnLimit: 100
-AlignEscapedNewlines: Right
-AllowAllArgumentsOnNextLine: true
-AllowAllParametersOfDeclarationOnNextLine: true
-BreakBeforeBraces: Allman
-BreakBeforeTernaryOperators: true
-BreakConstructorInitializers: BeforeComma
-BreakInheritanceList: BeforeComma
-BreakStringLiterals: true
-CompactNamespaces: true
-FixNamespaceComments: true
-IndentPPDirectives: None
-IndentWidth: 2
-MaxEmptyLinesToKeep: 1
-NamespaceIndentation: None
-PointerAlignment: Left
-SortIncludes: false
-SpaceAfterTemplateKeyword: false
-SpaceBeforeCtorInitializerColon: true
-SpaceBeforeInheritanceColon: true
-SpaceBeforeParens: Never
-SpaceBeforeRangeBasedForLoopColon: true
-SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 3
-SpacesInAngles: false
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
----
-EOF
+  cp ./shell/.clang-format ~/.clang-format
 }
