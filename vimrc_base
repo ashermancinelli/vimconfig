@@ -52,6 +52,7 @@ Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'rhysd/vim-clang-format'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-obsession'
 " Plug 'https://github.com/airblade/vim-gitgutter.git'
 
 call plug#end()
@@ -59,7 +60,6 @@ call plug#end()
 " The rest of my configurations
 source ~/.vim/remappings.vim
 source ~/.vim/my_commenter.vim
-source ~/.vim/abbrevs.vim
 source ~/.vim/autoclose.vim
 set tags+=~/.vim/tags
 

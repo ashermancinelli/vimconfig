@@ -91,13 +91,14 @@ install_vim()
     cp addressbook $HOME/.vim/
     mkdir -p $HOME/.vim/syntax $HOME/.vim/after/syntax
 
-    [ -f ~/.vim/syntax/cuda.vim ] || \
-      wget https://raw.githubusercontent.com/bfrg/vim-cuda-syntax/master/syntax/cuda.vim \
-      -P ~/.vim/syntax/
+    if [ -f ~/.vim/syntax/cuda.vim ]
+    then
+      wget https://raw.githubusercontent.com/bfrg/vim-cuda-syntax/master/syntax/cuda.vim -P ~/.vim/syntax/
+    fi
 
-    [ -f ~/.vim/autoclose.vim ] || \
-      curl "https://www.vim.org/scripts/download_script.php?src_id=10873" \
-      > ~/.vim/autoclose.vim
+    if [ -f ~/.vim/autoclose.vim ]
+    then
+      curl "https://www.vim.org/scripts/download_script.php?src_id=10873" > ~/.vim/autoclose.vim
     fi
 
     echo 'highlight link cudaKernelAngles Operator' >> $HOME/.vim/after/syntax/cuda.vim
