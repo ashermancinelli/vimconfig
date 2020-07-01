@@ -88,7 +88,6 @@ install_vim()
     cp vimrc_base $HOME/.vimrc
     [ -d $HOME/.vim ] || mkdir $HOME/.vim
 
-    cp addressbook $HOME/.vim/
     mkdir -p $HOME/.vim/syntax $HOME/.vim/after/syntax
 
     if [ -f ~/.vim/syntax/cuda.vim ]
