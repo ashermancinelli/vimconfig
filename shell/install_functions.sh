@@ -1,22 +1,6 @@
 
 install_zsh()
 {
-    echo
-    echo Installing Zsh from source...
-    echo
-    pushd external
-    wget -O zsh.tar.xz https://sourceforge.net/projects/zsh/files/latest/download
-    [ -d zsh ] || mkdir zsh
-    tar xf zsh.tar.xz -C zsh --strip-components 1
-    pushd zsh
-    ./configure \
-        --prefix=$install_prefix \
-        CPPFLAGS="-I$install_prefix/include" \
-        LDFLAGS="-L$install_prefix/lib"
-    make -j $n_jobs
-    make install
-    popd; popd
-
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     if [ ! -d $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting ]
     then
@@ -114,12 +98,8 @@ install_vim()
     [ -f ~/.vim/autoclose.vim ] || \
       curl "https://www.vim.org/scripts/download_script.php?src_id=10873" \
       > ~/.vim/autoclose.vim
-
-    if type pip; then
-        pip install grip
     fi
 
-    # echo 'syntax match cudaKernelAngles "<<<\_.\{-}>>>"' > $HOME/.vim/after/syntax/cuda.vim
     echo 'highlight link cudaKernelAngles Operator' >> $HOME/.vim/after/syntax/cuda.vim
     echo 'highlight link cudaStorageClass Statement' >> $HOME/.vim/after/syntax/cuda.vim
 
@@ -146,59 +126,9 @@ install_vim()
 install_tmux()
 {
     echo
-    echo Installing tmux from tarball...
-    echo
-    wget https://github.com/tmux/tmux/releases/download/3.0/tmux-3.0.tar.gz \
-        -O external/tmux-3.0.tar.gz || echo 'Check tmux url'
-    pushd external
-    tar -xvgf ./external/tmux-3.0.tar.gz
-    pushd tmux-3.0
-    ./configure \
-        --prefix=$install_prefix \
-        CPPFLAGS="-I$install_prefix/include" \
-        LDFLAGS="-L$install_prefix/lib"
-    make -j $n_jobs
-    make install
-    popd
-    popd
-
-    echo
     echo Loading default tmux config...
     echo
     cp tmux.conf $HOME/.tmux.conf
-}
-
-install_dash()
-{
-    echo
-    echo 'Installing dash from source...'
-    echo
-    wget http://gondor.apana.org.au/~herbert/dash/files/dash-0.5.10.2.tar.gz \
-        -O external/dash.tar.gz
-    pushd external
-    tar -xvzf dash.tar.gz
-    pushd $(ls | grep dash | grep -v tar)
-
-    make clean
-    ./configure --bindir=$install_prefix/bin --mandir=$install_prefix/share/man || \
-    {
-        echo Error configuring dash installation.
-        exit 1
-    }
-    make -j $n_jobs || \
-    {
-        echo Error making dash...
-        exit 1
-    }
-    make install || \
-    {
-        echo Error installing dash...
-        exit 1
-    }
-    echo
-    echo 'Dash installed'
-    echo
-    popd; popd
 }
 
 install_emacs()
