@@ -50,6 +50,8 @@ Plug 'vim-scripts/OmniCppComplete'
 Plug 'tpope/vim-surround'
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'rhysd/vim-clang-format'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'tpope/vim-fugitive'
 " Plug 'https://github.com/airblade/vim-gitgutter.git'
 
 call plug#end()
@@ -74,6 +76,7 @@ let g:cuda_runtime_api_highlight = 1
 let g:cuda_driver_api_highlight = 1
 " Highlight keywords from CUDA Thrust library
 let g:cuda_thrust_highlight = 1
+set colorcolumn=80
 
 set omnifunc=syntaxcomplete#Complete
 
