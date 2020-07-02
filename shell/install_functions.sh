@@ -179,8 +179,10 @@ install_emacs()
 
 install_profiles()
 {
-  for prof in $(ls ./profiles/)
-  do
-    cp -R ./profiles/$prof $HOME/.profiles/$prof
+  for i in profiles/*
+  do 
+    dn="$HOME/.profiles/$(basename $i)"
+    [ -d $dn ] || mkdir $dn
+    cp -R $i/* $dn
   done
 }
