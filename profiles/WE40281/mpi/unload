@@ -1,0 +1,2 @@
+unset OMPI_MCA_btl
+unset PMIX_MCA_gds

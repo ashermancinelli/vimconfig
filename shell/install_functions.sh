@@ -95,7 +95,7 @@ EOD
 
 install_vim()
 {
-    cp vimrc_base $HOME/.vimrc
+    cp vimfiles/vimrc_base $HOME/.vimrc
     [ -d $HOME/.vim ] || mkdir $HOME/.vim
 
     mkdir -p $HOME/.vim/syntax $HOME/.vim/after/syntax
