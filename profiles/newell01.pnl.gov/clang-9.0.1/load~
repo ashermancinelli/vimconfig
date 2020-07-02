@@ -1,2 +1,0 @@
-export _PROFILE_OLD_PATH="$PATH"
-export PATH=$HOME/projects/clang+llvm-9.0.1-powerpc64le-linux-rhel-7.4/bin:$PATH
