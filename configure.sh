@@ -21,6 +21,7 @@ usage()
                         ctags
                         vim
                         emacs
+                        profiles
 
 EOD
 }

@@ -177,7 +177,7 @@ install_emacs()
   cp ./shell/.clang-format ~/.clang-format
 }
 
-install_default_profiles()
+install_profiles()
 {
   for prof in $(ls ./profiles/)
   do
