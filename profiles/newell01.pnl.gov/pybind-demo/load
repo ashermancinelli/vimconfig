@@ -1,0 +1,2 @@
+module load gcc/7.4.0 cuda/10.2 cmake/3.17.2 python/anaconda3
+cd ~/projects/python-pnnl-demo

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ -z "$CLANG1000_OLD_PATH" ]]
+then
+  export PATH=$CLANG1000_OLD_PATH
+  export LD_LIBRARY_PATH=$CLANG1000_LD_LIBRARY_PATH
+fi

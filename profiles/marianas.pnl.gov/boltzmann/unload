@@ -1,0 +1,9 @@
+#!/bin/bash
+
+module purge
+unset gcc=9.1.0
+unset python=3.7.0
+unset cuda=10.1.243
+unset cmake=3.15.3
+
+unset INSTALL_LOCAL

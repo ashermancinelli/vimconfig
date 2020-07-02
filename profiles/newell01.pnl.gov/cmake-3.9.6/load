@@ -1,0 +1,10 @@
+
+if [[ -z "$PATH_STACK" ]]
+then
+  declare -a PATH_STACK=($PATH)
+  export PATH_STACK_IDX=0
+else
+  $((PATH_STACK_IDX+=1))
+  PATH_STACK[$PATH_STACK_IDX]="$PATH"
+fi
+export PATH=/people/manc568/projects/builds/newell01.pnl.gov/cmake-3.9.6_gcc-7.4.0/bin:$PATH

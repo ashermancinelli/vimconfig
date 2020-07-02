@@ -1,0 +1,2 @@
+export VIM821110_PATH=$PATH
+export PATH=/qfs/people/manc568/projects/builds/newell01.pnl.gov/vim-v8.2.1110/bin:$PATH

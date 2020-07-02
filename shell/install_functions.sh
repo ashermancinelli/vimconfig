@@ -1,4 +1,14 @@
 
+cat >>/dev/null <<EOD
+
+Each install function presumes it will be called from the top-level directory
+of this repo. There are various commands that have relatives paths which 
+assume as much.
+
+These define which commands may be passed to the top-level configure script.
+
+EOD
+
 install_zsh()
 {
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -117,7 +127,7 @@ install_vim()
         cp templates/$i $HOME/.vim/templates/$i
     done
 
-    for i in $(ls *.vim)
+    for i in $(ls vimfiles/*.vim)
     do
         cp $i $HOME/.vim/$i
     done
@@ -128,7 +138,7 @@ install_tmux()
     echo
     echo Loading default tmux config...
     echo
-    cp tmux.conf $HOME/.tmux.conf
+    cp ./shell/tmux.conf $HOME/.tmux.conf
 }
 
 install_emacs()
@@ -165,4 +175,12 @@ install_emacs()
   done < "./tags/$(uname -n)"
   mv ./tags-file $HOME/.emacs.d/tags
   cp ./shell/.clang-format ~/.clang-format
+}
+
+install_default_profiles()
+{
+  for prof in $(ls ./profiles/)
+  do
+    cp -R ./profiles/$prof $HOME/.profiles/$prof
+  done
 }

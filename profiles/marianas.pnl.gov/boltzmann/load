@@ -1,0 +1,14 @@
+#!/bin/bash
+
+gcc=9.1.0
+python=3.7.0
+cuda=10.1.243
+cmake=3.15.3
+
+module purge
+module load gcc/$gcc
+module load cmake/$cmake
+module load python/$python
+module load cuda/$cuda
+
+export INSTALL_LOCAL=/qfs/projects/boltzmann/marianas

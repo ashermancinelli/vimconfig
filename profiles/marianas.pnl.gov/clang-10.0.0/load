@@ -1,0 +1,4 @@
+export CLANG1000_OLD_PATH="$PATH"
+export CLANG1000_LD_LIBRARY_PATH=$LD_LIBRAY_PATH
+export PATH=~/projects/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin:$PATH
+export LD_LIBRARY_PATH=~/projects/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/lib:$LD_LIBRARY_PATH

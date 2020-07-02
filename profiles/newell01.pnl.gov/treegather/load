@@ -1,0 +1,15 @@
+source /etc/profile.d/modules.sh
+
+export OMP_CANCELLATION=true
+export OMP_PROC_BIND=true
+export OMPI_MCA_pml="ucx"
+export OMPI_MCA_btl="^vader,tcp,openib,uct"
+export UCX_NET_DEVICES=mlx5_1:1,mlx5_3:1
+
+module purge
+module load gcc/7.4.0
+module load openmpi/3.1.5
+export FC=mpif90
+export CC=mpicc
+export CXX=mpicxx
+cd ~/projects/mpi_treegatherv/

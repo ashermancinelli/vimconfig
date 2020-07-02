@@ -1,0 +1,5 @@
+#DEPENDS:clang
+if [ ! -z "$_OLD_PATH" ]
+then
+  export PATH=$_OLD_PATH
+fi

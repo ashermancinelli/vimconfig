@@ -1,0 +1,4 @@
+export _OLD_PATH=$PATH
+export _OLD_AWKPATH=$AWKPATH
+export PATH=/people/manc568/projects/builds/newell01.pnl.gov/gawk-5.1.0/bin/:$PATH
+export AWKPATH=/people/manc568/projects/builds/newell01.pnl.gov/gawk-5.1.0/:$AWKPATH

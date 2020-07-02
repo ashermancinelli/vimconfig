@@ -1,0 +1,3 @@
+#DEPENDS:clang
+export _OLD_PATH=$PATH
+export PATH=/people/manc568/projects/builds/marianas.pnl.gov/emacs-26.3_install/bin:$PATH
