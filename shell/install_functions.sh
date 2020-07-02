@@ -182,7 +182,10 @@ install_profiles()
   for i in profiles/*
   do 
     dn="$HOME/.profiles/$(basename $i)"
-    [ -d $dn ] || mkdir $dn
-    cp -R $i/* $dn
+    if [ ! -d $dn ] 
+    then
+      mkdir $dn
+      cp -R $i/* $dn
+    fi
   done
 }
