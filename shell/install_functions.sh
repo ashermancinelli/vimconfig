@@ -129,7 +129,7 @@ install_vim()
 
     for i in $(ls vimfiles/*.vim)
     do
-        cp $i $HOME/.vim/$i
+      cp $i $HOME/.vim/$(basename $i)
     done
 }
 
