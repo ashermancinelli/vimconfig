@@ -30,6 +30,7 @@ install_zsh()
 
 install_base()
 {
+    cp ./shell/.clang-format ~/.clang-format
     cat ./shell/baserc.sh >> $rc
     [ -d $HOME/.shell/ ] || mkdir -p $HOME/.shell
     cp ./shell/* $HOME/.shell/
@@ -174,7 +175,6 @@ install_emacs()
       $ctags_path/ctags -e -R --append -f ./tags-file $pth
   done < "./tags/$(uname -n)"
   mv ./tags-file $HOME/.emacs.d/tags
-  cp ./shell/.clang-format ~/.clang-format
 }
 
 install_profiles()
