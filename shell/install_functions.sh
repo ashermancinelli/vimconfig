@@ -40,6 +40,7 @@ install_bash()
     [ -d $HOME/.oh-my-bash ] || \
         git clone git://github.com/ohmybash/oh-my-bash.git $HOME/.oh-my-bash
     cat ./shell/ohmybashrc.sh >> $rc
+    cat ./shell/gitconfig > ~/.gitconfig
 }
 
 install_ctags()
