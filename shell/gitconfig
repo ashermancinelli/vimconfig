@@ -23,6 +23,9 @@
   conflictstyle="diff3"
   prompt=false
 
+[pull]
+  rebase=false
+
 [format]
   pretty='%C(yellow)%h%Creset %C(magenta)%cd%Creset %d %s'
 
