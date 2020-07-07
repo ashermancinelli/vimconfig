@@ -59,17 +59,19 @@ profile()
 
   unload_fn()
   {
-    source $PROFILEPATH/$1/unload
-    [ -f $CURRENT_PROFILES/$1 ] && rm $CURRENT_PROFILES/$1
+    pf=$(realname $1)
+    source $PROFILEPATH/$pf/unload
+    [ -f $CURRENT_PROFILES/$pf ] && rm $CURRENT_PROFILES/$pf
   }
 
   unload()
   {
+    pf=$(realname $1)
     for dep in $(grep -E '^#DEPENDS:' $PROFILEPATH/$1/load | cut -f2 -d':')
     do
-      unload_fn $dep
+      profile unload $dep
     done
-    unload_fn $1
+    unload_fn $pf
   }
 
   usage()
