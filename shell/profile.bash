@@ -3,7 +3,7 @@ cat >>/dev/null <<EOF
 Profile:
 
 This program is for quickly modifying your user environment.
-Scripts under your 'profilepath' will be sourced.
+Scripts under your 'PROFILEPATH' will be sourced.
 You may also set dependencies for a given profile with a comment at the top of your file.
 
 E.g:
@@ -19,49 +19,61 @@ your gawk-5 package.
 
 EOF
 
-current_profiles=""
+CURRENT_PROFILES=""
 
 profile()
 {
-  profilehome=$HOME/.profiles/
-  profilepath=$profilehome/$(uname -n)
-  [ -d $profilepath ] || mkdir -p $profilepath > /dev/null 2>&1
-  current_profiles=$profilehome/loaded/$$
-  [ -d $current_profiles ] || mkdir -p $current_profiles > /dev/null 2>&1
+  PROFILEHOME=$HOME/.profiles/
+  PROFILEPATH=$PROFILEHOME/$(uname -n)
+  [ -d $PROFILEPATH ] || mkdir -p $PROFILEPATH > /dev/null 2>&1
+  CURRENT_PROFILES=$PROFILEHOME/loaded/$$
+  [ -d $CURRENT_PROFILES ] || mkdir -p $CURRENT_PROFILES > /dev/null 2>&1
 
   red="\e[31m"
   green="\e[32m"
   white="\e[97m"
+  magenta="\e[96m"
+  yellow="\e[33m"
+
+  realname()
+  {
+    basename $(realpath $*)
+  }
 
   load_fn()
   {
-    echo Loading $1...
-    source $profilepath/$1/load
-    touch $current_profiles/$1
+    pf=$(realname $1)
+    echo Loading $pf...
+    source $PROFILEPATH/$pf/load
+    touch $CURRENT_PROFILES/$pf
   }
 
   load()
   {
-    for dep in $(grep -E '^#DEPENDS:' $profilepath/$1/load | cut -f2 -d':')
+    for dep in $(grep -E '^#DEPENDS:' $PROFILEPATH/$1/load \
+      | cut -f2 -d':' \
+      | sed 's/\s\+//g')
     do
-      load_fn $dep
+      profile load $dep
     done
     load_fn $1
   }
 
   unload_fn()
   {
-    source $profilepath/$1/unload
-    [ -f $current_profiles/$1 ] && rm $current_profiles/$1
+    pf=$(realname $1)
+    source $PROFILEPATH/$pf/unload
+    [ -f $CURRENT_PROFILES/$pf ] && rm $CURRENT_PROFILES/$pf
   }
 
   unload()
   {
-    for dep in $(grep -E '^#DEPENDS:' $profilepath/$1/load | cut -f2 -d':')
+    pf=$(realname $1)
+    for dep in $(grep -E '^#DEPENDS:' $PROFILEPATH/$1/load | cut -f2 -d':')
     do
-      unload_fn $dep
+      profile unload $dep
     done
-    unload_fn $1
+    unload_fn $pf
   }
 
   usage()
@@ -70,14 +82,16 @@ profile()
 
     Usage:
 
-    avail        Show all available profiles
-    list         Show all currently loaded profiles
-    load|add     Load a single profile
-    rm|unload    Unload a profile
-    help         Show this message
-    show         Show profile
+    avail       Show all available profiles
+    list        Show all currently loaded profiles
+    load|add    Load a single profile
+    rm|unload   Unload a profile
+    help        Show this message
+    show        Show profile
+    cleanup     Clean up temporary files. Cannot be ran with multiple
+                instances of profile being used at the same time.
 
-    Profile path for current system is $profilepath
+    Profile path for current system is $PROFILEPATH
 
 EOD
   }
@@ -91,18 +105,33 @@ EOD
   while [[ $# -gt 0 ]]
   do
     case $1 in
+      cleanup)
+        find $(dirname $CURRENT_PROFILES) \
+          -type d \
+          -and -not -name $$ \
+          -and -not -name '*loaded' \
+          -exec rm -rf {} \;
+        ;;
       list)
-          ls $current_profiles/
-          shift
-          ;;
+        ls $CURRENT_PROFILES/
+        shift
+        ;;
       avail)
-        profiles=$(ls "$profilepath")
-        if [[ "$profiles" == "" ]]
+        [ -f /tmp/short ] && rm /tmp/short
+        [ -f /tmp/long ] && rm /tmp/long
+        find $PROFILEPATH -type l | while read p; do [ -f $p/load ] && basename $p; done >> /tmp/short
+        find $PROFILEPATH -type d | while read p; do [ -f $p/load ] && basename $p; done >> /tmp/long
+
+        if [[ $(wc -l /tmp/long | cut -f1 -d' ') -eq 0 ]]
         then
           echo -e "$red No profiles found."
           return 1
         else
-          echo $profiles | tr ' ' '\n'
+          echo -e "$yellow"
+          printf '\n\n\t%-30s %s\n' 'Long Names:' 'Short Names:'
+          echo -e "$magenta"
+          paste /tmp/long /tmp/short | awk -F' ' '{printf "\t%-30s %s\n", $1, $2}'
+          echo -e "$white"
         fi
         shift
         ;;
@@ -114,7 +143,7 @@ EOD
 
       	shift
       	while [[ $# -gt 0 ]]; do
-          if [[ ! -d $profilepath/$1 ]]; then
+          if [[ ! -d $PROFILEPATH/$1 ]]; then
             echo -e "$red Profile not found."
             return 1
           else
@@ -125,13 +154,13 @@ EOD
       	return 1
         ;;
       rm|unload)
-        if [[ "$2" == "" ]]
+        if [[ -z "$2" ]]
         then
           echo -e "$red Please specify name of profile."
           return 1
         fi
 
-        if [[ ! -d $profilepath/$2 ]]; then
+        if [[ ! -d $PROFILEPATH/$2 ]]; then
           echo -e "$red Profile not found."
           return 1
         else
@@ -147,20 +176,23 @@ EOD
         echo
         echo -e "$green Load profile:"
         echo
-        cat $profilepath/$2/load
-        echo
-        echo -e "$red Unload profile:"
-        echo
-        cat $profilepath/$2/unload
-        echo -e "$while"
+        cat $PROFILEPATH/$2/load
+        if [[ -f $PROFILEPATH/$2/unload ]]
+        then
+          echo
+          echo -e "$red Unload profile:"
+          echo
+          cat $PROFILEPATH/$2/unload
+          echo -e "$white"
+        fi
         shift; shift
         ;;
       *)
         usage
-        return 0
+        return 1
         ;;
     esac
   done
 }
 
-complete -W 'avail list load help show' profile
+complete -W 'avail list add load unload rm help show cleanup' profile
