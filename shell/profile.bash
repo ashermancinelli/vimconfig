@@ -122,13 +122,13 @@ EOD
         find $PROFILEPATH -type l | while read p; do [ -f $p/load ] && basename $p; done >> /tmp/short
         find $PROFILEPATH -type d | while read p; do [ -f $p/load ] && basename $p; done >> /tmp/long
 
-        if [[ $(wc -l /tmp/long | cut -f1 -d' ') -eq 0 ]]
+        if [[ $(wc -l /tmp/long | awk '{print$1}') -eq 0 ]]
         then
           echo -e "$red No profiles found."
           return 1
         else
           echo -e "$yellow"
-          printf '\n\n\t%-30s %s\n' 'Long Names:' 'Short Names:'
+          printf '\n\t%-30s %s\n' 'Long Names:' 'Short Names:'
           echo -e "$magenta"
           paste /tmp/long /tmp/short | awk -F' ' '{printf "\t%-30s %s\n", $1, $2}'
           echo -e "$white"
