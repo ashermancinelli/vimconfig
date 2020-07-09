@@ -33,6 +33,7 @@ profile()
   green="\e[32m"
   white="\e[97m"
   magenta="\e[96m"
+  yellow="\e[33m"
 
   realname()
   {
@@ -105,13 +106,11 @@ EOD
   do
     case $1 in
       cleanup)
-        for pth in $(dirname $CURRENT_PROFILES)/*
-        do
-          if [[ ! $(basename $pth) == $$ ]]
-          then
-            rm -rf $i
-          fi
-        done
+        find $(dirname $CURRENT_PROFILES) \
+          -type d \
+          -and -not -name $$ \
+          -and -not -name '*loaded' \
+          -exec rm -rf {} \;
         ;;
       list)
         ls $CURRENT_PROFILES/
@@ -128,9 +127,10 @@ EOD
           echo -e "$red No profiles found."
           return 1
         else
-          printf '\n%-30s %s\n' 'Long Names:' 'Short Names:'
+          echo -e "$yellow"
+          printf '\n\n\t%-30s %s\n' 'Long Names:' 'Short Names:'
           echo -e "$magenta"
-          paste /tmp/long /tmp/short | awk -F' ' '{printf "%-30s %s\n", $1, $2}'
+          paste /tmp/long /tmp/short | awk -F' ' '{printf "\t%-30s %s\n", $1, $2}'
           echo -e "$white"
         fi
         shift
@@ -189,10 +189,10 @@ EOD
         ;;
       *)
         usage
-        return 0
+        return 1
         ;;
     esac
   done
 }
 
-complete -W 'avail list load help show' profile
+complete -W 'avail list add load unload rm help show cleanup' profile
