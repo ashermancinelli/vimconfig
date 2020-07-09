@@ -32,6 +32,7 @@ profile()
   red="\e[31m"
   green="\e[32m"
   white="\e[97m"
+  magenta="\e[96m"
 
   realname()
   {
@@ -117,13 +118,20 @@ EOD
         shift
         ;;
       avail)
-        profiles=$(ls "$PROFILEPATH")
-        if [[ "$profiles" == "" ]]
+        [ -f /tmp/short ] && rm /tmp/short
+        [ -f /tmp/long ] && rm /tmp/long
+        find $PROFILEPATH -type l | while read p; do [ -f $p/load ] && basename $p; done >> /tmp/short
+        find $PROFILEPATH -type d | while read p; do [ -f $p/load ] && basename $p; done >> /tmp/long
+
+        if [[ $(wc -l /tmp/long | cut -f1 -d' ') -eq 0 ]]
         then
           echo -e "$red No profiles found."
           return 1
         else
-          echo $profiles | tr ' ' '\n'
+          printf '\n%-30s %s\n' 'Long Names:' 'Short Names:'
+          echo -e "$magenta"
+          paste /tmp/long /tmp/short | awk -F' ' '{printf "%-30s %s\n", $1, $2}'
+          echo -e "$white"
         fi
         shift
         ;;
@@ -169,11 +177,14 @@ EOD
         echo -e "$green Load profile:"
         echo
         cat $PROFILEPATH/$2/load
-        echo
-        echo -e "$red Unload profile:"
-        echo
-        cat $PROFILEPATH/$2/unload
-        echo -e "$while"
+        if [[ -f $PROFILEPATH/$2/unload ]]
+        then
+          echo
+          echo -e "$red Unload profile:"
+          echo
+          cat $PROFILEPATH/$2/unload
+          echo -e "$white"
+        fi
         shift; shift
         ;;
       *)
