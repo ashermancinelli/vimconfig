@@ -43,7 +43,7 @@ profile()
   load_fn()
   {
     pf=$(realname $1)
-    echo Loading $pf...
+    echo -e "$green Loading $pf... $white"
     source $PROFILEPATH/$pf/load
     touch $CURRENT_PROFILES/$pf
   }
@@ -119,8 +119,21 @@ EOD
       avail)
         [ -f /tmp/short ] && rm /tmp/short
         [ -f /tmp/long ] && rm /tmp/long
-        find $PROFILEPATH -type l | while read p; do [ -f $p/load ] && basename $p; done >> /tmp/short
-        find $PROFILEPATH -type d | while read p; do [ -f $p/load ] && basename $p; done >> /tmp/long
+        find $PROFILEPATH -type l | while read p
+        do 
+          if [ -f $p/load ]
+          then
+            printf '%-8s %-5s %s;\n' $(basename $p) '->' $(realname $p)
+          fi
+        done | sort >> /tmp/short
+
+        find $PROFILEPATH -type d | while read p
+        do 
+          if [ -f $p/load ]
+          then 
+            printf '%s;\n' $(basename $p)
+          fi
+        done | sort >> /tmp/long
 
         if [[ $(wc -l /tmp/long | cut -f1 -d' ') -eq 0 ]]
         then
@@ -128,9 +141,9 @@ EOD
           return 1
         else
           echo -e "$yellow"
-          printf '\n\n\t%-30s %s\n' 'Long Names:' 'Short Names:'
+          printf '\n\t%-30s %s\n' 'Long Names:' 'Short Names:'
           echo -e "$magenta"
-          paste /tmp/long /tmp/short | awk -F' ' '{printf "\t%-30s %s\n", $1, $2}'
+          paste /tmp/long /tmp/short | awk -F';' '{printf "\t%-30s %s\n", $1, $2}'
           echo -e "$white"
         fi
         shift
