@@ -85,3 +85,6 @@ cnoremap gs silent! Gstatus
 cnoremap gg silent! Gllog
 cnoremap gd silent! Gdiffsplit
 cnoremap gc silent! Gcommit
+
+nnoremap F :ClangFormat<Enter>
+vnoremap F :ClangFormat<Enter>

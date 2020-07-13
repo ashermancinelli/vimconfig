@@ -135,7 +135,7 @@ EOD
           fi
         done | sort >> /tmp/long
 
-        if [[ $(wc -l /tmp/long | cut -f1 -d' ') -eq 0 ]]
+        if [[ $(wc -l /tmp/long | awk '{print$1}') -eq 0 ]]
         then
           echo -e "$red No profiles found."
           return 1
