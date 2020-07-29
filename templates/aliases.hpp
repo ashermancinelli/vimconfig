@@ -4,4 +4,4 @@ using l = long;
 using lu = long unsigned;
 using llu = long long unsigned;
 using vi = std::vector<int>;
-using vi = std::vector<double>;
+using vd = std::vector<double>;
