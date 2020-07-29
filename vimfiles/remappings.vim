@@ -45,6 +45,9 @@ autocmd Filetype txt setlocal spell
 autocmd Filetype md setlocal spell
 autocmd Filetype tex setlocal spell
 
+" Use javadoc commenting when in c++
+autocmd Filetype cpp setlocal syntax=cpp.doxygen
+
 " :make runs cargo build when in rust
 autocmd Filetype rs set makeprg=cargo\ build
 
