@@ -24,15 +24,6 @@ inoremap { {}<left>
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
 
-" type shorthand "
-inoremap `l long
-inoremap `lu long unsigned
-inoremap `ll long long
-inoremap `llu long long unsigned
-inoremap `vi std::vector<int>
-inoremap `vd std::vector<double>
-inoremap `vl std::vector<long>
-
 " <c-]> takes you to the tag definition, so naturally
 " <c-[> should take you back to the location from
 " which you tried to find the definition
