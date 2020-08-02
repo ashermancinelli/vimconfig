@@ -3,7 +3,11 @@ using l = long;
 using ll = long long;
 using lu = long unsigned;
 using llu = long long unsigned;
-using vi = std::vector<int>;
-using vl = std::vector<long>;
-using vll = std::vector<long long>;
-using vd = std::vector<double>;
+
+template<typename T>
+using v = std::vector<T>;
+
+template<typename T, int N>
+using ar = std::array<T, N>;
+
+using namespace std;
