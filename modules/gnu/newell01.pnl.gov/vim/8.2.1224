@@ -1,0 +1,3 @@
+#%Module
+
+prepend-path PATH /qfs/people/manc568/builds/newell01.pnl.gov/vim-master-rolling/bin

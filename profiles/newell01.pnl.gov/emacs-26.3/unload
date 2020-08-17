@@ -1,5 +1,0 @@
-#DEPENDS:clang
-if [[ ! -z "$EMACS263_PATH" ]]
-then
-  export PATH=$EMACS263_PATH
-fi

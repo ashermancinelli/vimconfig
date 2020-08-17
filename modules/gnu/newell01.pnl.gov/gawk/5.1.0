@@ -1,0 +1,4 @@
+#%Module
+
+prepned-path PATH /people/manc568/projects/builds/newell01.pnl.gov/gawk-5.1.0/bin/
+prepend-path AWKPATH /people/manc568/projects/builds/newell01.pnl.gov/gawk-5.1.0/

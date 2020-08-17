@@ -1,3 +1,5 @@
+#!/bin/sh
+
 cat >>/dev/null <<EOF
 
 Profile:
@@ -89,7 +91,8 @@ profile()
     help        Show this message
     show        Show profile
     cleanup     Clean up temporary files. Cannot be ran with multiple
-                instances of profile being used at the same time.
+                instances of profile being used at the same time
+    dep[end]    Shows all profiles a profile depends on
 
     Profile path for current system is $PROFILEPATH
 
@@ -105,6 +108,19 @@ EOD
   while [[ $# -gt 0 ]]
   do
     case $1 in
+      dep|depend)
+        if [[ $# -eq 1 ]]; then usage; return 1; fi
+        shift
+      	while [[ $# -gt 0 ]]; do
+          if [[ ! -d $PROFILEPATH/$1 ]]; then
+            echo -e "$red Profile not found."
+            return 1
+          else
+            grep DEPENDS $PROFILEPATH/$1/load | cut -f2 -d':'
+          fi
+      	  shift
+      	done
+        ;;
       cleanup)
         find $(dirname $CURRENT_PROFILES) \
           -type d \
@@ -135,7 +151,7 @@ EOD
           fi
         done | sort >> /tmp/long
 
-        if [[ $(wc -l /tmp/long | awk '{print$1}') -eq 0 ]]
+        if [[ $(wc -l /tmp/long | cut -f1 -d' ') -eq 0 ]]
         then
           echo -e "$red No profiles found."
           return 1
@@ -164,7 +180,6 @@ EOD
           fi
       	  shift
       	done
-      	return 1
         ;;
       rm|unload)
         if [[ -z "$2" ]]
@@ -208,4 +223,4 @@ EOD
   done
 }
 
-complete -W 'avail list add load unload rm help show cleanup' profile
+complete -W 'avail list add load unload rm help show cleanup dep' profile

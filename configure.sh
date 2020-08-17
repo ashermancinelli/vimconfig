@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 rc="$(realpath $HOME/.$(basename $SHELL)rc)"
+cwd="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 install_prefix="$HOME/.local"
 installs=()
 source 'shell/install_functions.sh'
@@ -21,7 +22,7 @@ usage()
                         ctags
                         vim
                         emacs
-                        profiles
+                        modules
 
 EOD
 }

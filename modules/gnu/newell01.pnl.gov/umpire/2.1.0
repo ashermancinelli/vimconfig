@@ -1,0 +1,22 @@
+#%Module
+
+set helpstr "Module to configure Umpire installation"
+
+proc ModulesHelp {} {
+  puts stderr "$helpstr"
+}
+
+module-whatis "$helpstr"
+
+conflict gcc@10.1,4.8.5,5.2.0,8.3.0
+conflict cuda@10.1,9.2
+
+module rm gcc
+module rm cuda
+module load gcc/7.4.0
+module load cuda/10.2
+
+set umpire_root /qfs/projects/exasgd/newell/umpire_2.1.0-gcc_7.4.0-cuda_10.2/
+setenv umpire_DIR "$umpire_root"
+prepend-path PATH "$umpire_root/bin"
+prepend-path LD_LIBRARY_PATH "$umpire_root/lib"

@@ -1,7 +1,0 @@
-source /etc/profile.d/modules.sh
-module purge
-unset OMP_CANCELLATION
-unset OMP_PROC_BIND
-unset OMPI_MCA_pml
-unset OMPI_MCA_btl
-unset UCX_NET_DEVICES

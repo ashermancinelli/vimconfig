@@ -1,0 +1,32 @@
+#%Module
+
+proc ModulesHelp {} {
+  puts stderr "Configures environment for Exago development"
+}
+
+module load clang/9.0.1
+
+set cuda_ver 10.2
+set NVCC_DIR "/share/apps/cuda/$cuda_ver"
+setenv CUDADIR "$NVCC_DIR"
+prepend-path PATH "$NVCC_DIR/bin"
+prepend-path C_INCLUDE_PATH "$NVCC_DIR/include"
+prepend-path CPLUS_INCLUDE_PATH "$NVCC_DIR/include"
+prepend-path LIBRARY_PATH "$NVCC_DIR/lib64"
+prepend-path LD_LIBRARY_PATH "$NVCC_DIR/lib64"
+setenv OMP_CANCELLATION "true"
+setenv OMP_PROC_BIND "true"
+
+setenv OMPI_MCA_pml "ucx"
+setenv OMPI_MCA_btl "^vader,tcp,openib,uct"
+setenv UCX_NET_DEVICES "mlx5_1:1,mlx5_3:1"
+
+module load gcc/7.4.0
+module load "cuda/$cuda_ver"
+module load cmake/3.16.4
+module load openmpi/3.1.5
+module load magma/2.5.2_cuda10.2
+module load metis/5.1.0
+
+setenv PETSC_DIR "/qfs/projects/exasgd/newell/petsc/"
+chdir ~/projects/exago

@@ -1,4 +1,0 @@
-export CC=gcc-9
-export CXX=g++-9
-export CMAKE_C_COMPILER=gcc-9
-export CMAKE_CXX_COMPILER=g++-9

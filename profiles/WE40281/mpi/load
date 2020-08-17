@@ -1,2 +1,0 @@
-export OMPI_MCA_btl=self,tcp
-export PMIX_MCA_gds=^ds12

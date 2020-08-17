@@ -1,0 +1,3 @@
+#%Module
+
+prepend-path PATH /people/manc568/projects/builds/newell01.pnl.gov/git-v2.27.0/bin

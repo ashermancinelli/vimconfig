@@ -1,4 +1,0 @@
-#DEPENDS:clang
-export EMACS263_PATH=$PATH
-export PATH=/people/manc568/projects/builds/newell01.pnl.gov/emacs-26.3_install/bin/:$PATH
-

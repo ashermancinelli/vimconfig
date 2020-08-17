@@ -1,3 +1,0 @@
-
-export PATH=${PATH_STACK[PATH_STACK_IDX]}
-$((PATH_STACK_IDX-=1))

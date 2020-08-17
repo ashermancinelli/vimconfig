@@ -190,3 +190,14 @@ install_profiles()
     fi
   done
 }
+
+install_modules()
+{
+  if type module; then
+    if [[ $(module 2>&1 | grep GNU | wc -l) -gt 0 ]]; then
+      echo "module use -a $cwd/modules/gnu/$(uname -n)" >> $rc
+    else
+      echo "module use -a $cwd/modules/luamod/$(uname -n)" >> $rc
+    fi
+  fi
+}

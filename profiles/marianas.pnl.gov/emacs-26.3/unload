@@ -1,6 +1,0 @@
-#DEPENDS:clang-9.0.0
-if [ ! -z "$EMACS263_PATH" ]
-then
-  export PATH=$EMACS263_PATH
-  export LD_LIBRARY_PATH=$EMACS263_LD_LIBRARY_PATH
-fi

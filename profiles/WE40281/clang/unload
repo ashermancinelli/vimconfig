@@ -1,4 +1,0 @@
-export CC=cc
-export CXX=c++
-export CMAKE_C_COMPILER=cc
-export CMAKE_CXX_COMPILER=c++

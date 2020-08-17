@@ -1,5 +1,0 @@
-#DEPENDS:clang-9.0.0
-export EMACS263_PATH=$PATH
-export EMACS263_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-export PATH=/people/manc568/projects/builds/marianas.pnl.gov/emacs-26.3_install/bin:$PATH
-export LD_LIBRARY_PATH=/people/manc568/projects/builds/marianas.pnl.gov/emacs-26.3_install/lib:$LD_LIBRARY_PATH

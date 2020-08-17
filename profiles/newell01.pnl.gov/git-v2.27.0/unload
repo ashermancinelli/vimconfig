@@ -1,4 +1,0 @@
-if [[ ! -z "$GIT227_PATH" ]]
-then
-  export PATH=$GIT227_PATH
-fi
