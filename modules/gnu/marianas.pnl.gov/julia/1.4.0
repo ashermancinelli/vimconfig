@@ -1,0 +1,9 @@
+#%Module
+
+set root /people/manc568/projects/julia-1.4.0
+
+prepend-path PATH "$root/bin"
+prepend-path LD_LIBRARY_PATH "$root/lib"
+prepend-path LD_LIBRARY_PATH "$root/libexec"
+prepend-path C_INCLUDE_PATH "$root/inlcude"
+prepend-path CPLUS_INCLUDE_PATH "$root/inlcude"

@@ -195,9 +195,9 @@ install_modules()
 {
   if type module; then
     if [[ $(module 2>&1 | grep GNU | wc -l) -gt 0 ]]; then
-      echo "module use -a $cwd/modules/gnu/$(uname -n)" >> $rc
+      echo "module use -a $cwd/modules/gnu/$(uname -n)" >> $HOME/.$(uname -n)
     else
-      echo "module use -a $cwd/modules/luamod/$(uname -n)" >> $rc
+      echo "module use -a $cwd/modules/luamod/$(uname -n)" >> $HOME/.$(uname -n)
     fi
   fi
 }

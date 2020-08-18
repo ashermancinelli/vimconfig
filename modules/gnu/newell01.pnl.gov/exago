@@ -29,4 +29,3 @@ module load magma/2.5.2_cuda10.2
 module load metis/5.1.0
 
 setenv PETSC_DIR "/qfs/projects/exasgd/newell/petsc/"
-chdir ~/projects/exago

@@ -25,4 +25,9 @@ module load openmpi/3.1.5
 module load magma/2.5.2_cuda10.2
 module load metis/5.1.0
 
-chdir ~/projects/hiop
+set hiop_dir "~/projects/hiop"
+setenv HIOP_DIR "$hiop_dir"
+
+if { [ module-info mode load ] } {
+  puts stdout "cd $hiop_dir"
+}

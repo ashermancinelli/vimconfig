@@ -1,0 +1,7 @@
+#%Module
+
+conflict cuda@10.1,10.0,9,8
+
+set umpire /qfs/projects/exasgd/marianas/umpire_2.1.0-gcc_7.3.0-cuda_10.2.89/
+prepend-path LD_LIBRARY_PATH "$umpire/lib"
+setenv umpire_DIR "$umpire"
