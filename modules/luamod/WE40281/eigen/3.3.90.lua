@@ -1,0 +1,5 @@
+family("library")
+whatis("Configures environment to find eigen installation.")
+prepend_path("C_INCLUDE_PATH", "/Users/manc568/workspace/installs/eigen3/include")
+prepend_path("CPLUS_INCLUDE_PATH", "/Users/manc568/workspace/installs/eigen3/include")
+setenv("EIGEN3_DIR", "/Users/manc568/workspace/installs/eigen3/")

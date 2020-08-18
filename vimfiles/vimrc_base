@@ -52,6 +52,7 @@ Plug 'rhysd/vim-clang-format'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'https://github.com/mbbill/undotree'
+Plug 'junegunn/goyo.vim'
 " Plug 'https://github.com/airblade/vim-gitgutter.git'
 
 call plug#end()
