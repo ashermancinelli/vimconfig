@@ -54,6 +54,7 @@ Plug 'tpope/vim-obsession'
 Plug 'https://github.com/mbbill/undotree'
 Plug 'junegunn/goyo.vim'
 Plug 'townk/vim-autoclose'
+Plug 'rust-lang/rust.vim'
 " Plug 'https://github.com/airblade/vim-gitgutter.git'
 
 call plug#end()
