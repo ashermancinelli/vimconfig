@@ -24,6 +24,12 @@ module load cmake/3.16.4
 module load openmpi/3.1.5
 module load magma/2.5.2_cuda10.2
 module load metis/5.1.0
+module load raja
+module load umpire
+
+setenv HIOP_MAGMA_DIR "/share/apps/magma/2.5.2/cuda10.2/"
+setenv HIOP_METIS_DIR "/share/apps/metis/5.1.0/"
+setenv HIOP_UMFPACK_DIR "/qfs/projects/exasgd/newell/suitesparse"
 
 set hiop_dir "~/projects/hiop"
 setenv HIOP_DIR "$hiop_dir"
@@ -31,3 +37,7 @@ setenv HIOP_DIR "$hiop_dir"
 if { [ module-info mode load ] } {
   puts stdout "cd $hiop_dir"
 }
+
+setenv CC /share/apps/gcc/7.4.0/bin/gcc
+setenv CXX /share/apps/gcc/7.4.0/bin/g++
+setenv FC /share/apps/gcc/7.4.0/bin/gfortran

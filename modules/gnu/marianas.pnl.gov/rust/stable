@@ -1,0 +1,6 @@
+#%Module
+
+set root "/people/manc568/projects/builds/marianas.pnl.gov/"
+setenv CARGO_HOME "$root/cargo-home"
+setenv RUSTUP_HOME "$root/rustup-home"
+prepend-path PATH "$root/cargo-home/bin"
