@@ -53,6 +53,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'https://github.com/mbbill/undotree'
 Plug 'junegunn/goyo.vim'
+Plug 'townk/vim-autoclose'
+Plug 'rust-lang/rust.vim'
 " Plug 'https://github.com/airblade/vim-gitgutter.git'
 
 call plug#end()
@@ -60,7 +62,6 @@ call plug#end()
 " The rest of my configurations
 source ~/.vim/remappings.vim
 source ~/.vim/my_commenter.vim
-source ~/.vim/autoclose.vim
 set tags+=~/.vim/tags
 
 " set background=light

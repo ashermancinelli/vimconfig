@@ -8,13 +8,8 @@ proc ModulesHelp {} {
 
 module-whatis "$helpstr"
 
-conflict gcc@10.1,4.8.5,5.2.0,8.3.0
-conflict cuda@10.1,9.2
-
-module rm gcc
-module rm cuda
-module load gcc/7.4.0
-module load cuda/10.2
+prereq gcc/7.4.0
+prereq cuda/10.2
 
 set raja_root /qfs/projects/exasgd/newell/raja_0.11.0-gcc_7.4.0-cuda_10.2
 setenv RAJA_DIR "$raja_root"
