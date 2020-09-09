@@ -136,6 +136,15 @@ install_tmux()
     echo Loading default tmux config...
     echo
     cp ./shell/tmux.conf $HOME/.tmux.conf
+    if [[ ! -d ~/.tmux/plugins ]]
+    then
+      mkdir -p ~/.tmux/plugins
+    fi
+
+    if [[ ! -d ~/.tmux/plugins/tpm ]]
+    then
+      git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    fi
 }
 
 install_emacs()

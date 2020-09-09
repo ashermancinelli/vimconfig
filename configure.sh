@@ -69,6 +69,7 @@ do
           getline
         }
       }' ./shell/install_functions.sh
+      exit
       shift; shift
       ;;
     *)
