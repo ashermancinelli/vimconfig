@@ -102,18 +102,10 @@ install_vim()
 
     mkdir -p $HOME/.vim/syntax $HOME/.vim/after/syntax
 
-    if [ -f ~/.vim/syntax/cuda.vim ]
-    then
-      wget https://raw.githubusercontent.com/bfrg/vim-cuda-syntax/master/syntax/cuda.vim -P ~/.vim/syntax/
-    fi
-
     if [ -f ~/.vim/autoclose.vim ]
     then
       curl "https://www.vim.org/scripts/download_script.php?src_id=10873" > ~/.vim/autoclose.vim
     fi
-
-    echo 'highlight link cudaKernelAngles Operator' >> $HOME/.vim/after/syntax/cuda.vim
-    echo 'highlight link cudaStorageClass Statement' >> $HOME/.vim/after/syntax/cuda.vim
 
     if [ ! -d $HOME/.vim/autoload ]
     then
@@ -200,4 +192,13 @@ install_modules()
       echo "module use -a $cwd/modules/luamod/$(uname -n)" >> $HOME/.$(uname -n)
     fi
   fi
+}
+
+install_alacritty()
+{
+  if [[ ! -d ~/.config/alacritty ]]
+  then
+    mkdir -p ~/.config/alacritty
+  fi
+  cp ./shell/alacritty.yml ~/.config/alacritty/
 }

@@ -16,13 +16,11 @@ usage()
   -s|--shell-rc-path  Path to RC file for given shell. Default: $rc
   -d|--default        Installs ctags, vim, and bash
   -i|--install        One or more of the following list, separated by commas with no spaces:
-                        zsh
-                        bash
-                        tmux
-                        ctags
-                        vim
-                        emacs
-                        modules
+
+$(grep install_ shell/install_functions.sh \
+  | grep -v base \
+  | cut -f2 -d_ \
+  | sed -e 's/[\(\)]//g' -e 's/^/       /')
 
 EOD
 }
