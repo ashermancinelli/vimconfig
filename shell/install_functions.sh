@@ -34,6 +34,9 @@ install_base()
     cat ./shell/baserc.sh >> $rc
     [ -d $HOME/.shell/ ] || mkdir -p $HOME/.shell
     cp ./shell/* $HOME/.shell/
+    for f in ./shell/*; do
+      [[ -f ./shell/$f ]] && cp ./shell/$f $HOME/.shell/$f
+    done
 }
 
 install_bash()

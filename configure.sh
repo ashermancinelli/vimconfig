@@ -15,6 +15,7 @@ usage()
   -p|--prefix         Sets install prefix. Default: $install_prefix
   -s|--shell-rc-path  Path to RC file for given shell. Default: $rc
   -d|--default        Installs ctags, vim, and bash
+  --show              Show installation script for pacakge
   -i|--install        One or more of the following list, separated by commas with no spaces:
 
 $(grep install_ shell/install_functions.sh \
@@ -51,6 +52,23 @@ do
       ;;
     -p|--prefix)
       install_prefix=$2
+      shift; shift
+      ;;
+    --show)
+      opt=$2
+      awk "/install_$opt/"'{
+        nesting=0
+        if(index($0,"{")!=0) nesting++;
+        print
+        getline
+        for(;;) {
+          print $0;
+          if(index($0,"{")!=0) nesting++;
+          if(index($0,"}")!=0) nesting--;
+          if(nesting==0) break;
+          getline
+        }
+      }' ./shell/install_functions.sh
       shift; shift
       ;;
     *)
