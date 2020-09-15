@@ -1,0 +1,24 @@
+
+# echo -n 'Password: '
+read -s -p 'Password: ' pw
+
+echo -n 'Pattern: '
+read pat
+
+secure_path=$(realpath ~/trash/secure.json.gpg)
+
+gpg -d $secure_path | awk -v pat="$pat" '
+$0~pat {
+  print
+  nest=0
+  if(match($0,/{/)) nest++;
+  print
+  getline
+  for(;;) {
+    if(match($0,/{/)) nest++;
+    if(match($0,/}/)) nest--;
+    getline
+    if(nest==0) break;
+    print
+  }
+}'

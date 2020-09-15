@@ -116,7 +116,7 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exit
 
 # Screenshot
 bindsym Print exec scrot $HOME/Pictures/Screenshots/%Y-%m-%d_%H%M%S.png #'%Y-%m-%d_%H%M%S_$wx$h_scrot.png' -e 'mv $f $HOME/Pictures/Screenshots/'
