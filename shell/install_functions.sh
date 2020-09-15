@@ -214,3 +214,21 @@ install_alacritty()
   fi
   cp ./shell/alacritty.yml ~/.config/alacritty/
 }
+
+install_rice()
+{
+  if [[ ! -v cwd ]]
+  then
+    echo Must set CWD in configure script...
+    exit 1
+  fi
+  pushd $cwd/rice
+  cat <<EOD
+
+  NOTE: If you are only installing the rice, you can also just cd
+  into $cwd/rice and run the install script there.
+
+EOD
+  ./install_rice.sh
+  popd
+}

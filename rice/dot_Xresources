@@ -1,0 +1,47 @@
+#include ".cache/colorer/Xresources"
+
+! URxvt Appearance
+#define FONT SF Mono
+#define FONT_SIZE 10
+URxvt.font: xft:FONT:style=Regular:size=FONT_SIZE:antialias=true:hinting=true,xft:IPAGothic:size=11
+URxvt.boldFont: xft:FONT:style=Bold:size=FONT_SIZE:antialias=true:hinting=true,xft:IPAGothic:size=11
+URxvt.italicFont: xft:FONT:style=Regular Italic:size=FONT_SIZE:antialias=true:hinting=true
+URxvt.boldItalicFont: xft:FONT:style=Bold Italic:size=FONT_SIZE:antialias=true:hinting=true
+URxvt.letterSpace: 0
+URxvt.lineSpace: 0
+URxvt.geometry: 80x24
+! URxvt.geometry: 75x20
+URxvt.internalBorder: 32
+URxvt.cursorBlink: true
+URxvt.cursorUnderline: true
+URxvt.saveline: 2048
+URxvt.scrollBar: false
+URxvt.scrollBar_right: false
+URxvt.urgentOnBell: true
+! URxvt.depth: 32
+URxvt.iso14755: false
+URxvt.transparent: false
+
+
+!! Common Keybinds for Navigations
+URxvt.keysym.M-k: command:\033]720;1\007
+URxvt.keysym.M-j: command:\033]721;1\007
+
+!! Copy Paste & Other Extensions
+URxvt.perl-ext-common: default,clipboard,resize-font
+URxvt.copyCommand: xclip -i -selection clipboard
+URxvt.pasteCommand: xclip -o -selection clipboard
+URxvt.keysym.Shift-Control-C: perl:clipboard:copy
+URxvt.keysym.Shift-Control-V: perl:clipboard:paste
+URxvt.urlLauncher: qutebrowser
+URxvt.underlineURLs: true
+URxvt.urlButton: 1
+URxvt.font-size.step: 1
+
+Xft.dpi: 96
+Xft.antialias: 1
+Xft.rgba: rgb
+Xft.hinting: 1
+Xft.hintstyle: hintslight
+Xft.lcdfilter: lcdnone
+Xft:autohint: 0
