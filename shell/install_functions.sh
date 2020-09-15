@@ -206,15 +206,6 @@ install_modules()
   fi
 }
 
-install_alacritty()
-{
-  if [[ ! -d ~/.config/alacritty ]]
-  then
-    mkdir -p ~/.config/alacritty
-  fi
-  cp ./shell/alacritty.yml ~/.config/alacritty/
-}
-
 install_rice()
 {
   if [[ ! -v cwd ]]

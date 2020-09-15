@@ -2,18 +2,18 @@
 set $mod Mod4
 
 # Execute picom composite manager
-exec picom
+# exec picom
 
 # Execute Clipit Clipboard Manager
-exec clipit
+# exec clipit
 
 # Load .Xresources on start
-exec xrdb -merge $HOME/.Xresources
+# exec xrdb -merge $HOME/.Xresources
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:Fira Code 11
-for_window [class="^.*"] border pixel 0
+font pango:Iosevka 11
+for_window [class="^.*"] border pixel 5
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
