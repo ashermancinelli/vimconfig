@@ -50,6 +50,8 @@ URxvt.font: Iosevka 11
 URxvt.boldFont: -*-rissole-*
 URxvt.italicFont: -*-rissole-*
 URxvt.boldItalicfont: -*-rissole-*
+URxvt.transparent: true
+URxvt.shading: 20
 URxvt.letterSpace: 0
 URxvt.lineSpace: 0
 URxvt.geometry: 92x24
