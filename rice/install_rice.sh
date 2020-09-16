@@ -14,9 +14,11 @@ do
 done
 
 # Install dotfiles
-for f in dot_*
+for f in ./.*
 do
-  cp $f $(echo $HOME/$f | sed 's/dot_/./')
+  if [[ -f $f ]]; then
+    cp $f $HOME
+  fi
 done
 
 # Install perl Urxvt extensions

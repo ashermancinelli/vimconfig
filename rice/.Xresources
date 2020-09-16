@@ -46,7 +46,7 @@
 *.color15: #fdf6e3
 
 !! URxvt Appearance
-URxvt.font: Iosevka 11
+URxvt.font: xft:Iosevka 11
 URxvt.boldFont: -*-rissole-*
 URxvt.italicFont: -*-rissole-*
 URxvt.boldItalicfont: -*-rissole-*
@@ -66,7 +66,7 @@ URxvt.depth: 24
 URxvt.iso14755: false
 
 !! Copy Paste & Other Extensions
-URxvt.perl-lib: ~/.config/urxvt/ext
+URxvt.perl-lib: /home/asher/.config/urxvt/ext
 URxvt.perl-ext-common: default,clipboard,url-select,keyboard-select
 URxvt.copyCommand: xclip -i -selection clipboard
 URxvt.pasteCommand: xclip -o -selection clipboard

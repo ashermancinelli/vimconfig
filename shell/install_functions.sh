@@ -223,3 +223,19 @@ EOD
   ./install_rice.sh
   popd
 }
+
+install_fresh()
+{
+  pushd ~
+  mkdir installs tarballs trash workspace
+  touch $HOME/".$(uname -n)"
+  wget https://raw.githubusercontent.com/dylanaraps/pfetch/master/pfetch -O $HOME/tarballs/pfetch
+  wget https://raw.githubusercontent.com/6gk/fet.sh/master/fet.sh -O $HOME/tarballs/fet.sh
+  curl https://sh.rustup.rs > $HOME/tarballs/rustup.sh
+
+  for i in rustup.sh fet.sh pfetch
+  do
+    chmod +x $HOME/tarballs/$i
+  done
+  popd
+}
