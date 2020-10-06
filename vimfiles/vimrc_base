@@ -58,6 +58,9 @@ Plug 'rust-lang/rust.vim'
 
 call plug#end()
 
+" Vim.org sourced plugins
+source ~/.vim/autoclose.vim
+
 " The rest of my configurations
 source ~/.vim/remappings.vim
 source ~/.vim/my_commenter.vim
@@ -103,3 +106,8 @@ colorscheme apprentice
 
 " Enable transparency in vim
 hi Normal guibg=NONE ctermbg=NONE
+
+set wildmenu
+set wildmode=longest,list
+
+
