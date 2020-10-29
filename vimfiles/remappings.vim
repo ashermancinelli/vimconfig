@@ -13,6 +13,9 @@ nnoremap <c-j> <c-w><c-j>
 nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 
+" Map <c-a> to accept suggestion and exit to normal mode
+inoremap <c-a> <c-y><esc>
+
 nnoremap <c-g> :Goyo<Enter>
 
 " Better buffer navigation "

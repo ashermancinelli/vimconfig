@@ -64,13 +64,6 @@ source ~/.vim/remappings.vim
 source ~/.vim/my_commenter.vim
 set tags+=~/.vim/tags
 
-" set background=light
-" colorscheme material
-" colorscheme materialbox
-" colorscheme minimalist
-" colorscheme meta4
-" colorscheme wolfpack
-
 " Highlight keywords from CUDA Runtime API
 let g:cuda_runtime_api_highlight = 1
 " Highlight keywords from CUDA Driver API
@@ -100,7 +93,13 @@ let vim_markdown_preview_browser='Google Chrome'
 au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
 set completeopt=menuone,menu,longest,preview
 
-colorscheme apprentice
+" set background=light
+" colorscheme material
+" colorscheme materialbox
+colorscheme minimalist
+" colorscheme meta4
+" colorscheme wolfpack
+" colorscheme apprentice
 
 " Enable transparency in vim
 hi Normal guibg=NONE ctermbg=NONE
