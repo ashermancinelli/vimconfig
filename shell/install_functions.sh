@@ -105,7 +105,7 @@ install_vim()
 
     mkdir -p $HOME/.vim/syntax $HOME/.vim/after/syntax
 
-    if [ -f ~/.vim/autoclose.vim ]
+    if [ ! -f ~/.vim/autoclose.vim ]
     then
       curl "https://www.vim.org/scripts/download_script.php?src_id=10873" > ~/.vim/autoclose.vim
     fi

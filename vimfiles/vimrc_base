@@ -53,11 +53,13 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'https://github.com/mbbill/undotree'
 Plug 'junegunn/goyo.vim'
-Plug 'townk/vim-autoclose'
 Plug 'rust-lang/rust.vim'
 " Plug 'https://github.com/airblade/vim-gitgutter.git'
 
 call plug#end()
+
+" Vim.org sourced plugins
+source ~/.vim/autoclose.vim
 
 " The rest of my configurations
 source ~/.vim/remappings.vim
@@ -103,3 +105,8 @@ colorscheme minimalist
 
 " Enable transparency in vim
 hi Normal guibg=NONE ctermbg=NONE
+
+set wildmenu
+set wildmode=longest,list
+
+
