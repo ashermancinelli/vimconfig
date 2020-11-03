@@ -54,7 +54,7 @@ Plug 'tpope/vim-obsession'
 Plug 'https://github.com/mbbill/undotree'
 Plug 'junegunn/goyo.vim'
 Plug 'rust-lang/rust.vim'
-" Plug 'https://github.com/airblade/vim-gitgutter.git'
+Plug 'sainnhe/sonokai'
 
 call plug#end()
 
@@ -98,10 +98,11 @@ set completeopt=menuone,menu,longest,preview
 " set background=light
 " colorscheme material
 " colorscheme materialbox
-colorscheme minimalist
+" colorscheme minimalist
 " colorscheme meta4
 " colorscheme wolfpack
 " colorscheme apprentice
+colorscheme sonokai
 
 " Enable transparency in vim
 hi Normal guibg=NONE ctermbg=NONE
