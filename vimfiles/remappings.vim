@@ -15,6 +15,7 @@ nnoremap <c-l> <c-w><c-l>
 
 " Map <c-a> to accept suggestion and exit to normal mode
 inoremap <c-a> <c-y><esc>
+inoremap <c-e> <esc>
 
 nnoremap <c-g> :Goyo<Enter>
 
