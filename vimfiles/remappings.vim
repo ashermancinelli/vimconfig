@@ -65,7 +65,7 @@ set nofoldenable
 " Relative line numberings, except for the current line which
 " shows the absolute line number
 set number
-set relativenumber
+" set relativenumber
 
 " number of colors
 set t_Co=256
