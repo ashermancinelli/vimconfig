@@ -1,7 +1,7 @@
 # Path to your oh-my-bash installation.
 export OSH=$HOME/.oh-my-bash
 
-OSH_THEME="bakke"
+OSH_THEME="sexy"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
