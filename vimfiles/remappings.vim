@@ -28,6 +28,9 @@ inoremap { {}<left>
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
 
+" Better javadoc comments "
+autocmd FileType c,cpp,java inoreabbrev <buffer> /** /**<CR>/<Up>
+
 " <c-]> takes you to the tag definition, so naturally
 " <c-[> should take you back to the location from
 " which you tried to find the definition
@@ -48,9 +51,6 @@ nnoremap T :NERDTree<Enter>
 autocmd Filetype txt setlocal spell
 autocmd Filetype md setlocal spell
 autocmd Filetype tex setlocal spell
-
-" Use javadoc commenting when in c++
-autocmd Filetype cpp setlocal syntax=cpp.doxygen
 
 " :make runs cargo build when in rust
 autocmd Filetype rs set makeprg=cargo\ build
