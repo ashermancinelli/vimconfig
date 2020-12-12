@@ -195,6 +195,3 @@ set -o emacs
 
 # Add shell aliases
 source $HOME/.shell/aliases.sh
-
-# Add profile command
-source $HOME/.shell/profile.bash
