@@ -29,7 +29,7 @@ inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
 
 " Better javadoc comments "
-autocmd FileType c,cpp,java inoreabbrev <buffer> /** /**<CR>/<Up>
+autocmd FileType c,cpp,java inoreabbrev <buffer> /** /**<CR><CR>/<Up><space>
 
 " <c-]> takes you to the tag definition, so naturally
 " <c-[> should take you back to the location from
