@@ -5,7 +5,6 @@ else
     alias ls="ls --color=always"
 fi
 
-alias pip="python3 -m pip"
 alias maek=make
 alias mkae=make
 alias meak=make
