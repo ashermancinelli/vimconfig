@@ -28,6 +28,7 @@
   :demand
   :init
   (ivy-mode 1)
+  :bind ("C-s" . swiper)
   :config
   (setq ivy-use-virtual-buffers t
         ivy-count-format "%d/%d "))
