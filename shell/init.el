@@ -41,16 +41,19 @@
   :ensure t)
 
 (use-package highlight-parentheses
-  :init
-  (highlight-parentheses-mode 1))
+  :ensure t
+  :init (highlight-parentheses-mode 1))
 
 (use-package smartparens
   :ensure t)
 
+(use-package neotree
+             :ensure t)
+
 (use-package smart-tab
-  :ensure t
-  :init
-  (smart-tab-mode 1))
+             :ensure t
+             :init
+             (smart-tab-mode 1))
 
 (use-package multiple-cursors
   :bind ("C-M-n" . mc/mark-next-like-this)
@@ -78,14 +81,17 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq indent-line-function 'insert-tab)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "123a8dabd1a0eff6e0c48a03dc6fb2c5e03ebc7062ba531543dfbce587e86f2a" default))
  '(package-selected-packages
-    (quote
-     (ivy-posframe highlight-parentheses smart-tab smartparens indent-guide use-package rainbow-delimiters multiple-cursors helm-mode-manager))))
+   '(gruvbox-theme ivy-posframe highlight-parentheses smart-tab smartparens indent-guide use-package rainbow-delimiters multiple-cursors helm-mode-manager)))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -98,3 +104,5 @@
       ((shell-command (format "clang-format -style=file %s" (buffer-file-name)))
        (revert-buffer))
     (message "Could not find clang format file.")))
+
+(load-theme gruvbox-dark-soft)
