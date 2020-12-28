@@ -33,3 +33,5 @@ fi
 if [[ -d $HOME/workspace ]]; then
   export CDPATH="$HOME/workspace:$CDPATH"
 fi
+
+export CDPATH="$HOME:$CDPATH"
