@@ -171,7 +171,7 @@ install_emacs()
     fi
   done
   if [[ -z "$ctags_path" ]]; then echo 'Could not find exuberant ctags...'; return 1; fi
-    
+
   [ -f ./tags-file ] && rm ./tags-file
   touch ./tags-file
   while read pth
