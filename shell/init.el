@@ -48,7 +48,8 @@
   :ensure t)
 
 (use-package neotree
-             :ensure t)
+  :bind ("C-x t" . neotree-show)
+  :ensure t)
 
 (use-package smart-tab
              :ensure t
@@ -88,16 +89,16 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "123a8dabd1a0eff6e0c48a03dc6fb2c5e03ebc7062ba531543dfbce587e86f2a" default))
+   '("4cf9ed30ea575fb0ca3cff6ef34b1b87192965245776afa9e9e20c17d115f3fb" "aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "123a8dabd1a0eff6e0c48a03dc6fb2c5e03ebc7062ba531543dfbce587e86f2a" default))
  '(package-selected-packages
-   '(ivy-posframe highlight-parentheses smart-tab smartparens indent-guide use-package rainbow-delimiters multiple-cursors helm-mode-manager)))
+   '(zzz-to-char gruvbox-theme ivy-posframe highlight-parentheses smart-tab smartparens indent-guide use-package rainbow-delimiters multiple-cursors helm-mode-manager)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background nil)))))
   
 (defun eval-clang-format ()
   (if (file-exists-p (expand-file-name (read-file-name "Location of .clang-format: ")))
@@ -105,5 +106,5 @@
        (revert-buffer))
     (message "Could not find clang format file.")))
 
-(load-theme 'gruvbox-dark-soft t)
+(load-theme 'gruvbox-dark-medium t)
 
