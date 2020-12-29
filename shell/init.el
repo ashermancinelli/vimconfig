@@ -33,6 +33,10 @@
   (setq ivy-use-virtual-buffers t
         ivy-count-format "%d/%d "))
 
+(use-package modern-cpp-font-lock
+  :bind ("C-c C-f" . 'clang-format-region)
+  :ensure t)
+
 (use-package ivy-rich
   :demand
   :init
