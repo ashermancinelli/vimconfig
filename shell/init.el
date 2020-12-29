@@ -19,6 +19,10 @@
 ;; Requirements
 (require 'use-package)
 
+(use-package undo-tree
+  :bind ("C-x C-u")
+  :ensure t)
+
 (use-package evil
   :ensure t)
 (use-package indent-guide
@@ -28,7 +32,11 @@
   :demand
   :init
   (ivy-mode 1)
-  :bind ("C-s" . swiper)
+  :bind
+  (("C-s" . swiper)
+   ("C-x C-n" . counsel-switch-buffer)
+   ("C-x C-i" . complete-symbol)
+   ("C-x C-f" . counsel-find-file))
   :config
   (setq ivy-use-virtual-buffers t
         ivy-count-format "%d/%d "))
@@ -96,7 +104,7 @@
  '(custom-safe-themes
    '("4cf9ed30ea575fb0ca3cff6ef34b1b87192965245776afa9e9e20c17d115f3fb" "aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "123a8dabd1a0eff6e0c48a03dc6fb2c5e03ebc7062ba531543dfbce587e86f2a" default))
  '(package-selected-packages
-   '(zzz-to-char gruvbox-theme ivy-posframe highlight-parentheses smart-tab smartparens indent-guide use-package rainbow-delimiters multiple-cursors helm-mode-manager)))
+   '(cmake-font-lock zzz-to-char gruvbox-theme ivy-posframe highlight-parentheses smart-tab smartparens indent-guide use-package rainbow-delimiters multiple-cursors helm-mode-manager)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
