@@ -34,7 +34,7 @@
   (ivy-mode 1)
   :bind
   (("C-s" . swiper)
-   ("C-x C-n" . counsel-switch-buffer)
+   ("C-x C-b" . counsel-switch-buffer)
    ("C-x C-i" . complete-symbol)
    ("C-x C-f" . counsel-find-file))
   :config
