@@ -95,6 +95,7 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq indent-line-function 'insert-tab)
+(setq sh-basic-offset 2)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
