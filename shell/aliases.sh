@@ -24,13 +24,3 @@ alias gd='git diff --color'
 shopt -s cdspell        # try to correct typos in path
 shopt -s dotglob        # include dotfiles in path expansion
 shopt -s hostcomplete   # try to autocomplete hostnames
-
-if [[ -d $HOME/projects ]]; then
-  export CDPATH="$HOME/projects:$CDPATH"
-fi
-
-if [[ -d $HOME/workspace ]]; then
-  export CDPATH="$HOME/workspace:$CDPATH"
-fi
-
-export CDPATH="$HOME:$CDPATH"
