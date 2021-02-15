@@ -107,6 +107,13 @@ colorscheme sonokai
 " Enable transparency in vim
 hi Normal guibg=NONE ctermbg=NONE
 
+" Correctly set codes to italicize text
+set t_ZH=[3m
+set t_ZR=[23m
+
+" Italicize comments
+hi Comment cterm=italic
+
 set wildmenu
 set wildmode=longest,list
 
