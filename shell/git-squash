@@ -1,0 +1,35 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+use v5.10;
+use Git::Repository;
+use Term::Choose qw(choose);
+use Term::UI;
+use Cwd qw(cwd);
+
+my $worktree = "";
+my $term = Term::ReadLine->new('GitExts');
+
+if ($ENV{SQUASHER_GIT_DIR}) {
+  $worktree = $ENV{SQUASHER_GIT_DIR};
+} elsif (scalar @ARGV > 0) {
+  $worktree = $ARGV[0];
+} else {
+  $worktree = &cwd();
+}
+
+say "Found working directory $worktree.";
+
+my $repo = Git::Repository->new(work_tree=>$worktree);
+my @logs = $repo->run('log', '--oneline', '--no-color', '-n', '10');
+
+my $commit = choose(\@logs, {
+    layout => 3,
+    prompt => "Space to select, Enter to continue."
+  });
+
+my @ar = split / /, $commit;
+my $hash = $ar[0];
+
+system("(cd $worktree && git rebase -i $hash)");
