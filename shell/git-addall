@@ -59,7 +59,7 @@ foreach my $f (@modif) {
   say "Adding $f...";
 }
 
-my $good = $term->ask_yn(
+$good = $term->ask_yn(
   prompt => 'Want to commit?',
   default => 'y',
 );
