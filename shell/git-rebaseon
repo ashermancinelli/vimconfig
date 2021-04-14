@@ -1,0 +1,61 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+use v5.10;
+use Git::Repository;
+use Path::Tiny;
+use Term::Choose qw(choose);
+use Term::UI;
+use Cwd qw(cwd);
+use Getopt::Long;
+use Pod::Usage;
+
+my $worktree = "";
+my $ref = "";
+
+GetOptions('help' => sub { pod2usage(3); }, 'on=s' => \$ref)
+  or pod2usage(3);
+
+$worktree = shift or pod2usage(3);
+
+say "Found working directory $worktree.";
+
+my $term = Term::ReadLine->new('GitExts');
+
+my $cmd = "pull --rebase origin $ref";
+my $good = $term->ask_yn(
+  prompt => "Does 'git $cmd' look good?",
+  default => 'y',
+);
+
+exit 0 if not $good;
+
+my $repo = Git::Repository->new(work_tree=>$worktree);
+$repo->run(split / /, $cmd);
+
+__END__
+
+=head1 NAME
+
+git-rebaseon - Utility for rebasing on branches/refs.
+
+=head1 SYNOPSIS
+
+git-rebaseon [options] /path/to/repo
+
+=item B<-on | -o>
+
+Supply git reference to rebase on.
+
+=item B<-interactive | -i>
+
+Interactively choose a commit or branch to rebase on.
+I<NOTE: Not yet working.>
+
+=head1 DESCRIPTION
+
+Open up an interactive editing session to rebase a git repo on a particuler
+reference. Particularly useful when pulling and rebasing on an updated branch.
+
+=cut

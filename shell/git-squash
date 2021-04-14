@@ -6,30 +6,50 @@ use v5.10;
 use Git::Repository;
 use Term::Choose qw(choose);
 use Term::UI;
+use Getopt::Long;
+use Pod::Usage;
 use Cwd qw(cwd);
 
-my $worktree = "";
 my $term = Term::ReadLine->new('GitExts');
 
-if ($ENV{SQUASHER_GIT_DIR}) {
-  $worktree = $ENV{SQUASHER_GIT_DIR};
-} elsif (scalar @ARGV > 0) {
-  $worktree = $ARGV[0];
-} else {
-  $worktree = &cwd();
-}
+my $num_lines = 10;
+
+Getopt::Long::GetOptions('help' => sub { pod2usage(3); }, 'number=i' => \$num_lines);
+my $worktree = shift or Cwd::cwd();
+
+my $repo = Git::Repository->new(work_tree=>$worktree)
+  or die("Invalid git repo path.");
 
 say "Found working directory $worktree.";
 
-my $repo = Git::Repository->new(work_tree=>$worktree);
-my @logs = $repo->run('log', '--oneline', '--no-color', '-n', '10');
+my @logs = $repo->run('log', '--oneline', '--no-color', '-n', $num_lines);
 
 my $commit = choose(\@logs, {
     layout => 3,
-    prompt => "Space to select, Enter to continue."
+    prompt => "Select commit to rebase on:"
   });
 
 my @ar = split / /, $commit;
 my $hash = $ar[0];
 
 system("(cd $worktree && git rebase -i $hash)");
+
+__END__
+
+=head1 NAME
+
+git-squash: Short-hand script for squashing commits.
+
+=head1 SYNOPSIS
+
+git-squash [options] [/path/to/repo]
+
+=item B<-number|-n N>
+
+Number of commits to view in the interactive session. Defaults to 10.
+
+=item B<-help|-h>
+
+Display this help message.
+
+=cut
