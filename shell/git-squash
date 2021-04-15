@@ -14,8 +14,13 @@ my $term = Term::ReadLine->new('GitExts');
 
 my $num_lines = 10;
 
-Getopt::Long::GetOptions('help' => sub { pod2usage(3); }, 'number=i' => \$num_lines);
-my $worktree = shift or Cwd::cwd();
+my $worktree = "";
+Getopt::Long::GetOptions(
+  'help' => sub { pod2usage(3); },
+  'directory=s' => \$worktree,
+  'number=i' => \$num_lines
+);
+$worktree = $worktree ? $worktree : Cwd::cwd();
 
 my $repo = Git::Repository->new(work_tree=>$worktree)
   or die("Invalid git repo path.");
@@ -32,7 +37,7 @@ my $commit = choose(\@logs, {
 my @ar = split / /, $commit;
 my $hash = $ar[0];
 
-system("(cd $worktree && git rebase -i $hash)");
+say ("(cd $worktree && git rebase -i $hash)");
 
 __END__
 
@@ -44,9 +49,13 @@ git-squash: Short-hand script for squashing commits.
 
 git-squash [options] [/path/to/repo]
 
-=item B<-number|-n N>
+=item B<-number | -n N>
 
 Number of commits to view in the interactive session. Defaults to 10.
+
+=item B<-directory | -d>
+
+Directory to use. Defaults to CWD.
 
 =item B<-help|-h>
 
