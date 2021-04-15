@@ -37,7 +37,7 @@ my $commit = choose(\@logs, {
 my @ar = split / /, $commit;
 my $hash = $ar[0];
 
-say ("(cd $worktree && git rebase -i $hash)");
+system("(cd $worktree && git rebase -i $hash)");
 
 __END__
 
