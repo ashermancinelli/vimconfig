@@ -1,0 +1,32 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+use v5.10;
+use Git::Repository;
+use Getopt::Long;
+use Term::ReadLine;
+use Pod::Usage;
+use Cwd qw(cwd);
+
+my $term = Term::ReadLine->new('git-explore');
+$term->ornaments(0);
+my $prompt = '-> ';
+my $worktree = "";
+Getopt::Long::GetOptions(
+  'help' => sub { pod2usage(3); },
+  'directory=s' => \$worktree,
+);
+$worktree = $worktree ? $worktree : Cwd::cwd();
+
+my $repo = Git::Repository->new(work_tree=>$worktree)
+  or die("Invalid git repo path.");
+
+while (defined($_ = $term->readline($prompt))) {
+  if (/^$/) { next; }
+  s/ls\s/ls-files /;
+  $term->addhistory($_);
+  my @cmds = split / /;
+  my $out = $repo->run(@cmds);
+  say $out;
+}
