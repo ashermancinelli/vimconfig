@@ -3,11 +3,15 @@
 use warnings;
 use strict;
 use v5.10;
+use Term::ANSIColor qw(RESET :constants256);
 use Git::Repository;
 use Getopt::Long;
+use IO::Pager;
 use Term::ReadLine;
 use Pod::Usage;
 use Cwd qw(cwd);
+
+$ENV{GIT_PAGER} = ''; # We'll do our own paging
 
 my $term = Term::ReadLine->new('git-explore');
 $term->ornaments(0);
@@ -23,10 +27,27 @@ my $repo = Git::Repository->new(work_tree=>$worktree)
   or die("Invalid git repo path.");
 
 while (defined($_ = $term->readline($prompt))) {
+  my $skiprun = 0;
+  if (/q(uit)?/) { exit; }
   if (/^$/) { next; }
+  if (/commit/) {
+    system("(cd $worktree && git commit)");
+  } elsif (/diff/) {
+    my @cmds = split / /;
+    my $out = $repo->run(@cmds);
+    my $pr = new IO::Pager;
+    $pr->print($out);
+    $skiprun = 1;
+  }
+
   s/ls\s/ls-files /;
+  s/^s$/status/;
+
   $term->addhistory($_);
-  my @cmds = split / /;
-  my $out = $repo->run(@cmds);
-  say $out;
+
+  if (!$skiprun) {
+    my @cmds = split / /;
+    my $out = $repo->run(@cmds);
+    say $out;
+  }
 }

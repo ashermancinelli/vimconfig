@@ -72,4 +72,4 @@ set -o emacs
 source $HOME/.shell/aliases.sh
 
 export PYTHONSTARTUP=$HOME/.shell/startup.py
-export PATH=$HOME/.shell
+export PATH=$PATH:$HOME/.shell
