@@ -1,7 +1,8 @@
 # Path to your oh-my-bash installation.
 export OSH=$HOME/.oh-my-bash
 
-OSH_THEME="stasher"
+OSH_THEME="sexy"
+test -d $HOME/.oh-my-bash/themes/stasher && OSH_THEME="stasher"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
