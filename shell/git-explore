@@ -27,6 +27,7 @@ usage() {
   ck    =  checkout
   c     =  commit
   g     =  log --graph --color --oneline'
+  q     =  quit
   !cmd  =  Run \$cmd in shell
 
   ------------------------"
@@ -72,6 +73,9 @@ do
 
   # Run special hooks
   case $input in
+    q|quit)
+      exit
+      ;;
     h|help)
       usage
       continue
