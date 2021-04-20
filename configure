@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+rc="$(realpath $HOME/.$(basename $SHELL)rc)"
+cwd="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+install_prefix="$HOME/.local"
+installs=()
+source 'shell/install_functions.sh'
+
+usage()
+{
+  cat <<EOD
+
+  Usage:
+
+  -p <path>           Sets install prefix. Default: $install_prefix
+  -r <path>           Path to RC file for given shell. Default: $rc
+  -d                  Default installation. Installs ctags, vim, and bash
+  -s <pkg>            Show installation script for pacakge
+  -i                  One or more of the following list, separated by commas with no spaces:
+
+$(grep install_ shell/install_functions.sh \
+  | grep -v base \
+  | cut -f2 -d_ \
+  | sed -e 's/[\(\)]//g' -e 's/^/       /')
+
+EOD
+  exit 1
+}
+
+[ $# -eq 0 ] && usage
+
+default=0
+while getopts "di:r:p:s:" arg
+do
+  if [[ $default == 1 ]]; then break; fi
+
+  case $arg in
+    d)
+      installs=$(echo "ctags,vim,bash" | tr ',' '\n')
+      default=1
+      ;;
+    i)
+      installs=$(echo $OPTARG | tr ',' '\n')
+      ;;
+    r)
+      rc=$OPTARG
+      ;;
+    p)
+      install_prefix=$OPTARG
+      ;;
+    s)
+      awk "/install_${OPTARG}/"'{
+        nesting=0
+        if(index($0,"{")!=0) nesting++;
+        print
+        getline
+        for(;;) {
+          print $0;
+          if(index($0,"{")!=0) nesting++;
+          if(index($0,"}")!=0) nesting--;
+          if(nesting==0) break;
+          getline
+        }
+      }' ./shell/install_functions.sh
+      exit
+      ;;
+    ?) usage;;
+  esac
+done
+
+for install in $installs
+do
+  echo Installing $install...
+  eval "install_$install"
+done
+install_base
+
+echo All done!
