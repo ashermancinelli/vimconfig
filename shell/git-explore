@@ -4,40 +4,40 @@ prompt()
 {
   echo "[`git rev-parse --abbrev-ref HEAD`]-> "
 }
-dir=`pwd`
-HISTFILE=$HOME/.git-explore-history
+exe=$0
 
-usage() { echo "Usage: $0 [-d directory] [-h history-file]"; exit 1; }
+usage() {
+  echo "
 
-while getopts "d:" arg; do
-  case $arg in
-  h)
-    HISTFILE=${OPTARG}
-    ;;
-  d)
-    dir=${OPTARG}
-    ;;
-  *)
-    usage
-    ;;
-  esac
-done
-shift $((OPTIND-1))
+  ------------------------
 
-echo "Using directory $dir"
-cd $dir
+  Usage: $exe [directory]
 
-help_()
-{
-  echo 'Default special commands:
-  hclear: Clear git-explore history
-  a: add
-  s: status
-  ls: ls-files
-  ck: checkout
-  c: commit
-  g: log --graph --color --oneline'
+  $exe:
+  The shell for git commands. Every command is invoked via git unless explicitly
+  ran through the shell with a leading '!'.
+
+  ------------------------
+
+  Interpreter commands:
+
+  a     =  add
+  s     =  status
+  ls    =  ls-files
+  ck    =  checkout
+  c     =  commit
+  g     =  log --graph --color --oneline'
+  !cmd  =  Run \$cmd in shell
+
+  ------------------------"
 }
+
+test $# -eq 1 && dir=$1
+test $# -eq 0 && dir=`pwd`
+test $# -gt 1 && { usage; exit 1; }
+
+cd $dir
+echo "Using directory $dir"
 
 # Replace shortcuts with their expansions
 r()
@@ -73,7 +73,7 @@ do
   # Run special hooks
   case $input in
     h|help)
-      help_
+      usage
       continue
       ;;
     '')
