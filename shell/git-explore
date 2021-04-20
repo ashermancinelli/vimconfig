@@ -58,10 +58,12 @@ branch=`ge rev-parse --abbrev-ref HEAD`
 
 while :
 do
-  read -p "$prompt" input
+  read -e -p "$prompt" input
 
   if [[ $input =~ '^h$' ]] || [[ $input =~ 'help' ]]; then
     help_
+    continue
+  elif [[ "$input" = '' ]]
     continue
   fi
 
