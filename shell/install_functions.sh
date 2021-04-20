@@ -46,8 +46,9 @@ install_bash()
 
     (
       cd $HOME/.oh-my-bash
-      if [ `git remote -v | grep asher | wc -l` -eq 0 ]
+      if [ `cd $HOME/.oh-my-bash && git remote -v | grep asher | wc -l` -eq 0 ]
       then
+        echo Adding fork of oh-my-bash...
         git remote add personal git@github.com:ashermancinelli/oh-my-bash.git
       fi
     )
