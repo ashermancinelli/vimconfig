@@ -55,7 +55,7 @@ r()
 # Execute command in directory
 e()
 {
-  (cd $dir && $*)
+  ($*)
 }
 
 # Execute git command in directory
