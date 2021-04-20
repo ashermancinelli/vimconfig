@@ -43,6 +43,14 @@ install_bash()
 {
     [ -d $HOME/.oh-my-bash ] || \
         git clone https://github.com/ohmybash/oh-my-bash.git $HOME/.oh-my-bash
+
+    (
+      cd $HOME/.oh-my-bash
+      if [ `git remote -v | grep asher | wc -l` -eq 0 ]
+      then
+        git remote add personal git@github.com:ashermancinelli/oh-my-bash.git
+      fi
+    )
     cat ./shell/ohmybashrc.sh >> $rc
     cat ./shell/gitconfig > ~/.gitconfig
 }
