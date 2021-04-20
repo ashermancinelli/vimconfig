@@ -26,8 +26,7 @@ help_()
   ls: ls-files
   ck: checkout
   c: commit
-  g: log --graph --color --oneline
-'
+  g: log --graph --color --oneline'
 }
 
 # Replace shortcuts with their expansions
@@ -38,6 +37,7 @@ r()
     | sed 's/^ls$/ls-files /' \
     | sed 's/^ck /checkout /' \
     | sed 's/^c$/commit /' \
+    | sed -e 's/^b$/branch/' -e 's/^b /branch /' \
     | sed 's/^g$/log --graph --color --oneline /' \
     | sed 's/^a /add /'
 }
