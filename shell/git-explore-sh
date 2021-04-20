@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+prompt="-> "
+dir=`pwd`
+
+usage() { echo "Usage: $0 [-d directory]"; exit 1; }
+
+while getopts "d:" arg; do
+  case $arg in
+  d)
+    dir=${OPTARG}
+    ;;
+  *)
+    usage
+    ;;
+  esac
+done
+shift $((OPTIND-1))
+
+echo "Using directory $dir"
+
+help_()
+{
+  echo 'Default replacements:
+  s: status
+  ls: ls-files
+  ck: checkout
+  c: commit
+  g: log --graph --color --oneline
+'
+}
+
+# Replace shortcuts with their expansions
+r()
+{
+  echo $* \
+    | sed 's/^s /status /' \
+    | sed 's/^ls /ls-files /' \
+    | sed 's/^ck /checkout /' \
+    | sed 's/^c /commit /' \
+    | sed 's/^g /log --graph --color --oneline /'
+}
+
+# Execute command in directory
+e()
+{
+  (cd $dir && $*)
+}
+
+# Execute git command in directory
+ge()
+{
+  e git $*
+}
+
+branch=`ge rev-parse --abbrev-ref HEAD`
+
+while :
+do
+  read -p "$prompt" input
+
+  if [[ $input =~ '^h$' ]] || [[ $input =~ 'help' ]]; then
+    help_
+    continue
+  fi
+
+  input=`r $input`
+
+  case $input in
+
+    # Escape to run shell commands in the directory
+    \!*)
+      e `echo $input | sed 's/^!//'`
+      ;;
+
+    # Run everything else through git
+    *)
+      ge $input
+      ;;
+  esac
+done
