@@ -5,11 +5,15 @@ prompt()
   echo "[`git rev-parse --abbrev-ref HEAD`]-> "
 }
 dir=`pwd`
+HISTFILE=$HOME/.git-explore-history
 
-usage() { echo "Usage: $0 [-d directory]"; exit 1; }
+usage() { echo "Usage: $0 [-d directory] [-h history-file]"; exit 1; }
 
 while getopts "d:" arg; do
   case $arg in
+  h)
+    HISTFILE=${OPTARG}
+    ;;
   d)
     dir=${OPTARG}
     ;;
@@ -25,7 +29,9 @@ cd $dir
 
 help_()
 {
-  echo 'Default replacements:
+  echo 'Default special commands:
+  hclear: Clear git-explore history
+  a: add
   s: status
   ls: ls-files
   ck: checkout
@@ -37,7 +43,7 @@ help_()
 r()
 {
   echo $* \
-    | sed -e 's/^s[\s$]/status /' -e 's/^s /status /' \
+    | sed -e 's/^s$/status /' -e 's/^s /status /' \
     | sed -e 's/^ls$/ls-files /' -e 's/^ls /ls-files /' \
     | sed 's/^ck /checkout /' \
     | sed 's/^c$/commit /' \
@@ -62,14 +68,25 @@ branch=`ge rev-parse --abbrev-ref HEAD`
 
 while :
 do
+  history -r
   read -e -p "`prompt`" input
+  history -s "$input"
+  history -w
 
-  if [[ $input =~ '^h$' ]] || [[ $input =~ 'help' ]]; then
-    help_
-    continue
-  elif [[ "$input" = '' ]]; then
-    continue
-  fi
+  # Run special hooks
+  case $input in
+    h|help)
+      help_
+      continue
+      ;;
+    hclear)
+      rm $HISTFILE
+      continue
+      ;;
+    '')
+      continue
+      ;;
+  esac
 
   # Run replacements on input commands
   input=`r $input`
