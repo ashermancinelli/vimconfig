@@ -8,15 +8,15 @@ The top directory has a script to deal with installation - you should pretty muc
 The help message is quite descriptive:
 
 ```bash
-$ ./configure.sh --help
+$ ./configure --h
 
   Usage:
 
-  -p|--prefix         Sets install prefix. Default: /Users/manc568/.local
-  -s|--shell-rc-path  Path to RC file for given shell. Default: /Users/manc568/.bashrc
-  -d|--default        Installs ctags, vim, and bash
-  --show              Show installation script for pacakge
-  -i|--install        One or more of the following list, separated by commas with no spaces:
+  -p <path>           Sets install prefix. Default: /people/manc568/.local
+  -r <path>           Path to RC file for given shell. Default: /qfs/people/manc568/.bashrc
+  -d                  Default installation. Installs ctags, vim, and bash
+  -s <pkg>            Show installation script for pacakge
+  -i                  One or more of the following list, separated by commas with no spaces:
 
        zsh
        bash
@@ -36,11 +36,11 @@ $ ./configure.sh --help
 For example, to just install my vim configuration, you'd do:
 
 ```bash
-$ ./configure.sh --install vim
+$ ./configure -i vim
 ```
 
 Or to install configs for multiple programs:
 
 ```bash
-$ ./configure.sh --install vim,ctags,tmux,emacs,bash
+$ ./configure -i vim,ctags,tmux,emacs,bash
 ```
