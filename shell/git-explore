@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-prompt="-> "
+prompt()
+{
+  echo "[`git rev-parse --abbrev-ref HEAD`]-> "
+}
 dir=`pwd`
 
 usage() { echo "Usage: $0 [-d directory]"; exit 1; }
@@ -18,6 +21,7 @@ done
 shift $((OPTIND-1))
 
 echo "Using directory $dir"
+cd $dir
 
 help_()
 {
@@ -33,8 +37,8 @@ help_()
 r()
 {
   echo $* \
-    | sed 's/^s$/status /' \
-    | sed 's/^ls$/ls-files /' \
+    | sed -e 's/^s[\s$]/status /' -e 's/^s /status /' \
+    | sed -e 's/^ls$/ls-files /' -e 's/^ls /ls-files /' \
     | sed 's/^ck /checkout /' \
     | sed 's/^c$/commit /' \
     | sed -e 's/^b$/branch/' -e 's/^b /branch /' \
@@ -58,15 +62,16 @@ branch=`ge rev-parse --abbrev-ref HEAD`
 
 while :
 do
-  read -e -p "$prompt" input
+  read -e -p "`prompt`" input
 
   if [[ $input =~ '^h$' ]] || [[ $input =~ 'help' ]]; then
     help_
     continue
-  elif [[ "$input" = '' ]]
+  elif [[ "$input" = '' ]]; then
     continue
   fi
 
+  # Run replacements on input commands
   input=`r $input`
 
   case $input in
