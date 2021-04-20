@@ -44,12 +44,12 @@ r()
 {
   echo $* \
     | sed -e 's/^s$/status /' -e 's/^s /status /' \
-    | sed -e 's/^ls$/ls-files /' -e 's/^ls /ls-files /' \
-    | sed 's/^ck /checkout /' \
-    | sed 's/^c$/commit /' \
-    | sed -e 's/^b$/branch/' -e 's/^b /branch /' \
-    | sed 's/^g$/log --graph --color --oneline /' \
-    | sed 's/^a /add /'
+        -e 's/^ls$/ls-files /' -e 's/^ls /ls-files /' \
+        -e 's/^ck /checkout /' \
+        -e 's/^c$/commit /' \
+        -e 's/^b$/branch/' -e 's/^b /branch /' \
+        -e 's/^g$/log --graph --color --oneline /' \
+        -e 's/^a /add /'
 }
 
 # Execute command in directory
@@ -68,19 +68,12 @@ branch=`ge rev-parse --abbrev-ref HEAD`
 
 while :
 do
-  history -r
   read -e -p "`prompt`" input
-  history -s "$input"
-  history -w
 
   # Run special hooks
   case $input in
     h|help)
       help_
-      continue
-      ;;
-    hclear)
-      rm $HISTFILE
       continue
       ;;
     '')

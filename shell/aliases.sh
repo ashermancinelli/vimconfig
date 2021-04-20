@@ -19,6 +19,7 @@ alias gp='git push'
 alias gck='git checkout'
 alias gg='git log --graph --color --oneline'
 alias gd='git diff --color'
+alias ge='git-explore'
 
 # https://unix.stackexchange.com/questions/6/what-are-your-favorite-command-line-features-or-tricks/67#67
 shopt -s cdspell        # try to correct typos in path
