@@ -58,7 +58,7 @@ my $decoded = decode_json(join '', @lines);
 # Get
 if (defined $opts{g}) {
   if (defined $decoded->{$opts{g}}) {
-    say Dumper $decoded->{$opts{g}};
+    print Dumper $decoded->{$opts{g}};
   }
   else {
     say "Key does not exist!";
@@ -68,7 +68,7 @@ if (defined $opts{g}) {
 
 # Dump
 if (defined $opts{d}) {
-  say Dumper $decoded;
+  print Dumper $decoded;
   exit;
 }
 
@@ -122,10 +122,10 @@ if (defined $opts{i}) {
       when('q') { exit; }
       when('') { next; }
       when('k') { map { say; } keys %$decoded; }
-      when('d') { say Dumper $decoded; }
+      when('d') { print Dumper $decoded; }
       default {
         if (defined $decoded->{$q}) {
-          say Dumper $decoded->{$q};
+          print Dumper $decoded->{$q};
           next;
         }
         help;
