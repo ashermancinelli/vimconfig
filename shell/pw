@@ -14,7 +14,7 @@ use JSON;
 
 my %opts;
 
-getopts("dhnr:f:p:ei", \%opts);
+getopts("g:dhnr:f:p:ei", \%opts);
 
 if ($opts{h}) {
   my $help = "
@@ -26,8 +26,9 @@ Usage:
   -i: interactive
   -e: edit
   -d: dump
-  -f <path>: path to data
   -n: create new password
+  -g <key>: get a key
+  -f <path>: path to data
   -r <regex>: create new password from regex
 --------------------------------
 ";
@@ -53,6 +54,17 @@ die("File not found!") unless defined $opts{f} and -f $opts{f};
 my $raw = read_file($opts{f});
 my @lines = decrypt($raw);
 my $decoded = decode_json(join '', @lines);
+
+# Get
+if (defined $opts{g}) {
+  if (defined $decoded->{$opts{g}}) {
+    say Dumper $decoded->{$opts{g}};
+  }
+  else {
+    say "Key does not exist!";
+  }
+  exit;
+}
 
 # Dump
 if (defined $opts{d}) {
