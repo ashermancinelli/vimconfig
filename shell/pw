@@ -17,7 +17,7 @@ my %opts;
 
 getopts("dhf:p:ei", \%opts);
 
-if (defined $opts{h}) {
+if ($opts{h}) {
   my $help = "
 
 Usage:
@@ -32,6 +32,7 @@ Usage:
 --------------------------------
   
 ";
+  say $help;
   exit 1;
 }
 
