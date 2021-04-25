@@ -1,0 +1,117 @@
+#!/usr/local/bin/perl5.33.9
+
+use strict;
+use warnings;
+use v5.30;
+use experimental qw(smartmatch switch);
+
+use String::Random;
+use Crypt::Simple;
+use Getopt::Std;
+use File::Slurp;
+use Data::Dumper::Concise;
+use IO::Uncompress::Unzip qw<unzip>;
+use JSON;
+
+my %opts;
+
+getopts("dhf:p:ei", \%opts);
+
+if (defined $opts{h}) {
+  my $help = "
+
+Usage:
+--------------------------------
+  pw [options]
+
+  -h: help
+  -i: interactive
+  -e: edit
+  -d: dump
+  -f <path>: path to data
+--------------------------------
+  
+";
+  exit 1;
+}
+
+if (not defined $opts{f}) {
+  $opts{f} = $ENV{PWFILE};
+}
+
+die("File not found!") unless defined $opts{f} and -f $opts{f};
+
+my $raw = read_file($opts{f});
+my @lines = decrypt($raw);
+my $decoded = decode_json(join '', @lines);
+
+# Dump
+if (defined $opts{d}) {
+  say Dumper $decoded;
+  exit;
+}
+
+# Edit secrets
+if (defined $opts{e}) {
+
+  # Create a temporary file for the user to edit
+  my $temp_fn = String::Random->new->randregex("[a-zA-Z]{20}");
+  my $f = "/tmp/$temp_fn.json";
+  write_file($f, @lines);
+
+  # Open an editor (defaults to vim :))
+  my $editor = $ENV{EDITOR};
+  $editor = 'vim' if not defined $editor;
+  system("$editor $f");
+
+  # Read the new contents
+  my $newcontent = join '', read_file($f);
+
+  # Move the original to a backup, write the new contents to the location of the
+  # original. If the backup already exists, just remove it.
+  my $orig = $opts{f};
+  `rm $orig.backup` if -f "$orig.backup";
+  `mv $orig $orig.backup`;
+  write_file($opts{f}, encrypt($newcontent));
+
+  # Remove the temporary file
+  `rm $f`;
+  exit;
+}
+
+# Interactive
+if (defined $opts{i}) {
+
+  # Help message just for the interactive session
+  sub help {
+    say "
+  h: This help messasge
+  q: Quit
+  k: Keys
+  d: Dump
+";
+  };
+
+  while (1) {
+    print "-> ";
+    my $q = <>;
+    chomp($q);
+    given ($q) {
+      when('h') { help; }
+      when('q') { exit; }
+      when('') { next; }
+      when('k') { map { say; } keys %$decoded; }
+      when('d') { say Dumper $decoded; }
+      default {
+        if (defined $decoded->{$q}) {
+          say Dumper $decoded->{$q};
+          next;
+        }
+        help;
+      }
+    }
+  }
+  exit;
+}
+
+say "Insufficient options!";
