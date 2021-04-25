@@ -10,16 +10,14 @@ use Crypt::Simple;
 use Getopt::Std;
 use File::Slurp;
 use Data::Dumper::Concise;
-use IO::Uncompress::Unzip qw<unzip>;
 use JSON;
 
 my %opts;
 
-getopts("dhf:p:ei", \%opts);
+getopts("dhnr:f:p:ei", \%opts);
 
 if ($opts{h}) {
   my $help = "
-
 Usage:
 --------------------------------
   pw [options]
@@ -29,11 +27,21 @@ Usage:
   -e: edit
   -d: dump
   -f <path>: path to data
+  -n: create new password
+  -r <regex>: create new password from regex
 --------------------------------
-  
 ";
   say $help;
   exit 1;
+}
+
+if (defined $opts{r}) {
+  say String::Random->new->randregex($opts{r});
+  exit;
+}
+if (defined $opts{n}) {
+  say String::Random->new->randregex(".{25}");
+  exit;
 }
 
 if (not defined $opts{f}) {
