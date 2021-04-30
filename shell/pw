@@ -19,18 +19,21 @@ getopts("g:dhnr:f:p:ei", \%opts);
 if ($opts{h}) {
   my $help = "
 Usage:
---------------------------------
+
+----------------------------------------------------------------
+
   pw [options]
 
-  -h: help
-  -i: interactive
-  -e: edit
-  -d: dump
-  -n: create new password
-  -g <key>: get a key
-  -f <path>: path to data
-  -r <regex>: create new password from regex
---------------------------------
+  -h            help
+  -i		        interactive
+  -e		        edit
+  -d		        dump
+  -n		        create new password
+  -g <key>      get a key
+  -f <path>		  path to data
+  -r <regex>    create new password from regex
+
+----------------------------------------------------------------
 ";
   say $help;
   exit 1;
