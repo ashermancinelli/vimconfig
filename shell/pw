@@ -14,7 +14,7 @@ use JSON;
 
 my %opts;
 
-getopts("g:dhnr:f:p:ei", \%opts);
+getopts("g:dhnr:f:p:eiE:", \%opts);
 
 if ($opts{h}) {
   my $help = "
@@ -27,6 +27,7 @@ Usage:
   -h            help
   -i		        interactive
   -e		        edit
+  -E            encrypt a file
   -d		        dump
   -n		        create new password
   -g <key>      get a key
@@ -50,6 +51,14 @@ if (defined $opts{n}) {
 
 if (not defined $opts{f}) {
   $opts{f} = $ENV{PWFILE};
+}
+
+if (defined $opts{E}) {
+  my $raw = read_file($opts{E});
+  my $file = $opts{E};
+  my $fn = "$file.enc";
+  write_file($fn, encrypt($raw));
+  exit;
 }
 
 die("File not found!") unless defined $opts{f} and -f $opts{f};
