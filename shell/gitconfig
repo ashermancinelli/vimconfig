@@ -38,7 +38,13 @@
 
 [user]
   name="Asher Mancinelli"
-  email="asher.mancinelli@pnnl.gov"
+  email="ashermancinelli@gmail.com"
 
 [github]
   username="ashermancinelli"
+
+[sendemail]
+	smtpEncryption = tls
+	smtpServer = smtp.gmail.com
+	smtpUser = ashermancinelli@gmail.com
+	smtpServerPort = 587

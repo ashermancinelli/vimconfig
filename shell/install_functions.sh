@@ -50,6 +50,8 @@ install_bash()
       then
         echo Adding fork of oh-my-bash...
         git remote add personal git@github.com:ashermancinelli/oh-my-bash.git
+        git fetch --all
+        git checkout my-themes
       fi
     )
     cat ./shell/ohmybashrc.sh >> $rc
