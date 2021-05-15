@@ -37,6 +37,7 @@ install_base()
     for f in ./shell/*; do
       [[ -f ./shell/$f ]] && cp ./shell/$f $HOME/.shell/$f
     done
+    cp ./shell/lldbinit ~/.lldbinit
 }
 
 install_bash()
