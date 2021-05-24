@@ -45,7 +45,7 @@ if (defined $opts{r}) {
   exit;
 }
 if (defined $opts{n}) {
-  say String::Random->new->randregex(".{25}");
+  say String::Random->new->randregex("[a-zA-Z0-9\(\)]{25}");
   exit;
 }
 
