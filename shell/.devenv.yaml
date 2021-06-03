@@ -1,0 +1,26 @@
+configs:
+
+  # Default config for editing on newell
+  newell-exago:
+    launch-command: srun -A exasgd -p newell_shared -N 1 -n 2 -t '59:00' --pty bash
+
+    modules:
+      - vim/8.2.1479
+      - gcc/7.4.0
+      - cmake/3.19.6
+      - python/anaconda3
+      - openmpi/3.1.5
+      - cuda/10.2
+
+    commands:
+      - cd ~/workspace/exago
+      - rm -rf build install
+      - mkdir build install
+      - source ./buildsystem/newellVariables.sh
+
+  marianas:
+    launch-command: srun -A exasgd -p dl -N 1 -n 2 -t '59:00' --pty bash
+
+aliases:
+  n: newell-exago
+  m: marianas

@@ -1,0 +1,200 @@
+#!/usr/bin/env python
+
+import yaml
+import sys
+import argparse
+import os
+from typing import Dict
+import logging
+import textwrap
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
+
+extra_help = textwrap.dedent('''
+Full Help Message:
+-------------------------------------------------------------------------------
+
+The configuration files must have the following form:
+
+```yaml
+# ~/.devenv.yaml
+configs:
+    config-name:
+        commands: []
+        modules: []
+        launch-command: ''
+
+aliases:
+    alias1: value1
+```
+
+The commands are built in the following order:
+
+    1. Commands
+    2. Modules
+    3. `srun` command
+
+For example, the following config:
+```yaml
+# ~/.devenv.yaml
+configs:
+    myconfig:
+        commands:
+          - cd ~/workspace
+        modules:
+          - gcc/7.4.0
+        launch-command: 'srun -N 1 --pty bash'
+
+aliases:
+    c: myconfig
+```
+
+would invoke the following command:
+
+    $ cd ~/workspace
+    $ module load gcc/7.4.0
+    $ srun -N 1 --pty bash
+
+This development environment may be invoked either via `devenv -n myconfig`
+or `devenv -n c`.
+
+-------------------------------------------------------------------------------
+''')
+
+# Default locations for config files
+default_config_locations = [
+        '~/.devenv.yaml',
+        '~/.config/devenv/config.yaml',
+        '/etc/devenv.yaml',
+        '/usr/etc/devenv.yaml',
+        ]
+
+# Default aliases for configurations
+aliases = dict()
+
+def cfg_to_cmd(config: Dict[str, str]) -> str:
+    '''Convert configuration into development environment init script'''
+
+    logging.info('Building command from configuration')
+    cmds = ''
+
+    if 'commands' in config.keys():
+        logging.info('Adding commands to command string')
+        for c in config['commands']:
+            logging.debug(f'Adding "{c}" to command string')
+            cmds += '\n' + c
+
+    if 'modules' in config.keys():
+        logging.info('Adding "module load" commands to command string')
+        for m in config['modules']:
+            logging.debug(f'Adding "module load {m}" to command string')
+            cmds += '\nmodule load ' + m
+
+    if 'launch-command' in config.keys():
+        logging.info('Adding launch command "{config["launch-command"]}" to command string')
+        cmds += '\n' + config['launch-command']
+
+    return cmds
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+            description='Configure development environment based on predetermined configurations',
+            formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('--config', '-c', type=str,
+            help=f'Path to configuration file. Defaults to {default_config_locations[0]}',
+            default=os.path.expanduser(default_config_locations[0]))
+    parser.add_argument('--name', '-n', type=str, help='Configuration to execute', default='default')
+    parser.add_argument('--dump', '-d', help='Dump all possible configurations avialable', action='store_true')
+    parser.add_argument('--full-help', help='Print extra long help information', action='store_true')
+    parser.add_argument('-v', help='Verbose debugging information', action='store_true')
+    parser.add_argument('-vv', help='Extra verbose debugging information', action='store_true')
+    parser.add_argument('--debug', '-L', help='Extra verbose debugging information and dont execute in subshell', action='store_true')
+    args, unknown = parser.parse_known_args()
+
+    if args.full_help:
+        print(extra_help)
+        sys.exit(0)
+
+    if args.v:
+        logging.basicConfig(level=logging.INFO)
+
+    if args.debug or args.vv:
+        logging.basicConfig(level=logging.DEBUG)
+        logging.debug('Debugging information enabled')
+
+    logging.debug(f'Got known args: {args}')
+    logging.debug(f'Got unknown args: {unknown}')
+
+    # If the config file doesn't exist, check the default locations until we find one that does
+    config_file = os.path.abspath(args.config)
+    default_loc_i = 0
+    while not os.path.exists(config_file):
+        logging.debug(f"Couldn't find file {config_file}")
+        config_file = os.path.expanduser(default_config_locations[default_loc_i])
+        logging.debug(f'Checking {config_file}')
+        default_loc_i += 1
+
+    logging.debug(f'Using config file {config_file}')
+    # If we still don't have a valid config file after checking default locations,
+    # let's just give up.
+    if not os.path.exists(config_file):
+        raise ValueError(f'Configuration file {config_file.strip()} does not exist!'
+                ' Please pass `--config` flag or create either ~/.devenv.yaml or ~/.shell/devenv.yaml.')
+
+    configs = {
+            'default': {
+                  'launch-command': '',
+                  'modules': [],
+                  'commands': [],
+                },
+            }
+
+    # Add the configs from the config file to our internal dict of configs
+    with open(config_file, 'r') as f:
+        new_values = yaml.load(f)
+        logging.debug(f'Got the following values from config file:\n{pp.pformat(new_values)}')
+
+        if 'configs' in new_values.keys():
+            logging.info('Updating configurations from config file')
+            configs.update(new_values['configs'])
+
+        if 'aliases' in new_values.keys():
+            logging.info('Updating aliases from config file')
+            aliases.update(new_values['aliases'])
+
+    logging.debug('Checking for conflicts between aliases and configs')
+    if len(set(configs.keys()).intersection(aliases.keys())) > 0:
+        raise ValueError('Got conflict between configuration names and aliases!')
+
+    config_name = args.name
+    logging.debug(f'Checking for alias under name "{args.name}"')
+    if config_name in aliases.keys():
+        logging.info(f'Setting config name to alias "{args.name}" = "{aliases[args.name]}"')
+        config_name = aliases[config_name]
+
+    if unknown:
+        # If the user has passed additional flags, pass those through to the config
+        # currently being used.
+        passthrough_args = dict()
+        while unknown:
+            v = unknown.pop()
+            k = unknown.pop()
+            passthrough_args[k] = v
+        logging.warning(f'Ignoring the following extra args from cli:\n{pp.pformat(passthrough_args)}')
+        # configs[config_name].update(passthrough_args)
+
+    # Pretty print the configs if the --dump flag is passed
+    if args.dump:
+        logging.info('Dumping configurations')
+        pp.pprint({'configs': configs, 'aliases': aliases})
+        sys.exit(0)
+
+    # Otherwise, print out the command
+    logging.info('Building development environment command')
+    cmd = cfg_to_cmd(configs[config_name])
+    print(cmd)
+
+    if not args.debug:
+        logging.debug('Running command in subprocess')
+        os.system(cmd)
+
