@@ -195,6 +195,6 @@ if __name__ == '__main__':
     print(cmd)
 
     if not args.debug:
-        logging.debug('Running command in subprocess')
+        logging.info('Running command in subprocess')
         os.system(cmd)
 
