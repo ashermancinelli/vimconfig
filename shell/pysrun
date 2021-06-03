@@ -11,8 +11,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 # Default locations for config files
 default_config_locations = [
-        '~/.config/pysrun/config.yaml',
         '~/.pysrun.yaml',
+        '~/.config/pysrun/config.yaml',
         '/etc/pysrun.yaml',
         '/usr/etc/pysrun.yaml',
         ]
@@ -31,10 +31,11 @@ def dict_to_cmd(config: Dict[str, str]) -> str:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Submit Slurm job from base configuration')
     parser.add_argument('--config', '-c', type=str,
-            help='Path to configuration file. Defaults to {default_config_locations[0]}',
+            help=f'Path to configuration file. Defaults to {default_config_locations[0]}',
             default=os.path.expanduser(default_config_locations[0]))
     parser.add_argument('--name', '-n', type=str, help='Configuration to execute', default='default')
     parser.add_argument('--dump', '-d', help='Dump all possible configurations avialable', action='store_true')
+    parser.add_argument('--execute', '-e', help='Execute slurm command in subshell', action='store_false')
     parser.add_argument('--debug', '-L', help='Print debugging information', action='store_true')
     args, unknown = parser.parse_known_args()
 
@@ -111,4 +112,10 @@ if __name__ == '__main__':
 
     # Otherwise, print out the command
     logging.debug('Printing srun command')
-    print(dict_to_cmd(configs[config_name]))
+
+    cmd = dict_to_cmd(configs[config_name])
+    print(cmd)
+
+    if args.execute:
+        os.system(cmd)
+
