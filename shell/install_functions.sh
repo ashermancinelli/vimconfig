@@ -38,6 +38,7 @@ install_base()
       [[ -f ./shell/$f ]] && cp ./shell/$f $HOME/.shell/$f
     done
     cp ./shell/lldbinit ~/.lldbinit
+    cp ./shell/pysrun.yaml ~/.pysrun.yaml
 }
 
 install_bash()
