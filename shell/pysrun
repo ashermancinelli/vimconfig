@@ -6,7 +6,17 @@ import argparse
 import os
 from typing import Dict
 
+default_config_locations = [
+        '~/.config/pysrun/config.yaml',
+        '~/.shell/pysrun.yaml',
+        '~/.pysrun.yaml',
+        '/etc/pysrun.yaml'
+        '/usr/etc/pysrun.yaml'
+        ]
+
 def dict_to_cmd(config: Dict[str, str]) -> str:
+    '''Convert dictionary into srun command'''
+
     cmd = 'srun '
     for key, value in config.items():
         cmd += f'{key} {value} '
@@ -15,40 +25,55 @@ def dict_to_cmd(config: Dict[str, str]) -> str:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Submit Slurm job from base configuration')
     parser.add_argument('--config', '-c', type=str,
-            help='Path to configuration file. Defaults to ~/.pysrun.yaml',
-            default=os.path.expanduser('~/.pysrun.yaml'))
+            help='Path to configuration file. Defaults to {default_config_locations[0]}',
+            default=os.path.expanduser(default_config_locations[0]))
     parser.add_argument('--name', '-n', type=str, help='Configuration to execute', default='default')
     parser.add_argument('--dump', '-d', help='Dump all possible configurations avialable', action='store_true')
     args, unknown = parser.parse_known_args()
 
-    passthrough_args = dict()
-    while unknown:
-        v = unknown.pop()
-        k = unknown.pop()
-        passthrough_args[k] = v
+    # If the config file doesn't exist, check the default locations until we find one that does
+    config_file = os.path.abspath(args.config)
+    default_loc_i = 0
+    while not os.path.exists(config_file):
+        config_file = os.path.expanduser(default_config_locations[default_loc_i])
+        default_loc_i += 1
 
-    if not os.path.exists(os.path.abspath(args.config)):
+    # If we still don't have a valid config file after checking default locations,
+    # let's just give up.
+    if not os.path.exists(config_file):
         raise ValueError(f'Configuration file {args.config.strip()} does not exist!'
                 ' Please pass `--config` flag or create either ~/.pysrun.yaml or ~/.shell/pysrun.yaml.')
 
     configs = {
             'default': {
+                '-p': 'slurm'
                 '-N': '1',
                 '-n': 1,
                 '-t': '30:00',
                 },
             }
 
+    # Add the configs from the config file to our internal dict of configs
     with open(args.config, 'r') as f:
         new_values = yaml.load(f)
         configs.update(new_values['configs'])
 
+    # If the user has passed additional flags, pass those through to the config
+    # currently being used.
+    passthrough_args = dict()
+    while unknown:
+        v = unknown.pop()
+        k = unknown.pop()
+        passthrough_args[k] = v
+
     configs[args.name].update(passthrough_args)
 
+    # Pretty print the configs if the --dump flag is passed
     if args.dump:
         import pprint
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(configs)
         sys.exit(0)
 
+    # Otherwise, print out the command
     print(dict_to_cmd(configs[args.name]))
