@@ -133,12 +133,13 @@ if __name__ == '__main__':
         config_file = os.path.expanduser(default_config_locations[default_loc_i])
         logging.debug(f'Checking {config_file}')
         default_loc_i += 1
+    args.config = config_file
 
-    logging.debug(f'Using config file {config_file}')
+    logging.debug(f'Using config file {args.config}')
     # If we still don't have a valid config file after checking default locations,
     # let's just give up.
-    if not os.path.exists(config_file):
-        raise ValueError(f'Configuration file {config_file.strip()} does not exist!'
+    if not os.path.exists(args.config):
+        raise ValueError(f'Configuration file {args.config.strip()} does not exist!'
                 ' Please pass `--config` flag or create either ~/.devenv.yaml or ~/.shell/devenv.yaml.')
 
     configs = {
@@ -150,7 +151,7 @@ if __name__ == '__main__':
             }
 
     # Add the configs from the config file to our internal dict of configs
-    with open(config_file, 'r') as f:
+    with open(args.config, 'r') as f:
         new_values = yaml.load(f)
         logging.debug(f'Got the following values from config file:\n{pp.pformat(new_values)}')
 
@@ -171,17 +172,13 @@ if __name__ == '__main__':
     if config_name in aliases.keys():
         logging.info(f'Setting config name to alias "{args.name}" = "{aliases[args.name]}"')
         config_name = aliases[config_name]
+    args.name = config_name
 
     if unknown:
         # If the user has passed additional flags, pass those through to the config
         # currently being used.
-        passthrough_args = dict()
-        while unknown:
-            v = unknown.pop()
-            k = unknown.pop()
-            passthrough_args[k] = v
-        logging.warning(f'Ignoring the following extra args from cli:\n{pp.pformat(passthrough_args)}')
-        # configs[config_name].update(passthrough_args)
+        logging.warning(f'Ignoring the following extra args from cli:\n{pp.pformat(unknown)}')
+        # configs[args.name].update(passthrough_args)
 
     # Pretty print the configs if the --dump flag is passed
     if args.dump:
@@ -191,10 +188,12 @@ if __name__ == '__main__':
 
     # Otherwise, print out the command
     logging.info('Building development environment command')
-    cmd = cfg_to_cmd(configs[config_name])
-    print(cmd)
+    cmd = cfg_to_cmd(configs[args.name])
+
+    if args.v:
+        print(cmd)
 
     if not args.debug:
-        logging.info('Running command in subprocess')
+        logging.debug('Running command in subprocess')
         os.system(cmd)
 
