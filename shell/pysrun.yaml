@@ -1,13 +1,25 @@
 configs:
+  inewell:
+    -A: exasgd
+    -p: newell
+    -N: 1
+    -n: 2
+    -t: '30:00'
+    --pty: bash
   newell:
     -A: exasgd
     -p: newell
     -N: 1
     -n: 2
-    -t: 30:00
+    -t: '30:00'
   marianas:
     -A: exasgd
     -p: marianas
     -N: 1
     -n: 2
-    -t: 30:00
+    -t: '30:00'
+
+aliases:
+  in: inewell
+  n: newell
+  m: marianas
