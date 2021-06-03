@@ -30,6 +30,7 @@ aliases:
 
 The commands are built in the following order:
 
+    0. Exported variables from command line if --export flag is passed
     1. Commands
     2. Modules
     3. `srun` command
@@ -69,6 +70,14 @@ default_config_locations = [
         '/usr/etc/devenv.yaml',
         ]
 
+configs = {
+        'default': {
+              'launch-command': '',
+              'modules': [],
+              'commands': [],
+            },
+        }
+
 # Default aliases for configurations
 aliases = dict()
 
@@ -96,62 +105,27 @@ def cfg_to_cmd(config: Dict[str, str]) -> str:
 
     return cmds
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-            description='Configure development environment based on predetermined configurations',
-            formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('--config', '-c', type=str,
-            help=f'Path to configuration file. Defaults to {default_config_locations[0]}',
-            default=os.path.expanduser(default_config_locations[0]))
-    parser.add_argument('--name', '-n', type=str, help='Configuration to execute', default='default')
-    parser.add_argument('--dump', '-d', help='Dump all possible configurations avialable', action='store_true')
-    parser.add_argument('--full-help', help='Print extra long help information', action='store_true')
-    parser.add_argument('-v', help='Verbose debugging information', action='store_true')
-    parser.add_argument('-vv', help='Extra verbose debugging information', action='store_true')
-    parser.add_argument('--debug', '-L', help='Extra verbose debugging information and dont execute in subshell', action='store_true')
-    args, unknown = parser.parse_known_args()
-
-    if args.full_help:
-        print(extra_help)
-        sys.exit(0)
-
-    if args.v:
-        logging.basicConfig(level=logging.INFO)
-
-    if args.debug or args.vv:
-        logging.basicConfig(level=logging.DEBUG)
-        logging.debug('Debugging information enabled')
-
-    logging.debug(f'Got known args: {args}')
-    logging.debug(f'Got unknown args: {unknown}')
-
+def check_config_file(args) -> None:
     # If the config file doesn't exist, check the default locations until we find one that does
-    config_file = os.path.abspath(args.config)
+    config_file = os.path.abspath(args.config_file)
     default_loc_i = 0
     while not os.path.exists(config_file):
         logging.debug(f"Couldn't find file {config_file}")
         config_file = os.path.expanduser(default_config_locations[default_loc_i])
         logging.debug(f'Checking {config_file}')
         default_loc_i += 1
-    args.config = config_file
+    args.config_file = config_file
 
-    logging.debug(f'Using config file {args.config}')
+    logging.debug(f'Using config file {args.config_file}')
     # If we still don't have a valid config file after checking default locations,
     # let's just give up.
-    if not os.path.exists(args.config):
-        raise ValueError(f'Configuration file {args.config.strip()} does not exist!'
+    if not os.path.exists(args.config_file):
+        raise ValueError(f'Configuration file {args.config_file.strip()} does not exist!'
                 ' Please pass `--config` flag or create either ~/.devenv.yaml or ~/.shell/devenv.yaml.')
 
-    configs = {
-            'default': {
-                  'launch-command': '',
-                  'modules': [],
-                  'commands': [],
-                },
-            }
-
+def merge_config_file(args) -> None:
     # Add the configs from the config file to our internal dict of configs
-    with open(args.config, 'r') as f:
+    with open(args.config_file, 'r') as f:
         new_values = yaml.load(f)
         logging.debug(f'Got the following values from config file:\n{pp.pformat(new_values)}')
 
@@ -174,10 +148,73 @@ if __name__ == '__main__':
         config_name = aliases[config_name]
     args.name = config_name
 
-    if unknown:
+def add_exported_variables(args) -> None:
+    if not args.export:
+        return
+    
+    logging.info('Adding exported variables')
+    exported_vars = args.export.split(',')
+
+    for var in exported_vars:
+        logging.debug(f'Exporting variable "{var}"')
+        
+        # We're setting the variable via cli
+        if '=' in var:
+            key, value = var.split('=')
+            logging.debug(f'Setting variable {key} to {value} in target environment via cli')
+
+        # We're exporting the variable from host environment
+        else:
+            key = var
+            value = os.environ[key]
+            logging.debug(f'Setting variable {key} to {value} in target environment via variable passthrough')
+
+        configs[args.name]['commands'].insert(0, f'export {key}={value}')
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+            description='Configure development environment based on predetermined configurations',
+            formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('--config-file', '-c', type=str,
+            help=f'Path to configuration file. Defaults to {default_config_locations[0]}',
+            default=os.path.expanduser(default_config_locations[0]))
+    parser.add_argument('--name', '-n', type=str, help='Configuration to execute', default='default')
+    parser.add_argument('--export', '-e', type=str,
+        help='Environment variables to set in target environment of the form \n'
+        '--export var1=var,var2 where var1 is set to "var", and var2 is set to\n'
+        'the value of var2 in host environment.', default=None)
+    parser.add_argument('--dump', '-d', help='Dump all possible configurations avialable', action='store_true')
+    parser.add_argument('--full-help', help='Print extra long help information', action='store_true')
+    parser.add_argument('-v', help='Verbose debugging information', action='store_true')
+    parser.add_argument('-vv', help='Extra verbose debugging information', action='store_true')
+    parser.add_argument('--debug', '-L',
+        help='Extra verbose debugging information and dont execute in subshell', action='store_true')
+    args, unknown_args = parser.parse_known_args()
+
+    if args.full_help:
+        print(extra_help)
+        sys.exit(0)
+
+    if args.v:
+        logging.basicConfig(level=logging.INFO)
+
+    if args.debug or args.vv:
+        logging.basicConfig(level=logging.DEBUG)
+        logging.debug('Debugging information enabled')
+
+    logging.debug(f'Got known args: {args}')
+    logging.debug(f'Got unknown args: {unknown_args}')
+
+    check_config_file(args)
+
+    merge_config_file(args)
+
+    add_exported_variables(args)
+
+    if unknown_args:
         # If the user has passed additional flags, pass those through to the config
         # currently being used.
-        logging.warning(f'Ignoring the following extra args from cli:\n{pp.pformat(unknown)}')
+        logging.warning(f'Ignoring the following extra args from cli:\n{pp.pformat(unknown_args)}')
         # configs[args.name].update(passthrough_args)
 
     # Pretty print the configs if the --dump flag is passed
@@ -190,10 +227,9 @@ if __name__ == '__main__':
     logging.info('Building development environment command')
     cmd = cfg_to_cmd(configs[args.name])
 
-    if args.v:
-        print(cmd)
+    logging.info(f'Launching environment with command: \n%s' % cmd.strip())
 
     if not args.debug:
-        logging.debug('Running command in subprocess')
+        logging.info('Running command in subprocess')
         os.system(cmd)
 
