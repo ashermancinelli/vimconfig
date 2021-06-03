@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+import yaml
+import sys
+import argparse
+import os
+from typing import Dict
+
+def dict_to_cmd(config: Dict[str, str]) -> str:
+    cmd = 'srun '
+    for key, value in config.items():
+        cmd += f'{key} {value} '
+    return cmd
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Submit Slurm job from base configuration')
+    parser.add_argument('--config', '-c', type=str,
+            help='Path to configuration file. Defaults to ~/.pysrun.yaml',
+            default=os.path.expanduser('~/.pysrun.yaml'))
+    parser.add_argument('--name', '-n', type=str, help='Configuration to execute', default='default')
+    parser.add_argument('--dump', '-d', help='Dump all possible configurations avialable', action='store_true')
+    args, unknown = parser.parse_known_args()
+
+    passthrough_args = dict()
+    while unknown:
+        v = unknown.pop()
+        k = unknown.pop()
+        passthrough_args[k] = v
+
+    if not os.path.exists(os.path.abspath(args.config)):
+        raise ValueError(f'Configuration file {args.config.strip()} does not exist!'
+                ' Please pass `--config` flag or create either ~/.pysrun.yaml or ~/.shell/pysrun.yaml.')
+
+    configs = {
+            'default': {
+                '-N': '1',
+                '-n': 1,
+                '-t': '30:00',
+                },
+            }
+
+    with open(args.config, 'r') as f:
+        new_values = yaml.load(f)
+        configs.update(new_values['configs'])
+
+    configs[args.name].update(passthrough_args)
+
+    if args.dump:
+        import pprint
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(configs)
+        sys.exit(0)
+
+    print(dict_to_cmd(configs[args.name]))
