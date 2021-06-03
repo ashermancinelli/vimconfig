@@ -106,7 +106,7 @@ if __name__ == '__main__':
     # Pretty print the configs if the --dump flag is passed
     if args.dump:
         logging.debug('Dumping configurations')
-        pp.pprint(configs)
+        pp.pprint({'configs': configs, 'aliases': aliases})
         sys.exit(0)
 
     # Otherwise, print out the command
