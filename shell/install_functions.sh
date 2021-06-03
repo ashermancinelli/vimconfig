@@ -38,7 +38,6 @@ install_base()
       [[ -f ./shell/$f ]] && cp ./shell/$f $HOME/.shell/$f
     done
     cp ./shell/lldbinit ~/.lldbinit
-    cp ./shell/.devenv.yaml ~/.devenv.yaml
 }
 
 install_bash()
