@@ -11,6 +11,8 @@ use Getopt::Std;
 use File::Slurp;
 use Data::Dumper::Concise;
 use JSON;
+use YAML::XS;
+local $YAML::XS::Boolean = "JSON::PP";
 
 my %opts;
 
@@ -25,13 +27,13 @@ Usage:
   pw [options]
 
   -h            help
-  -i		        interactive
-  -e		        edit
+  -i            interactive
+  -e            edit
   -E            encrypt a file
-  -d		        dump
-  -n		        create new password
+  -d            dump
+  -n            create new password
   -g <key>      get a key
-  -f <path>		  path to data
+  -f <path>     path to data
   -r <regex>    create new password from regex
 
 ----------------------------------------------------------------
@@ -49,10 +51,6 @@ if (defined $opts{n}) {
   exit;
 }
 
-if (not defined $opts{f}) {
-  $opts{f} = $ENV{PWFILE};
-}
-
 if (defined $opts{E}) {
   my $raw = read_file($opts{E});
   my $file = $opts{E};
@@ -61,16 +59,29 @@ if (defined $opts{E}) {
   exit;
 }
 
-die("File not found!") unless defined $opts{f} and -f $opts{f};
+if (not (defined $opts{f} and -f $opts{f}))
+{
+  $opts{f} = "/Users/manc568/Google Drive/Finance/pw.enc";
+}
 
 my $raw = read_file($opts{f});
 my @lines = decrypt($raw);
-my $decoded = decode_json(join '', @lines);
+
+# To use YAML
+my $decoded = Load(join '', @lines);
+
+# To use JSON
+# my $decoded = decode_json(join '', @lines);
 
 # Get
 if (defined $opts{g}) {
-  if (defined $decoded->{$opts{g}}) {
-    print Dumper $decoded->{$opts{g}};
+  my $dict = $decoded;
+  my @args = split /\./, $opts{g};
+  for my $arg (@args) {
+    $dict = $dict->{$arg};
+  }
+  if (defined $dict) {
+    print Dumper $dict;
   }
   else {
     say "Key does not exist!";
