@@ -35,7 +35,7 @@ function! MyVComment()
         let top_com="'''"
         let bottom_com="'''"
         let wrapping_comment=1
-    elseif &filetype ==# 'sh' || &filetype ==# 'make' || &filetype ==# 'perl' || &filetype ==# 'cmake'
+    elseif &filetype ==# 'sh' || &filetype ==# 'make' || &filetype ==# 'perl' || &filetype ==# 'cmake' || &filetype ==# 'dockerfile' || &filetype ==# 'yaml'
         let wrapping_comment=0
         let sep='#'
     elseif &filetype ==# 'vim'
