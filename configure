@@ -30,7 +30,7 @@ EOD
 [ $# -eq 0 ] && usage
 
 default=0
-while getopts "di:r:p:s:" arg
+while getopts "hdi:r:p:s:" arg
 do
   if [[ $default == 1 ]]; then break; fi
 
@@ -64,9 +64,11 @@ do
       }' ./shell/install_functions.sh
       exit
       ;;
-    ?) usage;;
+    h|?) usage; exit;;
   esac
 done
+
+echo "Installs: ${installs[@]}"
 
 for install in $installs
 do
