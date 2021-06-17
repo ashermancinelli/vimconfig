@@ -46,7 +46,8 @@ static void get_dir(char* dir)
     char* rest_it = dir + strlen(home);
 
     /* Copy remainder of path to _dir_ */
-    for (int i=0; i < strlen(dir) - strlen(home); i++)
+    int i;
+    for (i=0; i < strlen(dir) - strlen(home); i++)
     {
       *dir_it++ = *rest_it++;
     }
@@ -79,7 +80,8 @@ static void get_current_branch(char* branch)
   fgets(out, sizeof(out), fp);
   pclose(fp);
   strcpy(branch, out);
-  for (char* i = branch; i != (branch+strlen(branch)); i++)
+  char* i;
+  for (i = branch; i != (branch+strlen(branch)); i++)
   {
     if (*i == '\n')
     {
