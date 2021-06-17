@@ -46,16 +46,11 @@ install_bash()
         git clone https://github.com/ohmybash/oh-my-bash.git $HOME/.oh-my-bash
 
     (
-      cd $HOME/.oh-my-bash
-      if [ `cd $HOME/.oh-my-bash && git remote -v | grep asher | wc -l` -eq 0 ]
-      then
-        echo Adding fork of oh-my-bash...
-        git remote add personal git@github.com:ashermancinelli/oh-my-bash.git
-        git fetch --all
-        git checkout my-themes
-      fi
+      cd ./ps1
+      make
+      cp ./ps1 $HOME/.shell/
     )
-    cat ./shell/ohmybashrc.sh >> $rc
+    # cat ./shell/ohmybashrc.sh >> $rc
     cat ./shell/gitconfig > ~/.gitconfig
 }
 

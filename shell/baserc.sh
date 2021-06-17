@@ -73,3 +73,9 @@ source $HOME/.shell/aliases.sh
 
 export PYTHONSTARTUP=$HOME/.shell/startup.py
 export PATH=$PATH:$HOME/.shell
+
+__my_ps1()
+{
+  PS1=`~/.shell/ps1`
+}
+export PROMPT_COMMAND=__my_ps1
