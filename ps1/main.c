@@ -57,13 +57,16 @@ static void get_dir(char* dir)
 
 static int is_in_repo()
 {
-  DIR* d = opendir(".git");
-  if (ENOENT == errno)
+  char cmd[BUFSZ] = "git rev-parse --git-dir 2>&1 >/dev/null";
+  FILE* fp = popen(cmd, "r");
+  if (!fp)
   {
-    return 0;
+    perror("fopen");
+    exit(EXIT_FAILURE);
   }
-  closedir(d);
-  return 1;
+  int ec;
+  ec = pclose(fp);
+  return ec == 0;
 }
 
 static void get_current_branch(char* branch)
