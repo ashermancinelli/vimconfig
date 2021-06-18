@@ -48,7 +48,7 @@ install_bash()
     (
       cd ./ps1
       make
-      cp ./ps1 $HOME/.shell/
+      cp ./ps1-* $HOME/.shell/
     )
     # cat ./shell/ohmybashrc.sh >> $rc
     cat ./shell/gitconfig > ~/.gitconfig
