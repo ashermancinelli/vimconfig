@@ -24,6 +24,12 @@ alias gg='git log --graph --color --oneline'
 alias gd='git diff --color'
 alias ge='git-explore'
 
+# Spack aliases
+alias sce='spack config edit'
+alias scf='spack concretize -f'
+alias sel='spack env list'
+alias si='spack install'
+
 # Module aliases
 alias ml='module load'
 alias ms='module list'
