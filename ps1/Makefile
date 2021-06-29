@@ -1,5 +1,6 @@
 
 ARCH = $(shell arch)
+
 .PHONY: all
 all:
 	$(CC) main.c -o ps1

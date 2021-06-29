@@ -26,6 +26,13 @@ static void get_machine_name(char* name)
 
 static void get_user_name(char* name)
 {
+  char* slurm_id = getenv("SLURM_JOB_ID");
+  if (slurm_id != NULL)
+  {
+    strcpy(name, "job #");
+    strcat(name, slurm_id);
+    return;
+  }
   getlogin_r(name, BUFSZ);
 }
 
