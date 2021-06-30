@@ -24,7 +24,7 @@ gentags()
       fi
     fi
   done
-  if [[ -z "$ctags_path" ]]; then echo 'Could not find exuberant ctags...'; exit 1; fi
+  if [[ -z "$ctags_path" ]]; then echo 'Could not find exuberant ctags...'; return 1; fi
   set -x
   $ctags_path/ctags -R --c++-kinds=+p --extra=+q --fields=+iaS $(pwd)
   set +x
