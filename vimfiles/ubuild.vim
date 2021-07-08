@@ -34,12 +34,23 @@ function! UBuild_Sync(...)
     return 1
   endif
 
-  let rsync_command = 'rsync -aP ' . g:ubuild_local_directory . ' '
-    \ . g:ubuild_remote . ':' . g:ubuild_remote_directory . '\n'
+  let rsync_exclude = ''
+  if exists("g:ubuild_sync_ignore")
+    if len(g:ubuild_sync_ignore) > 0
+      let rsync_exclude = ' --exclude=' .
+        \join(g:ubuild_sync_ignore, ' --exclude=') . ' '
+    endif
+  endif
+
+  let rsync_command = 'rsync -aP ' . rsync_exclude . g:ubuild_local_directory . ' '
+    \ . g:ubuild_remote . ':' . g:ubuild_remote_directory
 
   echom 'Syncing to '. g:ubuild_remote
 
-  let t = term_start('bash', { "term_finish": "close" })
+  let t = term_start('bash', {
+    \'term_finish': 'close',
+    \'term_rows': 10,
+  \})
   call term_sendkeys(t, rsync_command . "\<cr>exit\<cr>")
 
 endfunction
@@ -52,7 +63,13 @@ function! UBuild_Build(...)
 
   let build_command = join(g:ubuild_build_commands, "\<cr>") . "\<cr>"
 
-  let t = term_start('bash', { "term_finish": "close" })
+  exe "$tabnew"
+
+  let t = term_start('bash', { 
+    \"term_finish": "close",
+    \"curwin": 1,
+  \})
+
   call term_sendkeys(t, build_command)
 
 endfunction
@@ -65,7 +82,13 @@ function! UBuild_Test(...)
 
   let test_command = join(g:ubuild_test_commands, "\<cr>") . "\<cr>"
 
-  let t = term_start('bash', { "term_finish": "close" })
+  exe "$tabnew"
+
+  let t = term_start('bash', { 
+    \"term_finish": "close",
+    \"curwin": 1,
+  \})
+
   call term_sendkeys(t, test_command)
 
 endfunction
