@@ -64,6 +64,7 @@ source ~/.vim/autoclose.vim
 " The rest of my configurations
 source ~/.vim/remappings.vim
 source ~/.vim/my_commenter.vim
+source ~/.vim/ubuild.vim
 set tags+=~/.vim/tags
 
 " Highlight keywords from CUDA Runtime API
