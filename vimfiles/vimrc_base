@@ -108,6 +108,10 @@ colorscheme sonokai
 " Enable transparency in vim
 hi Normal guibg=NONE ctermbg=NONE
 
+if has("gui_macvim")
+  set transparency=20
+endif
+
 " Correctly set codes to italicize text
 set t_ZH=[3m
 set t_ZR=[23m
