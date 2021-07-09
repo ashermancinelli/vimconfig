@@ -131,7 +131,7 @@ install_vim()
         cp templates/$i $HOME/.vim/templates/$i
     done
 
-    for i in $(ls vimfiles/*.vim)
+    for i in $(ls vimfiles/*)
     do
       cp $i $HOME/.vim/$(basename $i)
     done
