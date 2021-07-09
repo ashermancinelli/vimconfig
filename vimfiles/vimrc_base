@@ -111,6 +111,8 @@ hi Normal guibg=NONE ctermbg=NONE
 
 if has("gui_macvim")
   set transparency=20
+  set guifont=Menlo-Regular:h20
+  set lines=300 columns=200
 endif
 
 " Correctly set codes to italicize text
