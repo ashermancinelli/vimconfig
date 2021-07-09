@@ -1,23 +1,36 @@
 
+let g:true = 1
+let g:false = 0
+
 let g:_ubuild_term_id = -1
 let g:_ubuild_tab_id = -1
 
-" Wraps private variables into an object of handles
-function! UBuild_CreateTabbedTerminalObject()
+" Wraps private variables into an object of handles.
+"
+" \returns object with keys _terminal_handle_ and _tab_id_
+function! ubuild#create_tabbed_terminal_object()
   let terminal_handle = g:_ubuild_term_id
   let tab_id = g:_ubuild_tab_id
-  echom 'Creating tabbed term obj'
-  echom 'tab_id = ' . tab_id
-  echom 'terminal_handle = ' . terminal_handle
   return {
     \ 'terminal_handle': terminal_handle,
     \ 'tab_id': tab_id,
   \ }
 endfunction
 
+" Create a _.ubuild.json_ file in the current working directory using the
+" template configuration file installed alongside ubuild.
+function! ubuild#create_config_template()
+  let config_file = ubuild#get_config_file(g:false)
+  let template_path = getenv('HOME') . "/.vim/ubuild-template.json"
+  let config_template = readfile(template_path)
+  call writefile(config_template, config_file)
+endfunction
+
 " Create a terminal in a new window and return an object with fields needed to
 " operate on them.
-function! UBuild_GetTabbedTerminal(tab_name)
+"
+" \param tab_name[in] string Name to be used for the newly created tab
+function! ubuild#get_tabbed_terminal(tab_name)
 
   " Get current tab number
   let start_tab = tabpagenr()
@@ -27,10 +40,10 @@ function! UBuild_GetTabbedTerminal(tab_name)
   let tab_id = tabpagenr('$')
 
   " Create the terminal in the new tab, taking up the entire window
-  let term_handle = term_start('bash', {
+  rightbelow let term_handle = term_start('bash', {
         \ 'term_finish': 'close',
-        \ 'curwin': 1,
         \ 'term_name': a:tab_name,
+        \ 'term_rows': 8,
         \ })
 
   " Return to original tab while the commands run in the background
@@ -39,17 +52,28 @@ function! UBuild_GetTabbedTerminal(tab_name)
   return { 'terminal_handle': term_handle, 'tab_id': tab_id }
 endfunction
 
-" Ensure that a file _.ubuild.vim_ exists in the current working directory and 
-" that all the needed variables are set.
+" Get path to configuration file.
 "
-" \returns 1 on failure, 0 on success
-function! UBuild_VerifyConfig()
+" \param check[in] bool Should check for existence of config file?
+function! ubuild#get_config_file(...)
   let config = getcwd() . '/.ubuild.json'
 
-  if !filereadable(config)
-    echom 'Could not find config file ' . config
-    return 1
+  let check = 1
+  if a:0 > 0
+    let check = a:1
   endif
+
+  if check && !filereadable(config)
+    throw 'Could not find config file ' . config
+  endif
+
+  return config
+endfunction
+
+" Ensure that a file _.ubuild.vim_ exists in the current working directory and 
+" that all the needed variables are set.
+function! ubuild#verify_config()
+  let config = ubuild#get_config_file()
 
   let json_string = join(readfile(config))
   let config = json_decode(json_string)
@@ -66,8 +90,7 @@ function! UBuild_VerifyConfig()
 
   for v in required_vars
     if !has_key(config, v)
-      echom "Could not find required UBuild parameter '".v."'."
-      return 1
+      throw "Could not find required UBuild parameter '".v."'."
     endif
   endfor
 
@@ -80,17 +103,14 @@ function! UBuild_VerifyConfig()
   let g:ubuild_test_commands = config["test_commands"]
   let g:ubuild_sync_ignore = config["sync_ignore"]
 
-  return 0
 endfunction
 
 " Sync the source directory with the remote directory in a new window.
-function! UBuild_Sync(...)
+function! ubuild#sync()
 
-  if UBuild_VerifyConfig() == 1
-    return 1
-  endif
+  call ubuild#verify_config()
 
-  let term_handles = UBuild_GetTabbedTerminal('UBuild Sync')
+  let term_handles = ubuild#get_tabbed_terminal('UBuild Sync')
   let term_id = term_handles.terminal_handle
 
   let rsync_exclude = ''
@@ -114,19 +134,21 @@ function! UBuild_Sync(...)
 
 endfunction
 
-" Static variables for UBuild_Build
+" Static variables for ubuild#build
 let g:_ubuild_persistent_term_id = -1
 let g:_ubuild_persistent_tab_id = -1
 
-function! UBuild_SendCommandsToPersistentTerminal(title, commands)
-  if UBuild_VerifyConfig() == 1
-    return 1
-  endif
+" Send commands to existing terminal used by ubuild.
+"
+" \param title[in] string Title of tab while command is running.
+" \param commands[in] list[string] Commands to be run in the terminal instance
+function! ubuild#send_commands_to_persistent_terminal(title, commands)
+  call ubuild#verify_config()
 
   let command_string = join(a:commands, "\<cr>") . "\<cr>"
 
   if g:_ubuild_persistent_term_id == -1 || g:_ubuild_persistent_tab_id == -1
-    let term_handles = UBuild_GetTabbedTerminal('UBuild')
+    let term_handles = ubuild#get_tabbed_terminal('UBuild')
     let g:_ubuild_persistent_term_id = term_handles.terminal_handle
     let g:_ubuild_persistent_tab_id = term_handles.tab_id
   endif
@@ -139,52 +161,47 @@ function! UBuild_SendCommandsToPersistentTerminal(title, commands)
 
   call term_wait(term_id)
 
-  return 0
-
 endfunction
 
-function! UBuild_Connect()
-  if UBuild_VerifyConfig() == 1
-    return 1
-  endif
-  return UBuild_SendCommandsToPersistentTerminal(
+" Connect to remote build server and instantiate terminal for configure,
+" build, and test commands to use.
+function! ubuild#connect()
+  call ubuild#verify_config()
+  ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Connect', 
         \ g:ubuild_connect_commands
         \ )
 endfunction
 
-function! UBuild_Configure()
-  if UBuild_VerifyConfig() == 1
-    return 1
-  endif
-  return UBuild_SendCommandsToPersistentTerminal(
+" Configure build in persistent terminal
+function! ubuild#configure()
+  call ubuild#verify_config()
+  ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Configure', 
         \ g:ubuild_configure_commands
         \ )
 endfunction
 
-function! UBuild_Build()
-  if UBuild_VerifyConfig() == 1
-    return 1
-  endif
-  return UBuild_SendCommandsToPersistentTerminal(
+" Run build commands in persistent terminal
+function! ubuild#build()
+  call ubuild#verify_config()
+  ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Build', 
         \ g:ubuild_build_commands
         \ )
 endfunction
 
-function! UBuild_Test()
-  if UBuild_VerifyConfig() == 1
-    return 1
-  endif
-  return UBuild_SendCommandsToPersistentTerminal(
+" Run test commands in persistent terminal
+function! ubuild#test()
+  call ubuild#verify_config()
+  ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Test', 
         \ g:ubuild_test_commands
         \ )
 endfunction
 
-nnoremap <c-x><c-s> :call UBuild_Sync()<cr>
-nnoremap <c-x><c-a> :call UBuild_Connect()<cr>
-nnoremap <c-x><c-c> :call UBuild_Configure()<cr>
-nnoremap <c-x><c-b> :call UBuild_Build()<cr>
-nnoremap <c-x><c-t> :call UBuild_Test()<cr>
+nnoremap <c-x><c-s> :call ubuild#sync()<cr>
+nnoremap <c-x><c-a> :call ubuild#connect()<cr>
+nnoremap <c-x><c-c> :call ubuild#configure()<cr>
+nnoremap <c-x><c-b> :call ubuild#build()<cr>
+nnoremap <c-x><c-t> :call ubuild#test()<cr>
