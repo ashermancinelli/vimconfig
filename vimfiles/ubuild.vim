@@ -183,8 +183,8 @@ endfunction
 " Connect to remote build server and instantiate terminal for configure,
 " build, and test commands to use.
 function! ubuild#connect()
-  echo 'Connecting to ' . g:ubuild_remote
   call ubuild#verify_config()
+  echo 'Connecting to ' . g:ubuild_remote
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Connect', 
         \ g:ubuild_connect_commands
