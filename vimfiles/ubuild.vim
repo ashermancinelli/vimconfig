@@ -30,7 +30,7 @@ endfunction
 " Create a _.ubuild.json_ file in the current working directory using the
 " template configuration file installed alongside ubuild.
 function! ubuild#create_config_template()
-  let config_file = ubuild#get_config_file(g:false)
+  let config_file = ubuild#get_config_file(0)
   let template_path = getenv('HOME') . "/.vim/ubuild-template.json"
   let config_template = readfile(template_path)
   call writefile(config_template, config_file)
@@ -156,6 +156,8 @@ function! ubuild#sync()
 
   exe "tabnext " . init_tab
 
+  call ubuild#popup_notification('Done syncing!')
+
 endfunction
 
 " Send commands to existing terminal used by ubuild.
@@ -187,6 +189,7 @@ function! ubuild#connect()
         \ 'UBuild Connect', 
         \ g:ubuild_connect_commands
         \ )
+  call ubuild#popup_notification('Done connecting!')
 endfunction
 
 " Configure build in persistent terminal
@@ -197,6 +200,7 @@ function! ubuild#configure()
         \ 'UBuild Configure', 
         \ g:ubuild_configure_commands
         \ )
+  call ubuild#popup_notification('Done configuring!')
 endfunction
 
 " Run build commands in persistent terminal
@@ -207,6 +211,7 @@ function! ubuild#build()
         \ 'UBuild Build', 
         \ g:ubuild_build_commands
         \ )
+  call ubuild#popup_notification('Done building!')
 endfunction
 
 " Run test commands in persistent terminal
@@ -217,10 +222,73 @@ function! ubuild#test()
         \ 'UBuild Test', 
         \ g:ubuild_test_commands
         \ )
+  call ubuild#popup_notification('Done testing!')
 endfunction
 
-nnoremap <c-x><c-s> :call ubuild#sync()<cr>
-nnoremap <c-x><c-a> :call ubuild#connect()<cr>
-nnoremap <c-x><c-c> :call ubuild#configure()<cr>
-nnoremap <c-x><c-b> :call ubuild#build()<cr>
-nnoremap <c-x><c-t> :call ubuild#test()<cr>
+let g:_ubuild_notification_messages = [
+      \ 'Syncing...',
+      \ 'Connecting...',
+      \ 'Configuring...',
+      \ 'Building...',
+      \ 'Testing...',
+      \ 'Syncing and building',
+      \ ]
+
+let g:_ubuild_popup_menu_options = [
+      \ '[s] Sync',
+      \ '[a] Connect',
+      \ '[c] Configure',
+      \ '[b] Build',
+      \ '[t] Test',
+      \ '[z] Sync and build',
+      \ ]
+
+function! ubuild#popup_menu()
+  call popup_menu(g:_ubuild_popup_menu_options, #{
+        \ callback: 'ubuild#menu_handler',
+        \ })
+endf
+
+function! ubuild#popup_notification(message)
+  call popup_notification(a:message, #{ 
+        \ col: 1,
+        \ time: 3000,
+        \ })
+endf
+
+function! ubuild#menu_handler(id, result)
+  echom "id=".a:id." result=".a:result
+  call ubuild#popup_notification(g:_ubuild_notification_messages[a:result-1])
+
+  if a:result == 1
+    call ubuild#sync()
+  endif
+
+  if a:result == 2
+    call ubuild#connect()
+  endif
+
+  if a:result == 3
+    call ubuild#configure()
+  endif
+
+  if a:result == 4
+    call ubuild#build()
+  endif
+
+  if a:result == 5
+    call ubuild#test()
+  endif
+
+  if a:result == 6
+    call ubuild#sync()
+    call ubuild#build()
+  endif
+endf
+
+nnoremap <c-u><c-s> :call ubuild#sync()<cr>
+nnoremap <c-u><c-a> :call ubuild#connect()<cr>
+nnoremap <c-u><c-c> :call ubuild#configure()<cr>
+nnoremap <c-u><c-b> :call ubuild#build()<cr>
+nnoremap <c-u><c-t> :call ubuild#test()<cr>
+nnoremap <c-u><c-u> :call ubuild#popup_menu()<cr>
