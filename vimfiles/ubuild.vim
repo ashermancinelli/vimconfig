@@ -240,7 +240,6 @@ let g:_ubuild_popup_menu_options = [
 function! ubuild#popup_menu()
   call popup_menu(g:_ubuild_popup_menu_options, #{
         \ callback: 'ubuild#menu_handler',
-        \ filter: 'ubuild#menu_filter',
         \ })
 endf
 
