@@ -229,17 +229,18 @@ let g:_ubuild_notification_messages = [
       \ ]
 
 let g:_ubuild_popup_menu_options = [
-      \ '[s] Sync',
-      \ '[a] Connect',
-      \ '[c] Configure',
-      \ '[b] Build',
-      \ '[t] Test',
-      \ '[z] Sync and build',
+      \ 'Sync',
+      \ 'Connect',
+      \ 'Configure',
+      \ 'Build',
+      \ 'Test',
+      \ 'Sync and build',
       \ ]
 
 function! ubuild#popup_menu()
   call popup_menu(g:_ubuild_popup_menu_options, #{
         \ callback: 'ubuild#menu_handler',
+        \ filter: 'ubuild#menu_filter',
         \ })
 endf
 
