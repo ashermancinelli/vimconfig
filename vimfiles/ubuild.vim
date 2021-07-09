@@ -1,8 +1,9 @@
 
-let g:true = 1
-let g:false = 0
 
-let g:_ubuild_term_id = -1
+" Static variables for ubuild#
+if !exists("g:_ubuild_persistent_term_id")
+  let g:_ubuild_persistent_term_id = -1
+endif
 
 " Call term_sendkeys and wait on results before continuing
 "
@@ -20,7 +21,7 @@ endfunction
 "
 " \returns object with keys _terminal_handle_
 function! ubuild#create_tabbed_terminal_object()
-  let terminal_handle = g:_ubuild_term_id
+  let terminal_handle = g:_ubuild_persistent_term_id
   return {
     \ 'terminal_handle': terminal_handle,
   \ }
@@ -39,10 +40,17 @@ endfunction
 " operate on them.
 "
 " \param tab_name[in] string Name to be used for the newly created tab
-function! ubuild#get_tabbed_terminal(tab_name)
+" \param minimal[in] bool Should use minimal shell?
+function! ubuild#get_tabbed_terminal(tab_name, ...)
+
+  let shell = &shell
+
+  if a:0 > 0
+    let shell = 'env -i ' . &shell . ' --noprofile --norc'
+  endif
 
   " Create the terminal in the bottom right of the current window
-  rightbelow let term_handle = term_start('bash', {
+  rightbelow let term_handle = term_start(shell, {
         \ 'term_finish': 'close',
         \ 'term_name': a:tab_name,
         \ 'term_rows': 8,
@@ -104,14 +112,17 @@ function! ubuild#verify_config()
 
 endfunction
 
-" Sync the source directory with the remote directory in a new window.
-function! ubuild#sync()
+" Use terminal with buffer ID to send build/test commands to.
+"
+" \param buffer_id[in] string ID of buffer to use for remote commands
+function! ubuild#use_terminal_with_buffer_id(buffer_id)
+  let g:_ubuild_persistent_term_id = a:buffer_id
+endf
 
-  call ubuild#verify_config()
-
-  let term_handles = ubuild#get_tabbed_terminal('UBuild Sync')
-  let term_id = term_handles.terminal_handle
-
+" Build rsync command used to sync with build server.
+"
+" \returns string
+function! ubuild#build_rsync_command()
   let rsync_exclude = ''
   if exists("g:ubuild_sync_ignore")
     if len(g:ubuild_sync_ignore) > 0
@@ -121,16 +132,31 @@ function! ubuild#sync()
   endif
 
   let rsync_command = 'rsync -aP ' . rsync_exclude . g:ubuild_local_directory . ' '
-    \ . g:ubuild_remote . ':' . g:ubuild_remote_directory
+    \ . g:ubuild_remote . ':' . g:ubuild_remote_directory . "\<cr>exit\<cr>"
 
-  echom 'Using rsync command: ' . rsync_command
-  
-  call ubuild#term_sendkeys_await(term_id, rsync_command . "\<cr>exit\<cr>")
-
+  return rsync_command
 endfunction
 
-" Static variables for ubuild#build
-let g:_ubuild_persistent_term_id = -1
+" Sync the source directory with the remote directory in a new window.
+function! ubuild#sync()
+
+  call ubuild#verify_config()
+
+  let rsync_command = ubuild#build_rsync_command()
+
+  let init_tab = tabpagenr()
+  execute '$tabnew'
+  
+  let minimal_shell = 'env -i ' . &shell . ' --noprofile --norc'
+  let term_id = term_start(minimal_shell, {
+        \   'term_finish': 'close',
+        \   'curwin': 1
+        \ })
+  call ubuild#term_sendkeys_await(term_id, rsync_command)
+
+  exe "tabnext " . init_tab
+
+endfunction
 
 " Send commands to existing terminal used by ubuild.
 "
@@ -155,6 +181,7 @@ endfunction
 " Connect to remote build server and instantiate terminal for configure,
 " build, and test commands to use.
 function! ubuild#connect()
+  echo 'Connecting to ' . g:ubuild_remote
   call ubuild#verify_config()
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Connect', 
@@ -165,6 +192,7 @@ endfunction
 " Configure build in persistent terminal
 function! ubuild#configure()
   call ubuild#verify_config()
+  echo 'Configuring on ' . g:ubuild_remote
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Configure', 
         \ g:ubuild_configure_commands
@@ -174,6 +202,7 @@ endfunction
 " Run build commands in persistent terminal
 function! ubuild#build()
   call ubuild#verify_config()
+  echo 'Building on ' . g:ubuild_remote
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Build', 
         \ g:ubuild_build_commands
@@ -183,6 +212,7 @@ endfunction
 " Run test commands in persistent terminal
 function! ubuild#test()
   call ubuild#verify_config()
+  echo 'Testing on ' . g:ubuild_remote
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Test', 
         \ g:ubuild_test_commands
