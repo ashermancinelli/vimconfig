@@ -156,8 +156,6 @@ function! ubuild#sync()
 
   exe "tabnext " . init_tab
 
-  call ubuild#popup_notification('Done syncing!')
-
 endfunction
 
 " Send commands to existing terminal used by ubuild.
@@ -189,7 +187,6 @@ function! ubuild#connect()
         \ 'UBuild Connect', 
         \ g:ubuild_connect_commands
         \ )
-  call ubuild#popup_notification('Done connecting!')
 endfunction
 
 " Configure build in persistent terminal
@@ -200,7 +197,6 @@ function! ubuild#configure()
         \ 'UBuild Configure', 
         \ g:ubuild_configure_commands
         \ )
-  call ubuild#popup_notification('Done configuring!')
 endfunction
 
 " Run build commands in persistent terminal
@@ -211,7 +207,6 @@ function! ubuild#build()
         \ 'UBuild Build', 
         \ g:ubuild_build_commands
         \ )
-  call ubuild#popup_notification('Done building!')
 endfunction
 
 " Run test commands in persistent terminal
@@ -222,7 +217,6 @@ function! ubuild#test()
         \ 'UBuild Test', 
         \ g:ubuild_test_commands
         \ )
-  call ubuild#popup_notification('Done testing!')
 endfunction
 
 let g:_ubuild_notification_messages = [
