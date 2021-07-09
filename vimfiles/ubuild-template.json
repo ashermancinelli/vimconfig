@@ -1,0 +1,30 @@
+{
+  "local_directory": ".",
+  "remote_directory": "/people/manc568/workspace/haero",
+  "remote_host": "deception",
+  "connect_commands": [
+    "ssh deception",
+    "srun -A eagles -N 1 --exclusive -t 3:00:00 -p short --pty bash",
+    "cd ~/workspace/haero",
+    "source machines/marianas.pnl.gov.sh",
+    "mkdir /scratch/manc568"
+  ],
+  "configure_commands": [
+    "cd ~/workspace/haero",
+    "./setup /scratch/manc568",
+    "cd /scratch/manc568",
+    "./config.sh"
+  ],
+  "build_commands": [
+    "cd /scratch/manc56",
+    "cmake --build . --target mam_rename_fprocess_tests --parallel `nproc`"
+  ],
+  "test_commands": [
+    "cd /scratch/manc56",
+    "mpirun -n 1 ./haero/tests/mam_rename_fprocess_tests"
+  ],
+  "sync_ignore": [
+    ".git",
+    "ext"
+  ]
+}

@@ -58,6 +58,7 @@ function! UBuild_VerifyConfig()
         \ "remote_host" ,
         \ "remote_directory" ,
         \ "local_directory",
+        \ "connect_commands",
         \ "configure_commands",
         \ "build_commands",
         \ "test_commands",
@@ -73,6 +74,7 @@ function! UBuild_VerifyConfig()
   let g:ubuild_remote = config["remote_host"]
   let g:ubuild_remote_directory = config["remote_directory"]
   let g:ubuild_local_directory = config["local_directory"]
+  let g:ubuild_connect_commands = config["connect_commands"]
   let g:ubuild_configure_commands = config["configure_commands"]
   let g:ubuild_build_commands = config["build_commands"]
   let g:ubuild_test_commands = config["test_commands"]
@@ -141,6 +143,16 @@ function! UBuild_SendCommandsToPersistentTerminal(title, commands)
 
 endfunction
 
+function! UBuild_Connect()
+  if UBuild_VerifyConfig() == 1
+    return 1
+  endif
+  return UBuild_SendCommandsToPersistentTerminal(
+        \ 'UBuild Connect', 
+        \ g:ubuild_connect_commands
+        \ )
+endfunction
+
 function! UBuild_Configure()
   if UBuild_VerifyConfig() == 1
     return 1
@@ -172,6 +184,7 @@ function! UBuild_Test()
 endfunction
 
 nnoremap <c-x><c-s> :call UBuild_Sync()<cr>
+nnoremap <c-x><c-a> :call UBuild_Connect()<cr>
 nnoremap <c-x><c-c> :call UBuild_Configure()<cr>
 nnoremap <c-x><c-b> :call UBuild_Build()<cr>
 nnoremap <c-x><c-t> :call UBuild_Test()<cr>
