@@ -3,17 +3,26 @@ let g:true = 1
 let g:false = 0
 
 let g:_ubuild_term_id = -1
-let g:_ubuild_tab_id = -1
+
+" Call term_sendkeys and wait on results before continuing
+"
+" \param term_id[in] int ID of the terminal instance
+" \param command[in] string String-ified command to be run in terminal
+function! ubuild#term_sendkeys_await(term_id, command)
+  call term_wait(a:term_id)
+
+  call term_sendkeys(a:term_id, a:command)
+
+  call term_wait(a:term_id)
+endfunction
 
 " Wraps private variables into an object of handles.
 "
-" \returns object with keys _terminal_handle_ and _tab_id_
+" \returns object with keys _terminal_handle_
 function! ubuild#create_tabbed_terminal_object()
   let terminal_handle = g:_ubuild_term_id
-  let tab_id = g:_ubuild_tab_id
   return {
     \ 'terminal_handle': terminal_handle,
-    \ 'tab_id': tab_id,
   \ }
 endfunction
 
@@ -32,24 +41,14 @@ endfunction
 " \param tab_name[in] string Name to be used for the newly created tab
 function! ubuild#get_tabbed_terminal(tab_name)
 
-  " Get current tab number
-  let start_tab = tabpagenr()
-
-  " Craeate a new tab to be consumed by the terminal at the end
-  exe "$tabnew"
-  let tab_id = tabpagenr('$')
-
-  " Create the terminal in the new tab, taking up the entire window
+  " Create the terminal in the bottom right of the current window
   rightbelow let term_handle = term_start('bash', {
         \ 'term_finish': 'close',
         \ 'term_name': a:tab_name,
         \ 'term_rows': 8,
         \ })
 
-  " Return to original tab while the commands run in the background
-  exe 'tabnext ' . start_tab
-
-  return { 'terminal_handle': term_handle, 'tab_id': tab_id }
+  return { 'terminal_handle': term_handle }
 endfunction
 
 " Get path to configuration file.
@@ -125,18 +124,13 @@ function! ubuild#sync()
     \ . g:ubuild_remote . ':' . g:ubuild_remote_directory
 
   echom 'Using rsync command: ' . rsync_command
-
-  call term_wait(term_id)
-
-  call term_sendkeys(term_id, rsync_command . "\<cr>exit\<cr>")
-
-  call term_wait(term_id)
+  
+  call ubuild#term_sendkeys_await(term_id, rsync_command . "\<cr>exit\<cr>")
 
 endfunction
 
 " Static variables for ubuild#build
 let g:_ubuild_persistent_term_id = -1
-let g:_ubuild_persistent_tab_id = -1
 
 " Send commands to existing terminal used by ubuild.
 "
@@ -147,19 +141,14 @@ function! ubuild#send_commands_to_persistent_terminal(title, commands)
 
   let command_string = join(a:commands, "\<cr>") . "\<cr>"
 
-  if g:_ubuild_persistent_term_id == -1 || g:_ubuild_persistent_tab_id == -1
+  if g:_ubuild_persistent_term_id == -1
     let term_handles = ubuild#get_tabbed_terminal('UBuild')
     let g:_ubuild_persistent_term_id = term_handles.terminal_handle
-    let g:_ubuild_persistent_tab_id = term_handles.tab_id
   endif
 
   let term_id = g:_ubuild_persistent_term_id
 
-  call term_wait(term_id)
-
-  call term_sendkeys(term_id, command_string)
-
-  call term_wait(term_id)
+  call ubuild#term_sendkeys_await(term_id, command_string)
 
 endfunction
 
@@ -167,7 +156,7 @@ endfunction
 " build, and test commands to use.
 function! ubuild#connect()
   call ubuild#verify_config()
-  ubuild#send_commands_to_persistent_terminal(
+  call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Connect', 
         \ g:ubuild_connect_commands
         \ )
@@ -176,7 +165,7 @@ endfunction
 " Configure build in persistent terminal
 function! ubuild#configure()
   call ubuild#verify_config()
-  ubuild#send_commands_to_persistent_terminal(
+  call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Configure', 
         \ g:ubuild_configure_commands
         \ )
@@ -185,7 +174,7 @@ endfunction
 " Run build commands in persistent terminal
 function! ubuild#build()
   call ubuild#verify_config()
-  ubuild#send_commands_to_persistent_terminal(
+  call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Build', 
         \ g:ubuild_build_commands
         \ )
@@ -194,7 +183,7 @@ endfunction
 " Run test commands in persistent terminal
 function! ubuild#test()
   call ubuild#verify_config()
-  ubuild#send_commands_to_persistent_terminal(
+  call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Test', 
         \ g:ubuild_test_commands
         \ )
