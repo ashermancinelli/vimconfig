@@ -1,39 +1,60 @@
+"==============------------------------------------------------=================
+"========                                                         ==============
+"  _   _ ____        _ _     _
+" | | | | __ ) _   _(_) | __| |
+" | | | |  _ \| | | | | |/ _` |
+" | |_| | |_) | |_| | | | (_| |
+"  \___/|____/ \__,_|_|_|\__,_|
+"
+"
+" IDE for Vim.
+" ------------
+"
+" Some highlights:
+" ----------------
+"
+"   - Remote build servers
+"   - Build kits
+"   - Source syncronization between systems
+"   - Psuedo GUI menu
+"
+" Asher Mancinelli <ashermancinelli@gmail.com>
+"
+"========                                                         ==============
+"==============------------------------------------------------=================
 
 
-" Static variables for ubuild#
-if !exists("g:_ubuild_persistent_term_id")
-  let g:_ubuild_persistent_term_id = -1
-endif
+"======-------------------------------------------------------------------======
+"
+" General Utilities
+"
+"======-------------------------------------------------------------------======
+
+" Static variables for ubuild#*
+let g:_ubuild_vars = [
+      \ '_ubuild_persistent_term_id',
+      \ '_ubuild_config',
+      \ ]
+
+" Initialize all global ubuild vars to -1
+for v in g:_ubuild_vars
+  if !exists("g:" . v)
+    exe "let g:".v." = -1"
+  endif
+endfor
 
 " Call term_sendkeys and wait on results before continuing
 "
 " \param term_id[in] int ID of the terminal instance
 " \param command[in] string String-ified command to be run in terminal
 function! ubuild#term_sendkeys_await(term_id, command)
+
   call term_wait(a:term_id)
 
   call term_sendkeys(a:term_id, a:command)
 
   call term_wait(a:term_id)
-endfunction
 
-" Wraps private variables into an object of handles.
-"
-" \returns object with keys _terminal_handle_
-function! ubuild#create_tabbed_terminal_object()
-  let terminal_handle = g:_ubuild_persistent_term_id
-  return {
-    \ 'terminal_handle': terminal_handle,
-  \ }
-endfunction
-
-" Create a _.ubuild.json_ file in the current working directory using the
-" template configuration file installed alongside ubuild.
-function! ubuild#create_config_template()
-  let config_file = ubuild#get_config_file(0)
-  let template_path = getenv('HOME') . "/.vim/ubuild-template.json"
-  let config_template = readfile(template_path)
-  call writefile(config_template, config_file)
 endfunction
 
 " Create a terminal in a new window and return an object with fields needed to
@@ -57,12 +78,128 @@ function! ubuild#get_tabbed_terminal(tab_name, ...)
         \ })
 
   return { 'terminal_handle': term_handle }
+
 endfunction
+
+" Wraps private variables into an object of handles.
+"
+" \returns object with keys _terminal_handle_
+function! ubuild#create_tabbed_terminal_object()
+
+  let terminal_handle = g:_ubuild_persistent_term_id
+  return {
+    \ 'terminal_handle': terminal_handle,
+  \ }
+
+endfunction
+
+" Ensure configuration contians the given keys, ordered by nesting.
+"
+" For example, to check if the key 'inner_key' exists in the following
+" configuration:
+"
+" ```json
+" {
+"   'outter_key': {
+"     'inner_key': true
+"   }
+" }
+" ```
+"
+" One would call this function like so:
+"
+" ```vim
+" call ubuild#assert_config_has_key('outter_key', 'inner_key')
+" ```
+function! ubuild#assert_config_has_key(...)
+
+  if a:0 == 0
+    throw "UBuild function _config_has_key requires >= 1 argument!"
+  endif
+
+  if g:_ubuild_config == -1
+    throw "ubuild#assert_config_has_key was called, but config is not initialized!"
+  endif
+
+  let config = g:_ubuild_config
+
+  for k in a:000
+
+    if !type(config) == type({})
+      throw "Config component '" . config . "' is missing key " . k . "!"
+    endif
+
+    if !has_key(config, k)
+      throw "Config component '" . config . "' is missing key " . k . "!"
+    endif
+
+    let config = config[k]
+
+  endfor
+
+endf
+
+" Use terminal with buffer ID to send build/test commands to.
+"
+" \param buffer_id[in] string ID of buffer to use for remote commands
+function! ubuild#use_terminal_with_buffer_id(buffer_id)
+
+  let g:_ubuild_persistent_term_id = a:buffer_id
+
+endf
+
+" Send commands to existing terminal used by ubuild.
+"
+" \param title[in] string Title of tab while command is running.
+" \param commands[in] list[string] Commands to be run in the terminal instance
+function! ubuild#send_commands_to_persistent_terminal(title, commands)
+
+  call ubuild#verify_config()
+
+  let command_string = join(a:commands, "\<cr>") . "\<cr>"
+
+  if g:_ubuild_persistent_term_id == -1
+    let term_handles = ubuild#get_tabbed_terminal('UBuild')
+    let g:_ubuild_persistent_term_id = term_handles.terminal_handle
+  endif
+
+  let term_id = g:_ubuild_persistent_term_id
+
+  call ubuild#term_sendkeys_await(term_id, command_string)
+
+endfunction
+
+"======-------------------------------------------------------------------======
+"
+" Configuration Utilities
+" -----------------------
+"
+"======-------------------------------------------------------------------======
+
+function! ubuild#edit_config()
+
+  " Get configuration file name
+  let config_file = ubuild#get_config_file(0)
+  let basename = split(config_file, '/')[-1]
+
+  " Try to find a buffer with it already open
+  let id = bufnr(basename)
+
+  if id != -1
+    exe "edit #" . id
+    return
+  endif
+
+  exe "$tabnew"
+  exe "edit " . config_file
+
+endf
 
 " Get path to configuration file.
 "
 " \param check[in] bool Should check for existence of config file?
 function! ubuild#get_config_file(...)
+
   let config = getcwd() . '/.ubuild.json'
 
   let check = 1
@@ -75,59 +212,70 @@ function! ubuild#get_config_file(...)
   endif
 
   return config
+
+endfunction
+
+" Create a _.ubuild.json_ file in the current working directory using the
+" template configuration file installed alongside ubuild.
+function! ubuild#create_config_template()
+
+  let config_file = ubuild#get_config_file(0)
+  let template_path = getenv('HOME') . "/.vim/ubuild-template.json"
+  let config_template = readfile(template_path)
+  call writefile(config_template, config_file)
+
 endfunction
 
 " Ensure that a file _.ubuild.vim_ exists in the current working directory and 
 " that all the needed variables are set.
 function! ubuild#verify_config()
-  let config = ubuild#get_config_file()
 
-  let json_string = join(readfile(config))
-  let config = json_decode(json_string)
+  let config_file = ubuild#get_config_file()
 
-  let required_vars = [
-        \ "remote_host" ,
-        \ "remote_directory" ,
-        \ "local_directory",
-        \ "connect_commands",
-        \ "configure_commands",
-        \ "build_commands",
-        \ "test_commands",
-        \ ]
+  let json_string = join(readfile(config_file))
+  let g:_ubuild_config = json_decode(json_string)
 
-  for v in required_vars
-    if !has_key(config, v)
-      throw "Could not find required UBuild parameter '".v."'."
+  call ubuild#assert_config_has_key('configure_commands')
+  call ubuild#assert_config_has_key('build_commands')
+  call ubuild#assert_config_has_key('test_commands')
+  call ubuild#assert_config_has_key('remote_build_server')
+  call ubuild#assert_config_has_key('remote_build_server', 'enabled')
+
+  if g:_ubuild_config.remote_build_server.enabled
+
+    call ubuild#assert_config_has_key('remote_build_server', 'enabled')
+    call ubuild#assert_config_has_key('remote_build_server', 'local_directory')
+    call ubuild#assert_config_has_key('remote_build_server', 'remote_host')
+    call ubuild#assert_config_has_key('remote_build_server', 'remote_directory')
+    call ubuild#assert_config_has_key('remote_build_server', 'connect_commands')
+    call ubuild#assert_config_has_key('remote_build_server', 'rsync_exclude')
+
+    if type(g:_ubuild_config.remote_build_server.rsync_exclude) != type([])
+      throw "UBuild expected config key `remote_build_server.rsync_exclude` to have type `list`!"
     endif
-  endfor
 
-  let g:ubuild_remote = config["remote_host"]
-  let g:ubuild_remote_directory = config["remote_directory"]
-  let g:ubuild_local_directory = config["local_directory"]
-  let g:ubuild_connect_commands = config["connect_commands"]
-  let g:ubuild_configure_commands = config["configure_commands"]
-  let g:ubuild_build_commands = config["build_commands"]
-  let g:ubuild_test_commands = config["test_commands"]
-  let g:ubuild_sync_ignore = config["sync_ignore"]
+  endif
 
 endfunction
 
-" Use terminal with buffer ID to send build/test commands to.
+"======-------------------------------------------------------------------======
 "
-" \param buffer_id[in] string ID of buffer to use for remote commands
-function! ubuild#use_terminal_with_buffer_id(buffer_id)
-  let g:_ubuild_persistent_term_id = a:buffer_id
-endf
+" Command Functions
+" -----------------
+"
+"======-------------------------------------------------------------------======
 
 " Build rsync command used to sync with build server.
 "
 " \returns string
 function! ubuild#build_rsync_command()
+
   let rsync_exclude = ''
-  if exists("g:ubuild_sync_ignore")
-    if len(g:ubuild_sync_ignore) > 0
+  if has_key(g:_ubuild_config['remote_build_server'], 'rsync_exclude')
+    let exclude = g:_ubuild_config.remote_build_server.rsync_exclude
+    if len(exclude) > 0
       let rsync_exclude = ' --exclude=' .
-        \join(g:ubuild_sync_ignore, ' --exclude=') . ' '
+        \ join(exclude, ' --exclude=') . ' '
     endif
   endif
 
@@ -135,6 +283,7 @@ function! ubuild#build_rsync_command()
     \ . g:ubuild_remote . ':' . g:ubuild_remote_directory . "\<cr>exit\<cr>"
 
   return rsync_command
+
 endfunction
 
 " Sync the source directory with the remote directory in a new window.
@@ -158,66 +307,61 @@ function! ubuild#sync()
 
 endfunction
 
-" Send commands to existing terminal used by ubuild.
-"
-" \param title[in] string Title of tab while command is running.
-" \param commands[in] list[string] Commands to be run in the terminal instance
-function! ubuild#send_commands_to_persistent_terminal(title, commands)
-  call ubuild#verify_config()
-
-  let command_string = join(a:commands, "\<cr>") . "\<cr>"
-
-  if g:_ubuild_persistent_term_id == -1
-    let term_handles = ubuild#get_tabbed_terminal('UBuild')
-    let g:_ubuild_persistent_term_id = term_handles.terminal_handle
-  endif
-
-  let term_id = g:_ubuild_persistent_term_id
-
-  call ubuild#term_sendkeys_await(term_id, command_string)
-
-endfunction
-
 " Connect to remote build server and instantiate terminal for configure,
 " build, and test commands to use.
 function! ubuild#connect()
+
   call ubuild#verify_config()
   echo 'Connecting to ' . g:ubuild_remote
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Connect', 
         \ g:ubuild_connect_commands
         \ )
+
 endfunction
 
 " Configure build in persistent terminal
 function! ubuild#configure()
+
   call ubuild#verify_config()
   echo 'Configuring on ' . g:ubuild_remote
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Configure', 
         \ g:ubuild_configure_commands
         \ )
+
 endfunction
 
 " Run build commands in persistent terminal
 function! ubuild#build()
+
   call ubuild#verify_config()
   echo 'Building on ' . g:ubuild_remote
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Build', 
         \ g:ubuild_build_commands
         \ )
+
 endfunction
 
 " Run test commands in persistent terminal
 function! ubuild#test()
+
   call ubuild#verify_config()
   echo 'Testing on ' . g:ubuild_remote
   call ubuild#send_commands_to_persistent_terminal(
         \ 'UBuild Test', 
         \ g:ubuild_test_commands
         \ )
+
 endfunction
+
+"======-------------------------------------------------------------------======
+"
+" GUI
+" ---
+"
+"======-------------------------------------------------------------------======
 
 let g:_ubuild_notification_messages = [
       \ 'Syncing...',
@@ -225,7 +369,7 @@ let g:_ubuild_notification_messages = [
       \ 'Configuring...',
       \ 'Building...',
       \ 'Testing...',
-      \ 'Syncing and building',
+      \ 'Editing Configuration...',
       \ ]
 
 let g:_ubuild_popup_menu_options = [
@@ -234,24 +378,34 @@ let g:_ubuild_popup_menu_options = [
       \ 'Configure',
       \ 'Build',
       \ 'Test',
-      \ 'Sync and build',
+      \ 'Edit Config',
       \ ]
 
 function! ubuild#popup_menu()
+
   call popup_menu(g:_ubuild_popup_menu_options, #{
         \ callback: 'ubuild#menu_handler',
         \ })
+
 endf
 
 function! ubuild#popup_notification(message)
+
   call popup_notification(a:message, #{ 
         \ col: 1,
         \ time: 3000,
         \ })
+
 endf
 
 function! ubuild#menu_handler(id, result)
+
+  if a:result == -1
+    return
+  endif
+
   echom "id=".a:id." result=".a:result
+
   call ubuild#popup_notification(g:_ubuild_notification_messages[a:result-1])
 
   if a:result == 1
@@ -275,10 +429,17 @@ function! ubuild#menu_handler(id, result)
   endif
 
   if a:result == 6
-    call ubuild#sync()
-    call ubuild#build()
+    call ubuild#edit_config()
   endif
+
 endf
+
+"======-------------------------------------------------------------------======
+"
+" Remappings
+" ----------
+"
+"======-------------------------------------------------------------------======
 
 nnoremap <c-u><c-s> :call ubuild#sync()<cr>
 nnoremap <c-u><c-a> :call ubuild#connect()<cr>
