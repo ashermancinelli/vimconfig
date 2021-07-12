@@ -41,18 +41,17 @@
 "======-------------------------------------------------------------------======
 
 " Static variables for ubuild#*
-let g:_ubuild_vars = [
-      \ '_ubuild_persistent_term_id',
-      \ '_ubuild_config',
-      \ '_ubuild_enabled_kit_id',
-      \ ]
+if !exists('g:_ubuild_enabled_kit_id')
+  let g:_ubuild_enabled_kit_id = -1
+endif
 
-" Initialize all global ubuild vars to -1
-for v in g:_ubuild_vars
-  if !exists("g:" . v)
-    exe "let g:".v." = -1"
-  endif
-endfor
+if !exists('g:_ubuild_config')
+  let g:_ubuild_config = -1
+endif
+
+if !exists('g:_ubuild_persistent_term_id')
+  let g:_ubuild_persistent_term_id = -1
+endif
 
 " Call term_sendkeys and wait on results before continuing
 "
@@ -221,16 +220,6 @@ function! ubuild#edit_config()
   " Get configuration file name
   let config_file = s:get_config_file(0)
   let basename = split(config_file, '/')[-1]
-
-  " Try to find a buffer with it already open
-  let id = bufnr(basename)
-
-  if id != -1
-    exe "edit #" . id
-    return
-  endif
-
-  exe "$tabnew"
   exe "edit " . config_file
 
 endf
@@ -306,6 +295,7 @@ endfunction
 
 function! ubuild#get_enabled_kit()
 
+  call ubuild#verify_config()
   return g:_ubuild_config.kits[g:_ubuild_enabled_kit_id]
 
 endf
@@ -551,7 +541,8 @@ function! s:get_menu_options()
 
   if kit.remote_build_server.enabled
     call add(options, 'Sync')
-    call add(messages, 'Syncing with remote ' kit.remote_build_server.remote_host . '...')
+    let msg = 'Syncing with remote ' . kit.remote_build_server.remote_host . '...'
+    call add(messages, msg)
     call add(callbacks, 'sync')
   endif
 
@@ -602,7 +593,7 @@ function! ubuild#menu_handler(id, result)
 
   let options = s:get_menu_options()
 
-  if a:result < len(s:notification_messages)
+  if a:result < len(options.messages)
     echom a:result
     let msg = options.messages[a:result-1]
     if len(msg) > 0
