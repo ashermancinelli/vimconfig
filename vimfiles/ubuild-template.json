@@ -15,7 +15,7 @@
           "source machines/marianas.pnl.gov.sh",
           "mkdir /scratch/manc568"
         ],
-        "rsync_ignore": [
+        "rsync_exclude": [
           ".git",
           "ext"
         ]
