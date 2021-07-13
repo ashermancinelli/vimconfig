@@ -95,3 +95,25 @@ set backspace=indent,eol,start
 set autoindent
 set ruler
 set showcmd
+
+function! Handler(id, result)
+  echom a:id . ' ' . a:result
+  if a:result == -1
+    return
+  endif
+  echom a:result
+  call execute('!git checkout ' . trim(a:result))
+endf
+
+function! GitCheckout()
+  let branches = substitute(system("git branch"), '\n\+$', '', '')
+  let branches = split(branches, '\n')
+
+  call popup_menu(branches, #{
+        \ callback: 'Handler'
+        \ })
+  return branches
+endf
+
+command! Gcheckout :call GitCheckout()
+
