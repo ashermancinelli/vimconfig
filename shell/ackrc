@@ -1,6 +1,13 @@
 --ignore-dir=build
 --ignore-dir=.git
 
+--ignore-file=match:.*\.lock
+--ignore-file=match:.*\.swp
+--ignore-file=match:.*\.swo
+--ignore-file=match:.*\.o
+
 --sort-files
 
---pager='less -r'
+--color
+
+#--pager=less
