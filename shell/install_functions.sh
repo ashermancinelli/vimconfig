@@ -30,6 +30,8 @@ install_zsh()
 
 install_base()
 {
+    curl https://beyondgrep.com/ack-v3.5.0 > $HOME/.shell/ack \
+      && chmod 0755 $HOME/.shell/ack
     cp ./shell/.clang-format ~/.clang-format
     cat ./shell/baserc.sh >> $rc
     [ -d $HOME/.shell/ ] || mkdir -p $HOME/.shell

@@ -52,10 +52,12 @@ Plug 'rhysd/vim-clang-format'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-obsession'
-Plug 'https://github.com/mbbill/undotree'
+Plug 'mbbill/undotree'
 Plug 'junegunn/goyo.vim'
 Plug 'rust-lang/rust.vim'
 Plug 'sainnhe/sonokai'
+Plug 'ashermancinelli/ubuild'
+Plug 'mileszs/ack'
 
 call plug#end()
 
@@ -67,6 +69,8 @@ source ~/.vim/remappings.vim
 source ~/.vim/my_commenter.vim
 source ~/.vim/ubuild.vim
 set tags+=~/.vim/tags
+
+set wildignore+=.git
 
 " Highlight keywords from CUDA Runtime API
 let g:cuda_runtime_api_highlight = 1
