@@ -1,0 +1,6 @@
+--ignore-dir=build
+--ignore-dir=.git
+
+--sort-files
+
+--pager='less -r'
