@@ -82,6 +82,15 @@ set shiftwidth=2
 set expandtab
 set softtabstop=2
 
+" Shortcut for opening Git browser
+function! GitStatusNewWindow()
+  exe "$tabnew"
+  let orig = bufnr()
+  exe "Gstatus"
+  exe "bd " . orig
+endf
+nnoremap <c-u><c-g> :call GitStatusNewWindow()<cr>
+
 set backspace=indent,eol,start
 set autoindent
 set ruler
