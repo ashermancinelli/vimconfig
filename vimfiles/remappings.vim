@@ -96,18 +96,25 @@ set autoindent
 set ruler
 set showcmd
 
+function! s:get_branches()
+  let branches = substitute(system("git branch"), '\n\+$', '', '')
+  let branches = split(branches, '\n')
+  return branches
+endf
+
 function! Handler(id, result)
-  echom a:id . ' ' . a:result
+  let branches = s:get_branches()
+
   if a:result == -1
     return
   endif
-  echom a:result
-  call execute('!git checkout ' . trim(a:result))
+
+  call system('git checkout ' . trim(branches[a:result-1]))
 endf
 
 function! GitCheckout()
-  let branches = substitute(system("git branch"), '\n\+$', '', '')
-  let branches = split(branches, '\n')
+
+  let branches = s:get_branches()
 
   call popup_menu(branches, #{
         \ callback: 'Handler'
