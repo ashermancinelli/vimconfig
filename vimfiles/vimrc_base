@@ -57,17 +57,16 @@ Plug 'junegunn/goyo.vim'
 Plug 'rust-lang/rust.vim'
 Plug 'sainnhe/sonokai'
 Plug 'ashermancinelli/ubuild'
-Plug 'mileszs/ack'
+Plug 'mileszs/ack.vim'
 
 call plug#end()
 
 " Vim.org sourced plugins
 source ~/.vim/autoclose.vim
-
-" The rest of my configurations
+source ~/.vim/quack.vim
 source ~/.vim/remappings.vim
 source ~/.vim/my_commenter.vim
-source ~/.vim/ubuild.vim
+
 set tags+=~/.vim/tags
 
 set wildignore+=.git
