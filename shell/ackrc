@@ -1,10 +1,11 @@
 --ignore-dir=build
 --ignore-dir=.git
 
---ignore-file=match:.*\.lock
---ignore-file=match:.*\.swp
---ignore-file=match:.*\.swo
---ignore-file=match:.*\.o
+--ignore-file=ext:lock
+--ignore-file=ext:swp
+--ignore-file=ext:swo
+--ignore-file=ext:o
+--ignore-file=is:tags
 
 --sort-files
 
