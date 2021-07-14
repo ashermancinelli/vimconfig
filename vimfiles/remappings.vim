@@ -47,7 +47,7 @@ func! GenTags(...)
   endfor
 
 endfunc
-command! -nargs=* -complete=dir GenTags :call GenTags(<args>)
+command! -nargs=* -complete=dir GenTags :call GenTags(<f-args>)
 
 " Better tab navigation
 nnoremap tn gt
