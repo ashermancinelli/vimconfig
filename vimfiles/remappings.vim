@@ -31,13 +31,23 @@ inoremap {;<CR> {<CR>};<ESC>O
 " Better javadoc comments "
 autocmd FileType c,cpp,java inoreabbrev <buffer> /** /**<CR><CR>/<Up><space>
 
-" <c-]> takes you to the tag definition, so naturally
-" <c-[> should take you back to the location from
-" which you tried to find the definition
-func! GenTags()
-  exe "!ctags -R --c++-kinds=+p --extra=+q --fields=+iaS ."
-  exe "echom 'Generated new ctags database.'"
+func! GenTags(...)
+  let cmd = "!ctags -R --c++-kinds=+xp --extra=+q --fields=+iaS "
+  echom 'Generating new ctags database with command ' . cmd
+
+  " call system('if [ -f ' . getcwd() . '/tags ]; then rm ' . getcwd() . '/tags; fi')
+
+  if a:0 == 0
+    exe cmd . getcwd()
+    return
+  endif
+
+  for d in a:000
+    exe cmd . d
+  endfor
+
 endfunc
+command! -nargs=* GenTags :call GenTags(<args>)
 
 " Better tab navigation
 nnoremap tn gt
